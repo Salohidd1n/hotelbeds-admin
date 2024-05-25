@@ -40,8 +40,6 @@ const LocationListPage = () => {
 		},
 	});
 
-	console.log('data', data);
-
 	const onChangeTerm = useDebounce((e) => {
 		setTerm(e.target.value);
 	}, 700);
@@ -169,7 +167,7 @@ const LocationListPage = () => {
 			</Box>
 			<CustomPopup
 				isOpen={!!deletableZone}
-				title="Delete Zone"
+				title="Delete Location"
 				footerContent={
 					<Box display="flex" gap="3">
 						<Button variant="outline" onClick={() => setDeletableZone(null)}>
@@ -192,7 +190,7 @@ const LocationListPage = () => {
 				onClose={() => setDeletableZone(null)}
 			>
 				<p>
-          Are you sure want to delete <b>{deletableZone?.en_name}</b> zone?
+          Are you sure want to delete <b>{deletableZone?.en_title}</b> location?
 				</p>
 			</CustomPopup>
 		</>
