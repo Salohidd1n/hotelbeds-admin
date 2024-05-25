@@ -2,13 +2,13 @@ import { useMutation, useQuery } from 'react-query';
 import httpRequest from './httpRequest';
 
 const hotelProtfolioService = {
-	getList: (params) => httpRequest.get('v1/hotel-protfolios', params),
+	getList: (params) => httpRequest.get('v1/hotel-portfolios', params),
 	getByID: (id, params) =>
-		httpRequest.get(`v1/hotel-protfolios/${id}`, { params }),
-	update: (data) => httpRequest.patch('v1/hotel-protfolios', data),
+		httpRequest.get(`v1/hotel-portfolios/${id}`, { params }),
+	update: (data) => httpRequest.patch('v1/hotel-portfolios', data),
 	delete: (id, params) =>
-		httpRequest.delete(`v2/hotel-protfolios/${id}`, { params }),
-	create: (data) => httpRequest.post('v1/hotel-protfolios', data),
+		httpRequest.delete(`v2/hotel-portfolios/${id}`, { params }),
+	create: (data) => httpRequest.post('v1/hotel-portfolios', data),
 };
 
 export const useGetHotelPortfolios = ({ params = {}, queryParams = {} }) => {

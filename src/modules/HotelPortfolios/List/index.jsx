@@ -12,25 +12,26 @@ import NotificationMenu from '../../../components/NotificationMenu';
 import { Page } from '../../../components/Page';
 import PageCard, { PageCardHeader } from '../../../components/PageCard';
 import ProfileMenu from '../../../components/ProfileMenu';
-import {
-	useUserDeleteMutation,
-	useUsersListQuery,
-} from '../../../services/user.service';
 import styles from './index.module.scss';
+import { useGetHotelPortfolios } from 'services/hotel-portfolio.service';
+import { useDeleteHotelPortfolio } from 'services/hotel-portfolio.service';
 
 const HotelPortfoliosListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
 
-	const {
-		data: { users, count } = {},
-		isLoading,
-		refetch,
-	} = useUsersListQuery();
+	const { data, isLoading, refetch } = useGetHotelPortfolios({
+		params: {
+			page_size: pageSize,
+			page: 1,
+		},
+	});
 
-	const { mutate: deleteUser, isLoading: deleteLoading } =
-    useUserDeleteMutation({
+	const list = data?.hits;
+
+	const { mutate: deleteHotelPortfolio, isLoading: deleteLoading } =
+    useDeleteHotelPortfolio({
     	onSuccess: refetch,
     });
 
@@ -44,7 +45,7 @@ const HotelPortfoliosListPage = () => {
 
 	const onDeleteClick = (e, row) => {
 		e.stopPropagation();
-		deleteUser(row.id);
+		deleteHotelPortfolio(row.id);
 	};
 
 	const columns = [
@@ -56,16 +57,24 @@ const HotelPortfoliosListPage = () => {
 			render: (_, __, index) => index + 1,
 		},
 		{
-			title: 'Имя',
-			dataIndex: 'first_name',
+			title: 'JPCode',
+			dataIndex: 'JPCode',
 		},
 		{
-			title: 'Фамилия',
-			dataIndex: 'last_name',
+			title: 'Name (EN)',
+			dataIndex: 'en_name',
 		},
 		{
-			title: 'Pinfl',
-			dataIndex: 'pinfl',
+			title: 'Name (KR)',
+			dataIndex: 'kr_name',
+		},
+		{
+			title: 'City (EN)',
+			dataIndex: 'City.en_value',
+		},
+		{
+			title: 'City (KR)',
+			dataIndex: 'City.kr_value',
 		},
 		{
 			title: '',
@@ -99,15 +108,12 @@ const HotelPortfoliosListPage = () => {
 				<PageCard h="calc(100vh - 90px)">
 					<PageCardHeader>
 						<HeaderExtraSide>
-							<Button variant="outline" leftIcon={<DownloadIcon />}>
-                Скачать
-							</Button>
 							<Button
 								onClick={navigateToCreatePage}
 								bgColor="primary.main"
 								leftIcon={<AddIcon />}
 							>
-                Добавить пользователя
+                Add Hotel Portfolio
 							</Button>
 						</HeaderExtraSide>
 					</PageCardHeader>
@@ -115,11 +121,11 @@ const HotelPortfoliosListPage = () => {
 					<Box p={3}>
 						<DataTable
 							columns={columns}
-							data={users}
+							data={list}
 							scroll={{ y: 'calc(100vh - 260px)' }}
 							isLoading={isLoading || deleteLoading}
 							pagination={{
-								total: count,
+								total: Number(data?.count),
 								pageSize,
 								onPageSizeChange: setPageSize,
 							}}
