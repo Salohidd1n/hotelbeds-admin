@@ -50,7 +50,7 @@ const HotelPortfoliosDetailPage = () => {
 	useEffect(() => {
 		if (!data) return;
 
-		reset({ ...data?.hits[0], JPCode: data?.hits[0]?.attributes?.JPCode });
+		reset({ ...data, JPCode: data?.attributes?.JPCode });
 	}, [data]);
 
 	const { mutate: createUpdatePortfolio, isLoading: createLoading } =

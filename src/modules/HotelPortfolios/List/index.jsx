@@ -16,22 +16,31 @@ import styles from './index.module.scss';
 import { useGetHotelPortfolios } from 'services/hotel-portfolio.service';
 import { useDeleteHotelPortfolio } from 'services/hotel-portfolio.service';
 import CustomPopup from 'components/CustomPopup';
+import SearchInput from 'components/FormElements/Input/SearchInput';
+import useDebounce from 'hooks/useDebounce';
 
 const HotelPortfoliosListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 
 	const [pageSize, setPageSize] = useState(30);
+	const [page, setPage] = useState(1);
 	const [deletableHP, setDeletableHP] = useState(false);
+	const [term, setTerm] = useState();
 
 	const { data, isLoading, refetch } = useGetHotelPortfolios({
 		params: {
+			page,
 			page_size: pageSize,
-			page: 1,
+			search: term,
 		},
 	});
 
 	const list = data?.hits;
+
+	const onChangeTerm = useDebounce((e) => {
+		setTerm(e.target.value);
+	}, 700);
 
 	const { mutate: deleteHotelPortfolio, isLoading: deleteLoading } =
     useDeleteHotelPortfolio({
@@ -52,6 +61,10 @@ const HotelPortfoliosListPage = () => {
 	const onDeleteClick = (e, row) => {
 		e.stopPropagation();
 		deleteHotelPortfolio(row.id);
+	};
+
+	const onChangePage = (current) => {
+		setPage(current);
 	};
 
 	const columns = [
@@ -121,6 +134,9 @@ const HotelPortfoliosListPage = () => {
 					<PageCard h="calc(100vh - 90px)">
 						<PageCardHeader>
 							<HeaderExtraSide>
+								<Box w="250px">
+									<SearchInput onChange={onChangeTerm} />
+								</Box>
 								<Button
 									onClick={navigateToCreatePage}
 									bgColor="primary.main"
@@ -141,6 +157,8 @@ const HotelPortfoliosListPage = () => {
 									total: Number(data?.count),
 									pageSize,
 									onPageSizeChange: setPageSize,
+									onChange: onChangePage,
+									current: page,
 								}}
 								onRow={(row, index) => ({
 									onClick: () => navigateToEditPage(row.id),
@@ -157,7 +175,7 @@ const HotelPortfoliosListPage = () => {
 				title="Delete Hotel Portfolio"
 				footerContent={
 					<Box display="flex" gap="20px">
-						<Button variant="outlined" onClick={() => setDeletableHP(null)}>
+						<Button variant="outline" onClick={() => setDeletableHP(null)}>
               Cancel
 						</Button>
 						<Button

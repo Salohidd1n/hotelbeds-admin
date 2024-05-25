@@ -26,7 +26,7 @@ export const useGetSingHotelPortfolio = ({
 }) => {
 	return useQuery(
 		['HOTEL_PORTFOLIO_SINGLE', params, id],
-		() => hotelProtfolioService.getList(id, params),
+		() => hotelProtfolioService.getByID(id, params),
 		queryParams,
 	);
 };
