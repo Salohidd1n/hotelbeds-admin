@@ -1,0 +1,25 @@
+.footer {
+  width: 100%;
+  height: 56px;
+  box-shadow: inset 0px 1px 0px #e5e9eb;
+  display: flex;
+  align-items: center;
+}
+
+.footerLeftSide {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 15px;
+  height: 100%;
+
+  .title {
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--heading-color);
+  }
+}
+
+.footerExtraSide {
+  margin-left: auto;
+}

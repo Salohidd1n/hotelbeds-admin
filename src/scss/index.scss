@@ -1,0 +1,22 @@
+@import "./table.scss";
+@import "./dnd.scss";
+
+html {
+  font-size: 0.8rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif !important;
+  // text-decoration: none;
+}
+
+.css-wtf6ne {
+  background-color: #fff !important;
+}
+
+.rc-table .rc-table-head.rc-table-hide-scrollbar::-webkit-scrollbar {
+  width: 20px !important;
+}

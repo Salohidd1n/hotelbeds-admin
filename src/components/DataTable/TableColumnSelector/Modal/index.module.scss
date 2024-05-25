@@ -1,0 +1,23 @@
+.container {
+  border: 1px solid $border-color;
+  border-bottom: none;
+
+  .row {
+    justify-content: space-between;
+    padding: 5px 10px;
+    border-bottom: 1px solid $border-color;
+
+    // &:last-of-type {
+    //   border-bottom: none;
+    // }
+
+    .titleBlock {
+    }
+  }
+}
+
+.ghost {
+  border: 1px solid $border-color;
+  background-color: #fff;
+  // background-color: red;
+}
