@@ -5,9 +5,9 @@ const hotelProtfolioService = {
 	getList: (params) => httpRequest.get('v1/hotel-portfolios', params),
 	getByID: (id, params) =>
 		httpRequest.get(`v1/hotel-portfolios/${id}`, { params }),
-	update: (data) => httpRequest.patch('v1/hotel-portfolios', data),
+	update: ({ id, data }) => httpRequest.put(`v1/hotel-portfolios/${id}`, data),
 	delete: (id, params) =>
-		httpRequest.delete(`v2/hotel-portfolios/${id}`, { params }),
+		httpRequest.delete(`v1/hotel-portfolios/${id}`, { params }),
 	create: (data) => httpRequest.post('v1/hotel-portfolios', data),
 };
 

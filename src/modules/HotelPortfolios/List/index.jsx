@@ -15,11 +15,14 @@ import ProfileMenu from '../../../components/ProfileMenu';
 import styles from './index.module.scss';
 import { useGetHotelPortfolios } from 'services/hotel-portfolio.service';
 import { useDeleteHotelPortfolio } from 'services/hotel-portfolio.service';
+import CustomPopup from 'components/CustomPopup';
 
 const HotelPortfoliosListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
+
 	const [pageSize, setPageSize] = useState(30);
+	const [deletableHP, setDeletableHP] = useState(false);
 
 	const { data, isLoading, refetch } = useGetHotelPortfolios({
 		params: {
@@ -32,7 +35,10 @@ const HotelPortfoliosListPage = () => {
 
 	const { mutate: deleteHotelPortfolio, isLoading: deleteLoading } =
     useDeleteHotelPortfolio({
-    	onSuccess: refetch,
+    	onSuccess: () => {
+    		refetch();
+    		setDeletableHP(null);
+    	},
     });
 
 	const navigateToCreatePage = () => {
@@ -58,7 +64,8 @@ const HotelPortfoliosListPage = () => {
 		},
 		{
 			title: 'JPCode',
-			dataIndex: 'JPCode',
+			dataIndex: 'attributes.JPCode',
+			render: (_, row, index) => row.attributes.JPCode,
 		},
 		{
 			title: 'Name (EN)',
@@ -71,10 +78,12 @@ const HotelPortfoliosListPage = () => {
 		{
 			title: 'City (EN)',
 			dataIndex: 'City.en_value',
+			render: (_, row, index) => row.City.en_value,
 		},
 		{
 			title: 'City (KR)',
 			dataIndex: 'City.kr_value',
+			render: (_, row, index) => row.City.kr_value,
 		},
 		{
 			title: '',
@@ -82,7 +91,10 @@ const HotelPortfoliosListPage = () => {
 			align: 'center',
 			render: (_, row, index) => (
 				<IconButton
-					onClick={(e) => onDeleteClick(e, row)}
+					onClick={(e) => {
+						e.stopPropagation();
+						setDeletableHP(row);
+					}}
 					colorScheme="red"
 					variant="outline"
 				>
@@ -93,51 +105,80 @@ const HotelPortfoliosListPage = () => {
 	];
 
 	return (
-		<Box>
-			<Header>
-				<HeaderLeftSide>
-					<HeaderTitle>Пользователи</HeaderTitle>
-				</HeaderLeftSide>
-				<HeaderExtraSide>
-					<NotificationMenu />
-					<ProfileMenu />
-				</HeaderExtraSide>
-			</Header>
+		<>
+			<Box>
+				<Header>
+					<HeaderLeftSide>
+						<HeaderTitle>Hotel Portfolios</HeaderTitle>
+					</HeaderLeftSide>
+					<HeaderExtraSide>
+						<NotificationMenu />
+						<ProfileMenu />
+					</HeaderExtraSide>
+				</Header>
 
-			<Page p={4}>
-				<PageCard h="calc(100vh - 90px)">
-					<PageCardHeader>
-						<HeaderExtraSide>
-							<Button
-								onClick={navigateToCreatePage}
-								bgColor="primary.main"
-								leftIcon={<AddIcon />}
-							>
-                Add Hotel Portfolio
-							</Button>
-						</HeaderExtraSide>
-					</PageCardHeader>
+				<Page p={4}>
+					<PageCard h="calc(100vh - 90px)">
+						<PageCardHeader>
+							<HeaderExtraSide>
+								<Button
+									onClick={navigateToCreatePage}
+									bgColor="primary.main"
+									leftIcon={<AddIcon />}
+								>
+                  Create Portfolio
+								</Button>
+							</HeaderExtraSide>
+						</PageCardHeader>
 
-					<Box p={3}>
-						<DataTable
-							columns={columns}
-							data={list}
-							scroll={{ y: 'calc(100vh - 260px)' }}
-							isLoading={isLoading || deleteLoading}
-							pagination={{
-								total: Number(data?.count),
-								pageSize,
-								onPageSizeChange: setPageSize,
+						<Box p={3}>
+							<DataTable
+								columns={columns}
+								data={list}
+								scroll={{ y: 'calc(100vh - 260px)' }}
+								isLoading={isLoading || deleteLoading}
+								pagination={{
+									total: Number(data?.count),
+									pageSize,
+									onPageSizeChange: setPageSize,
+								}}
+								onRow={(row, index) => ({
+									onClick: () => navigateToEditPage(row.id),
+								})}
+								className={styles.table}
+							/>
+						</Box>
+					</PageCard>
+				</Page>
+			</Box>
+
+			<CustomPopup
+				isOpen={!!deletableHP}
+				title="Delete Hotel Portfolio"
+				footerContent={
+					<Box display="flex" gap="20px">
+						<Button variant="outlined" onClick={() => setDeletableHP(null)}>
+              Cancel
+						</Button>
+						<Button
+							variant="solid"
+							bg="red"
+							disabled={deleteLoading}
+							isLoading={deleteLoading}
+							onClick={(e) => onDeleteClick(e, deletableHP)}
+							_hover={{
+								background: 'red',
 							}}
-							onRow={(row, index) => ({
-								onClick: () => navigateToEditPage(row.id),
-							})}
-							className={styles.table}
-						/>
+						>
+              Delete
+						</Button>
 					</Box>
-				</PageCard>
-			</Page>
-		</Box>
+				}
+				onClose={() => setDeletableHP(null)}
+			>
+				<p>Are you sure want to delete Hotel Portfolio?</p>
+			</CustomPopup>
+		</>
 	);
 };
 export default HotelPortfoliosListPage;
