@@ -4,6 +4,7 @@ import styles from './index.module.scss';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AiFillLeftCircle } from 'react-icons/ai';
+import Logo from '../../assets/logos/logo.svg';
 
 const Sidebar = ({ elements }) => {
 	const navigate = useNavigate();
@@ -16,15 +17,15 @@ const Sidebar = ({ elements }) => {
 	return (
 		<Box className={styles.sidebar}>
 			<Box className={styles.header}>
-				{/* <img src={Logo} alt="logo" /> */}
-        Logo
-				<Icon
-					as={AiFillLeftCircle}
-					boxSize="24px"
-					color="primary.main"
-					cursor="pointer"
-					_hover={{ color: 'primary.500' }}
-				/>
+				<img src={Logo} alt="logo" width={170} />
+				{/* <Logo /> */}
+				{/* <Icon
+          as={AiFillLeftCircle}
+          boxSize="24px"
+          color="primary.main"
+          cursor="pointer"
+          _hover={{ color: "primary.500" }}
+        /> */}
 			</Box>
 
 			<Box className={styles.body}>
