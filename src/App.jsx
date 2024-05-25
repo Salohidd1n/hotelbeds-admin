@@ -7,7 +7,6 @@ import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-import { useEffect } from 'react';
 import PreloaderProvider from './providers/PreloaderProvider';
 const { ToastContainer, toast } = createStandaloneToast();
 
