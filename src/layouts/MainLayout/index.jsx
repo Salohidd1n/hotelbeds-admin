@@ -13,15 +13,25 @@ import { Outlet } from 'react-router-dom';
 
 const elements = [
 	{
-		label: 'Дашборд',
+		label: 'Dashboard',
 		icon: BiHomeSmile,
 		link: '/dashboard',
 	},
 	{
-		label: 'Пользователи',
-		icon: FiUser,
-		link: '/users',
+		label: 'Rooms',
+		icon: BiHomeSmile,
+		link: '/rooms',
 	},
+	{
+		label: 'Zones',
+		icon: BiHomeSmile,
+		link: '/zones',
+	},
+	// {
+	// 	label: 'Пользователи',
+	// 	icon: FiUser,
+	// 	link: '/users',
+	// },
 ];
 
 const MainLayout = () => {
