@@ -2,7 +2,10 @@ import { useMutation, useQuery } from 'react-query';
 import httpRequest from './httpRequest';
 
 const roomService = {
-	getList: (params) => httpRequest.get('v1/room-lists', params),
+	getList: (params) =>
+		httpRequest.get('v1/room-lists', {
+			params,
+		}),
 	getById: (id, params) => httpRequest.get(`v1/room-lists/${id}`, { params }),
 	update: (data) => httpRequest.patch('v1/room-lists', data),
 	delete: (id, params) => httpRequest.delete(`v1/room-lists/${id}`, { params }),

@@ -18,9 +18,19 @@ import { useGetRooms, useRoomsDelete } from 'services/room.service';
 const RoomListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const [pageSize, setPageSize] = useState(30);
+	const [pageSize, setPageSize] = useState(10);
+	const [page, setPage] = useState(1);
 
-	const { data, isLoading, refetch } = useGetRooms();
+	const {
+		data: { hits, count } = {},
+		isLoading,
+		refetch,
+	} = useGetRooms({
+		params: {
+			page,
+			page_size: 10,
+		},
+	});
 
 	const { mutate: deleteUser, isLoading: deleteLoading } = useRoomsDelete({
 		onSuccess: refetch,
@@ -28,6 +38,10 @@ const RoomListPage = () => {
 
 	const navigateToCreatePage = () => {
 		navigate(`${pathname}/create`);
+	};
+
+	const onChangePage = (current) => {
+		setPage(current);
 	};
 
 	const navigateToEditPage = (id) => {
@@ -45,7 +59,7 @@ const RoomListPage = () => {
 			width: 40,
 			textAlign: 'center',
 			align: 'center',
-			render: (_, __, index) => index + 1,
+			render: (_, __, index) => (page - 1) * pageSize + index + 1,
 		},
 		{
 			title: 'JRCode',
@@ -104,13 +118,15 @@ const RoomListPage = () => {
 					<Box p={3}>
 						<DataTable
 							columns={columns}
-							data={data?.hits}
+							data={hits}
 							scroll={{ y: 'calc(100vh - 260px)' }}
 							isLoading={isLoading || deleteLoading}
 							pagination={{
-								total: data?.count,
+								total: Number(count || 0),
 								pageSize,
 								onPageSizeChange: setPageSize,
+								onChange: onChangePage,
+								current: page,
 							}}
 							onRow={(row, index) => ({
 								onClick: () => navigateToEditPage(row.id),
