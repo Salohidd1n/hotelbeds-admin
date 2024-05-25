@@ -32,8 +32,8 @@ const Router = () => {
 	return (
 		<Routes>
 			<Route path="/" element={<MainLayout />}>
-				<Route index element={<Navigate to="/dashboard" />} />
-				<Route path="dashboard" element={<Dashboard />} />
+				<Route index element={<Navigate to="/countries" />} />
+				{/* <Route path="dashboard" element={<Dashboard />} /> */}
 
 				<Route path="rooms" element={<RoomListPage />} />
 				<Route path="rooms/create" element={<RoomDetailPage />} />
