@@ -42,7 +42,7 @@ const DataTable = ({
 						<Stack alignItems="center" p={10} spacing={1}>
 							<Icon as={HiOutlineInbox} boxSize={20} color="silver" />
 							<Text fontSize="md" color="silver" fontWeight={600}>
-                Пусто
+                Empty
 							</Text>
 						</Stack>
 					}
