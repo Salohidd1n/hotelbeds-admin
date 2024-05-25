@@ -1,4 +1,4 @@
-import { Checkbox, Switch } from '@chakra-ui/react';
+import { Switch } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 
 const FormSwitch = ({

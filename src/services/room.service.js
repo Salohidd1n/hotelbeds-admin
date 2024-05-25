@@ -7,7 +7,7 @@ const roomService = {
 			params,
 		}),
 	getById: (id, params) => httpRequest.get(`v1/room-lists/${id}`, { params }),
-	update: (data) => httpRequest.patch('v1/room-lists', data),
+	update: (data) => httpRequest.put(`v1/room-lists/${data.id}`, data),
 	delete: (id, params) => httpRequest.delete(`v1/room-lists/${id}`, { params }),
 	create: (data) => httpRequest.post('v1/room-lists', data),
 };

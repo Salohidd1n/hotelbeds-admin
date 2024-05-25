@@ -30,11 +30,7 @@ const RoomDetailPage = () => {
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
 
-	const { control, reset, handleSubmit } = useForm({
-		defaultValues: {
-			user_type: 1,
-		},
-	});
+	const { control, reset, handleSubmit } = useForm();
 
 	const { isLoading } = useGetRoomsById({
 		id,
@@ -45,13 +41,13 @@ const RoomDetailPage = () => {
 		},
 	});
 
-	const { mutate: createUser, isLoading: createLoading } = useRoomsCreate({
+	const { mutate: createRoom, isLoading: createLoading } = useRoomsCreate({
 		onSuccess: () => {
 			successToast();
 			navigate(-1);
 		},
 	});
-	const { mutate: updateUser, isLoading: updateLoading } = useRoomsUpdate({
+	const { mutate: updateRoom, isLoading: updateLoading } = useRoomsUpdate({
 		onSuccess: () => {
 			successToast();
 			navigate(-1);
@@ -59,11 +55,11 @@ const RoomDetailPage = () => {
 	});
 
 	const onSubmit = (values) => {
-		if (!id) createUser(values);
+		if (!id) createRoom(values);
 		else {
-			updateUser({
+			updateRoom({
 				id,
-				data: values,
+				...values,
 			});
 		}
 	};
@@ -96,7 +92,7 @@ const RoomDetailPage = () => {
 							<FormInput
 								control={control}
 								name="JRCode"
-								placeholder="Enter JRCode"
+								placeholder="Enter JR Code"
 								autoFocus
 								required
 							/>
