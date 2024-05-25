@@ -4,37 +4,42 @@ import styles from './index.module.scss';
 import { FiUser, FiUsers } from 'react-icons/fi';
 import {
 	BiCog,
+	BiCurrentLocation,
 	BiExtension,
+	BiHome,
 	BiHomeSmile,
+	BiHotel,
+	BiLocationPlus,
+	BiMap,
 	BiMoney,
 	BiTask,
 } from 'react-icons/bi';
 import { Outlet } from 'react-router-dom';
 
 const elements = [
-	{
-		label: 'Dashboard',
-		icon: BiHomeSmile,
-		link: '/dashboard',
-	},
+	// {
+	// 	label: 'Dashboard',
+	// 	icon: BiHomeSmile,
+	// 	link: '/dashboard',
+	// },
 	{
 		label: 'Hotel Portfolios',
-		icon: BiHomeSmile,
+		icon: BiHome,
 		link: '/hotel-portfolios',
 	},
 	{
 		label: 'Countries',
-		icon: BiHomeSmile,
+		icon: BiMap,
 		link: '/countries',
 	},
 	{
 		label: 'Rooms',
-		icon: BiHomeSmile,
+		icon: BiHotel,
 		link: '/rooms',
 	},
 	{
 		label: 'Zones',
-		icon: BiHomeSmile,
+		icon: BiCurrentLocation,
 		link: '/zones',
 	},
 	// {

@@ -5,8 +5,8 @@ const useCustomToast = () => {
 
 	const toast = (settings = {}) => {
 		chakraToast({
-			title: 'Успешно',
-			description: 'Авторизация прошла успешно',
+			title: 'Success',
+			description: 'Successfuly authorized',
 			position: 'top-right',
 			status: 'success',
 			duration: 3000,
@@ -17,7 +17,7 @@ const useCustomToast = () => {
 
 	const successToast = (description = '', settings = {}) => {
 		chakraToast({
-			title: 'Успешно',
+			title: 'Success',
 			description: description,
 			position: 'top-right',
 			status: 'success',
@@ -29,7 +29,7 @@ const useCustomToast = () => {
 
 	const errorToast = (description = '', settings = {}) => {
 		chakraToast({
-			title: 'Ошибка',
+			title: 'Error',
 			description,
 			position: 'top-right',
 			status: 'error',
