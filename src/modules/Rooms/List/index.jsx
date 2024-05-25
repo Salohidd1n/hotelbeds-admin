@@ -14,13 +14,15 @@ import PageCard, { PageCardHeader } from '../../../components/PageCard';
 import ProfileMenu from '../../../components/ProfileMenu';
 import styles from './index.module.scss';
 import { useGetRooms, useRoomsDelete } from 'services/room.service';
+import SearchInput from 'components/FormElements/Input/SearchInput';
+import useDebounce from 'hooks/useDebounce';
 
 const RoomListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(30);
 	const [page, setPage] = useState(1);
-
+	const [term, setTerm] = useState();
 	const {
 		data: { hits, count } = {},
 		isLoading,
@@ -28,9 +30,14 @@ const RoomListPage = () => {
 	} = useGetRooms({
 		params: {
 			page,
-			page_size: 10,
+			page_size: pageSize,
+			search: term,
 		},
 	});
+
+	const onChangeTerm = useDebounce((e) => {
+		setTerm(e.target.value);
+	}, 700);
 
 	const { mutate: deleteUser, isLoading: deleteLoading } = useRoomsDelete({
 		onSuccess: refetch,
@@ -105,6 +112,9 @@ const RoomListPage = () => {
 				<PageCard h="calc(100vh - 90px)">
 					<PageCardHeader>
 						<HeaderExtraSide>
+							<Box w="250px">
+								<SearchInput onChange={onChangeTerm} />
+							</Box>
 							<Button
 								onClick={navigateToCreatePage}
 								bgColor="primary.main"
