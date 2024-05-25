@@ -18,6 +18,16 @@ const elements = [
 		link: '/dashboard',
 	},
 	{
+		label: 'Hotel Portfolios',
+		icon: BiHomeSmile,
+		link: '/hotel-portfolios',
+	},
+	{
+		label: 'Countries',
+		icon: BiHomeSmile,
+		link: '/countries',
+	},
+	{
 		label: 'Rooms',
 		icon: BiHomeSmile,
 		link: '/rooms',
