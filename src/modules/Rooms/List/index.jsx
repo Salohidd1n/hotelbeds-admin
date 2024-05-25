@@ -12,12 +12,8 @@ import NotificationMenu from '../../../components/NotificationMenu';
 import { Page } from '../../../components/Page';
 import PageCard, { PageCardHeader } from '../../../components/PageCard';
 import ProfileMenu from '../../../components/ProfileMenu';
-import {
-	useUserDeleteMutation,
-	useUsersListQuery,
-} from '../../../services/user.service';
 import styles from './index.module.scss';
-import { useGetRooms } from 'services/room.service';
+import { useGetRooms, useRoomsDelete } from 'services/room.service';
 
 const RoomListPage = () => {
 	const navigate = useNavigate();
@@ -26,12 +22,9 @@ const RoomListPage = () => {
 
 	const { data, isLoading, refetch } = useGetRooms();
 
-	console.log('data===>', data);
-
-	const { mutate: deleteUser, isLoading: deleteLoading } =
-    useUserDeleteMutation({
-    	onSuccess: refetch,
-    });
+	const { mutate: deleteUser, isLoading: deleteLoading } = useRoomsDelete({
+		onSuccess: refetch,
+	});
 
 	const navigateToCreatePage = () => {
 		navigate(`${pathname}/create`);
@@ -55,16 +48,16 @@ const RoomListPage = () => {
 			render: (_, __, index) => index + 1,
 		},
 		{
-			title: 'Имя',
-			dataIndex: 'first_name',
+			title: 'JRCode',
+			dataIndex: 'JRCode',
 		},
 		{
-			title: 'Фамилия',
-			dataIndex: 'last_name',
+			title: 'EN name',
+			dataIndex: 'en_name',
 		},
 		{
-			title: 'Pinfl',
-			dataIndex: 'pinfl',
+			title: 'KR name',
+			dataIndex: 'kr_name',
 		},
 		{
 			title: '',
@@ -109,13 +102,13 @@ const RoomListPage = () => {
 					</PageCardHeader>
 
 					<Box p={3}>
-						{/* <DataTable
+						<DataTable
 							columns={columns}
-							data={users}
+							data={data?.hits}
 							scroll={{ y: 'calc(100vh - 260px)' }}
 							isLoading={isLoading || deleteLoading}
 							pagination={{
-								total: count,
+								total: data?.count,
 								pageSize,
 								onPageSizeChange: setPageSize,
 							}}
@@ -123,7 +116,7 @@ const RoomListPage = () => {
 								onClick: () => navigateToEditPage(row.id),
 							})}
 							className={styles.table}
-						/> */}
+						/>
 					</Box>
 				</PageCard>
 			</Page>
