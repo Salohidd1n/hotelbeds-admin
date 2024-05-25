@@ -42,6 +42,11 @@ const elements = [
 		icon: BiCurrentLocation,
 		link: '/zones',
 	},
+	{
+		label: 'Locations',
+		icon: BiCurrentLocation,
+		link: '/locations',
+	},
 	// {
 	// 	label: 'Пользователи',
 	// 	icon: FiUser,

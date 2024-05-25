@@ -13,6 +13,8 @@ import HotelPortfoliosListPage from 'modules/HotelPortfolios/List';
 import HotelPortfoliosDetailPage from 'modules/HotelPortfolios/Detail';
 import CountriesListPage from 'modules/Countries/List';
 import CountryDetailPage from 'modules/Countries/Detail';
+import LocationListPage from 'modules/Locations/List';
+import LocationDetailPage from 'modules/Locations/Detail';
 
 const Router = () => {
 	const { isAuth } = authStore;
@@ -42,6 +44,10 @@ const Router = () => {
 				<Route path="zones" element={<ZoneListPage />} />
 				<Route path="zones/create" element={<ZoneDetailPage />} />
 				<Route path="zones/:id" element={<ZoneDetailPage />} />
+
+				<Route path="locations" element={<LocationListPage />} />
+				<Route path="locations/create" element={<LocationDetailPage />} />
+				<Route path="locations/:id" element={<LocationDetailPage />} />
 
 				<Route path="countries" element={<CountriesListPage />} />
 				<Route path="countries/create" element={<CountryDetailPage />} />
