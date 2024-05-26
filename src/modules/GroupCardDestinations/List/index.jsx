@@ -1,5 +1,5 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Box, Button, IconButton, Image } from '@chakra-ui/react';
+import { Box, Button, IconButton } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DataTable from '../../../components/DataTable';
@@ -13,22 +13,23 @@ import { Page } from '../../../components/Page';
 import PageCard, { PageCardHeader } from '../../../components/PageCard';
 import ProfileMenu from '../../../components/ProfileMenu';
 import styles from './index.module.scss';
+import { useGetRooms, useRoomsDelete } from 'services/room.service';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
 import {
-	useDestinationsDelete,
-	useGetDestinations,
-} from 'services/destination.service';
+	useGetGroupDestinations,
+	useGroupDestinationsDelete,
+} from 'services/group-destinations.service';
 
-const DestinationListPage = () => {
+const GroupCardDestinationsListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
 	const [page, setPage] = useState(1);
-	const [deletableZone, setDeletableZone] = useState(false);
+	const [deletableRoom, setDeletableRoom] = useState(false);
 	const [term, setTerm] = useState();
-	const { data, isLoading, refetch } = useGetDestinations({
+	const { data, isLoading, refetch } = useGetGroupDestinations({
 		params: {
 			page,
 			limit: pageSize,
@@ -40,11 +41,11 @@ const DestinationListPage = () => {
 		setTerm(e.target.value);
 	}, 700);
 
-	const { mutate: deleteZones, isLoading: deleteLoading } =
-    useDestinationsDelete({
+	const { mutate: deleteUser, isLoading: deleteLoading } =
+    useGroupDestinationsDelete({
     	onSuccess: () => {
     		refetch();
-    		setDeletableZone(null);
+    		setDeletableRoom(null);
     	},
     });
 
@@ -62,7 +63,7 @@ const DestinationListPage = () => {
 
 	const onDeleteClick = (e, row) => {
 		e.stopPropagation();
-		deleteZones(row.id);
+		deleteUser(row.id);
 	};
 
 	const columns = [
@@ -74,32 +75,20 @@ const DestinationListPage = () => {
 			render: (_, __, index) => (page - 1) * pageSize + index + 1,
 		},
 		{
-			title: 'Image',
-			width: 80,
-			render: (_, row, index) => (
-				<Image
-					src={row?.header?.imagesURL[0]}
-					w="100%"
-					h="100%"
-					objectFit="cover"
-				></Image>
-			),
+			title: 'EN location',
+			dataIndex: 'en_location',
 		},
 		{
-			title: 'EN title',
-			render: (_, row, index) => row?.header?.en_title,
-		},
-		{
-			title: 'KR title',
-			render: (_, row, index) => row?.header?.kr_title,
+			title: 'KR location',
+			dataIndex: 'kr_location',
 		},
 		{
 			title: 'EN content',
-			render: (_, row, index) => row?.header?.en_content,
+			dataIndex: 'en_content',
 		},
 		{
 			title: 'KR content',
-			render: (_, row, index) => row?.header?.kr_content,
+			dataIndex: 'kr_content',
 		},
 		{
 			title: '',
@@ -109,7 +98,7 @@ const DestinationListPage = () => {
 				<IconButton
 					onClick={(e) => {
 						e.stopPropagation();
-						setDeletableZone(row);
+						setDeletableRoom(row);
 					}}
 					colorScheme="red"
 					variant="outline"
@@ -145,7 +134,7 @@ const DestinationListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create group destination
+                  Create group destinations
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>
@@ -173,11 +162,11 @@ const DestinationListPage = () => {
 				</Page>
 			</Box>
 			<CustomPopup
-				isOpen={!!deletableZone}
-				title="Delete Location"
+				isOpen={!!deletableRoom}
+				title="Delete Group Destination"
 				footerContent={
 					<Box display="flex" gap="3">
-						<Button variant="outline" onClick={() => setDeletableZone(null)}>
+						<Button variant="outline" onClick={() => setDeletableRoom(null)}>
               Cancel
 						</Button>
 						<Button
@@ -185,7 +174,7 @@ const DestinationListPage = () => {
 							bg="red"
 							disabled={deleteLoading}
 							isLoading={deleteLoading}
-							onClick={(e) => onDeleteClick(e, deletableZone)}
+							onClick={(e) => onDeleteClick(e, deletableRoom)}
 							_hover={{
 								background: 'red',
 							}}
@@ -194,15 +183,14 @@ const DestinationListPage = () => {
 						</Button>
 					</Box>
 				}
-				onClose={() => setDeletableZone(null)}
+				onClose={() => setDeletableRoom(null)}
 			>
 				<p>
-          Are you sure want to delete <b>{deletableZone?.header?.en_title}</b>{' '}
-          group destination?
-					<br />
+          Are you sure want to delete <b>{deletableRoom?.en_location}</b> group
+          destination?
 				</p>
 			</CustomPopup>
 		</>
 	);
 };
-export default DestinationListPage;
+export default GroupCardDestinationsListPage;

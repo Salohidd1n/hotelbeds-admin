@@ -27,7 +27,7 @@ import {
 	useDestinationsCreate,
 	useDestinationsUpdate,
 	useGetDestinationsById,
-} from 'services/destination';
+} from 'services/destination.service';
 import { useGetLocations } from 'services/location.service';
 import { useState } from 'react';
 import { useGetRecommendedDestinationsByLocationId } from 'services/recommended-destination.service';

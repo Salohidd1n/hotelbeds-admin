@@ -19,6 +19,7 @@ import { TbLocation } from 'react-icons/tb';
 import { MdModeOfTravel } from 'react-icons/md';
 import { Outlet } from 'react-router-dom';
 import { MdOutlineDataExploration } from 'react-icons/md';
+import { GiTriangleTarget } from 'react-icons/gi';
 
 const elements = [
 	// {
@@ -65,6 +66,18 @@ const elements = [
 				label: 'Destinations',
 				icon: TbLocation,
 				link: '/promotions/destinations',
+			},
+		],
+	},
+	{
+		label: 'Target',
+		icon: GiTriangleTarget,
+		link: '/target',
+		children: [
+			{
+				label: 'Group Destinations',
+				icon: MdModeOfTravel,
+				link: '/target/group-destinations',
 			},
 		],
 	},

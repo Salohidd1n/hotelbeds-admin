@@ -14,8 +14,6 @@ const Sidebar = ({ elements }) => {
 		navigate(element.link);
 	};
 
-	console.log('pathname', pathname);
-
 	return (
 		<Box className={styles.sidebar}>
 			<Box className={styles.header}>
