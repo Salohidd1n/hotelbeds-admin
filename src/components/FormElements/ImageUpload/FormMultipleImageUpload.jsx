@@ -1,8 +1,8 @@
 import { FormErrorMessage } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
-import ImageUpload from './ImageUpload';
+import MultipleImageUpload from './MultipleImageUpload';
 
-const FormImageUpload = ({
+const FormMultipleImageUpload = ({
 	control,
 	required = false,
 	name,
@@ -21,7 +21,11 @@ const FormImageUpload = ({
 			rules={{ required }}
 			render={({ field: { onChange, value }, fieldState: { error } }) => (
 				<>
-					<ImageUpload onChange={onChange} value={value} required={required} />
+					<MultipleImageUpload
+						onChange={onChange}
+						value={value}
+						required={required}
+					/>
 					<FormErrorMessage>{error?.message}</FormErrorMessage>
 				</>
 			)}
@@ -29,4 +33,4 @@ const FormImageUpload = ({
 	);
 };
 
-export default FormImageUpload;
+export default FormMultipleImageUpload;

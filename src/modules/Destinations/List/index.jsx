@@ -16,16 +16,19 @@ import styles from './index.module.scss';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
-import { useGetLocations, useLocationsDelete } from 'services/location.service';
+import {
+	useDestinationsDelete,
+	useGetDestinations,
+} from 'services/destination';
 
-const LocationListPage = () => {
+const DestinationListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
 	const [page, setPage] = useState(1);
 	const [deletableZone, setDeletableZone] = useState(false);
 	const [term, setTerm] = useState();
-	const { data, isLoading, refetch } = useGetLocations({
+	const { data, isLoading, refetch } = useGetDestinations({
 		params: {
 			page,
 			limit: pageSize,
@@ -37,12 +40,13 @@ const LocationListPage = () => {
 		setTerm(e.target.value);
 	}, 700);
 
-	const { mutate: deleteZones, isLoading: deleteLoading } = useLocationsDelete({
-		onSuccess: () => {
-			refetch();
-			setDeletableZone(null);
-		},
-	});
+	const { mutate: deleteZones, isLoading: deleteLoading } =
+    useDestinationsDelete({
+    	onSuccess: () => {
+    		refetch();
+    		setDeletableZone(null);
+    	},
+    });
 
 	const navigateToCreatePage = () => {
 		navigate(`${pathname}/create`);
@@ -73,18 +77,30 @@ const LocationListPage = () => {
 			title: 'Image',
 			width: 80,
 			render: (_, row, index) => (
-				<Image src={row.imageURL} w="100%" h="100%" objectFit="cover"></Image>
+				<Image
+					src={row?.header?.imagesURL[0]}
+					w="100%"
+					h="100%"
+					objectFit="cover"
+				></Image>
 			),
 		},
 		{
 			title: 'EN title',
-			dataIndex: 'en_title',
+			render: (_, row, index) => row?.header?.en_title,
 		},
 		{
 			title: 'KR title',
-			dataIndex: 'kr_title',
+			render: (_, row, index) => row?.header?.kr_title,
 		},
-
+		{
+			title: 'EN content',
+			render: (_, row, index) => row?.header?.en_content,
+		},
+		{
+			title: 'KR content',
+			render: (_, row, index) => row?.header?.kr_content,
+		},
 		{
 			title: '',
 			width: 50,
@@ -109,7 +125,7 @@ const LocationListPage = () => {
 			<Box>
 				<Header>
 					<HeaderLeftSide>
-						<HeaderTitle>Locations</HeaderTitle>
+						<HeaderTitle>Group destinations</HeaderTitle>
 					</HeaderLeftSide>
 					<HeaderExtraSide>
 						<NotificationMenu />
@@ -129,7 +145,7 @@ const LocationListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create location
+                  Create group destination
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>
@@ -181,12 +197,12 @@ const LocationListPage = () => {
 				onClose={() => setDeletableZone(null)}
 			>
 				<p>
-          Are you sure want to delete <b>{deletableZone?.en_title}</b> location?
+          Are you sure want to delete <b>{deletableZone?.header?.en_title}</b>{' '}
+          group destination?
 					<br />
-          In addition, all child data will be deleted.
 				</p>
 			</CustomPopup>
 		</>
 	);
 };
-export default LocationListPage;
+export default DestinationListPage;

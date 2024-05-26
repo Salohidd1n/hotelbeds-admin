@@ -145,7 +145,7 @@ const RecommendedDestinationListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create destination
+                  Create recommended destination
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>
@@ -174,7 +174,7 @@ const RecommendedDestinationListPage = () => {
 			</Box>
 			<CustomPopup
 				isOpen={!!deletableZone}
-				title="Delete Location"
+				title="Delete Travel Destination"
 				footerContent={
 					<Box display="flex" gap="3">
 						<Button variant="outline" onClick={() => setDeletableZone(null)}>
@@ -197,7 +197,13 @@ const RecommendedDestinationListPage = () => {
 				onClose={() => setDeletableZone(null)}
 			>
 				<p>
-          Are you sure want to delete <b>{deletableZone?.en_title}</b> location?
+          Are you sure want to delete{' '}
+					<b>
+						{deletableZone?.header && deletableZone?.header[0]?.en_headerTitle}
+					</b>{' '}
+          travel destinations?
+					<br />
+          In addition, all child data will be deleted.
 				</p>
 			</CustomPopup>
 		</>

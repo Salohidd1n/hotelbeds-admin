@@ -21,7 +21,7 @@ import ProfileMenu from '../../../components/ProfileMenu';
 import useCustomToast from '../../../hooks/useCustomToast';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
-import ImageUpload from 'components/FormElements/ImageUpload/FormImageUpload';
+import FormImageUpload from 'components/FormElements/ImageUpload/FormImageUpload';
 import {
 	useGetLocationsById,
 	useLocationsCreate,
@@ -41,10 +41,8 @@ const LocationDetailPage = () => {
 			cacheTime: false,
 			enabled: Boolean(id),
 			onSuccess: (res) => {
-				console.log(res);
 				reset({
 					...res.data,
-					'locations-image': res.data.imageURL,
 				});
 			},
 		},
@@ -128,7 +126,7 @@ const LocationDetailPage = () => {
 							<FormSwitch control={control} name="is_active" />
 						</FormRow>
 						<FormRow label="Image:" required>
-							<ImageUpload control={control} name="imageURL" required />
+							<FormImageUpload control={control} name="imageURL" required />
 						</FormRow>
 					</PageCardForm>
 

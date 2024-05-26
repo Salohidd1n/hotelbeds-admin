@@ -14,6 +14,8 @@ const Sidebar = ({ elements }) => {
 		navigate(element.link);
 	};
 
+	console.log('pathname', pathname);
+
 	return (
 		<Box className={styles.sidebar}>
 			<Box className={styles.header}>
@@ -30,17 +32,37 @@ const Sidebar = ({ elements }) => {
 
 			<Box className={styles.body}>
 				{elements?.map((element, index) => (
-					<Box
-						key={index}
-						className={clsx(styles.row, {
-							[styles.active]: pathname.startsWith(element.link),
-						})}
-						onClick={() => onRowClick(element)}
-					>
-						<Box className={styles.element}>
-							<Icon as={element.icon} className={styles.icon} />
-							<Text className={styles.label}>{element.label}</Text>
+					<Box key={index}>
+						<Box
+							className={clsx(styles.row, {
+								[styles.active]: pathname.startsWith(element.link),
+							})}
+							onClick={() => onRowClick(element)}
+						>
+							<Box className={styles.element}>
+								<Icon as={element.icon} className={styles.icon} />
+								<Text className={styles.label}>{element.label}</Text>
+							</Box>
 						</Box>
+
+						{pathname.includes(element.link) && (
+							<Box pl="15px">
+								{element?.children?.map((value) => (
+									<Box
+										key={value.link}
+										className={clsx(styles.row, {
+											[styles.active]: pathname.startsWith(value.link),
+										})}
+										onClick={() => onRowClick(value)}
+									>
+										<Box className={styles.element}>
+											<Icon as={value.icon} className={styles.icon} />
+											<Text className={styles.label}>{value.label}</Text>
+										</Box>
+									</Box>
+								))}
+							</Box>
+						)}
 					</Box>
 				))}
 			</Box>

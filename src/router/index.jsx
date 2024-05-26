@@ -17,6 +17,8 @@ import LocationListPage from 'modules/Locations/List';
 import LocationDetailPage from 'modules/Locations/Detail';
 import RecommendedDestinationListPage from 'modules/RecommendedDestinations/List';
 import RecommendedDestionationDetailPage from 'modules/RecommendedDestinations/Detail';
+import DestinationDetailPage from 'modules/Destinations/Detail';
+import DestinationListPage from 'modules/Destinations/List';
 
 const Router = () => {
 	const { isAuth } = authStore;
@@ -47,21 +49,45 @@ const Router = () => {
 				<Route path="zones/create" element={<ZoneDetailPage />} />
 				<Route path="zones/:id" element={<ZoneDetailPage />} />
 
-				<Route path="locations" element={<LocationListPage />} />
-				<Route path="locations/create" element={<LocationDetailPage />} />
-				<Route path="locations/:id" element={<LocationDetailPage />} />
+				<Route path="promotions/locations" element={<LocationListPage />} />
+				<Route
+					path="promotions/locations/create"
+					element={<LocationDetailPage />}
+				/>
+				<Route
+					path="promotions/locations/:id"
+					element={<LocationDetailPage />}
+				/>
 
 				<Route
-					path="recommended-destinations"
+					path="promotions/destinations"
+					element={<DestinationListPage />}
+				/>
+				<Route
+					path="promotions/destinations/create"
+					element={<DestinationDetailPage />}
+				/>
+				<Route
+					path="promotions/destinations/:id"
+					element={<DestinationDetailPage />}
+				/>
+
+				<Route
+					path="promotions/recommended-destinations"
 					element={<RecommendedDestinationListPage />}
 				/>
 				<Route
-					path="recommended-destinations/create"
+					path="promotions/recommended-destinations/create"
 					element={<RecommendedDestionationDetailPage />}
 				/>
 				<Route
-					path="recommended-destinations/:id"
+					path="promotions/recommended-destinations/:id"
 					element={<RecommendedDestionationDetailPage />}
+				/>
+
+				<Route
+					path="promotions"
+					element={<Navigate to="/promotions/locations" />}
 				/>
 
 				<Route path="countries" element={<CountriesListPage />} />

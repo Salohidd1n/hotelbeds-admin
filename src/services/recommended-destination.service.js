@@ -10,6 +10,13 @@ const destinationService = {
 		httpRequestV2.get(`v1/promotions/recommended-destinations/${id}`, {
 			params,
 		}),
+	getByLocationId: (id, params) =>
+		httpRequestV2.get(
+			`v1/promotions/recommended-destinations/by-location/${id}`,
+			{
+				params,
+			},
+		),
 	update: (data) =>
 		httpRequestV2.put(
 			`v1/promotions/recommended-destinations/${data.id}`,
@@ -45,6 +52,20 @@ export const useGetRecommendedDestinationsById = ({
 		['useGetRecommendedDestinationsById', { id, ...params }],
 		() => {
 			return destinationService.getById(id, params);
+		},
+		queryParams,
+	);
+};
+
+export const useGetRecommendedDestinationsByLocationId = ({
+	id,
+	params = {},
+	queryParams,
+}) => {
+	return useQuery(
+		['useGetRecommendedDestinationsByLocationId', { id, ...params }],
+		() => {
+			return destinationService.getByLocationId(id, params);
 		},
 		queryParams,
 	);

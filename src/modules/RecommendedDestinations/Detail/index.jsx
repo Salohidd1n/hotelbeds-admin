@@ -21,12 +21,7 @@ import ProfileMenu from '../../../components/ProfileMenu';
 import useCustomToast from '../../../hooks/useCustomToast';
 import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
 import ImageUpload from 'components/FormElements/ImageUpload/FormImageUpload';
-import {
-	useGetLocations,
-	useGetLocationsById,
-	useLocationsCreate,
-	useLocationsUpdate,
-} from 'services/location.service';
+
 import FormTextarea from 'components/FormElements/Input/FormTextarea';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import FormSelect from 'components/FormElements/Select/FormSelect';
@@ -35,6 +30,7 @@ import {
 	useRecommendedDestinationsCreate,
 	useRecommendedDestinationsUpdate,
 } from 'services/recommended-destination.service';
+import { useGetLocations } from 'services/location.service';
 
 const initialHeader = {
 	en_headerTitle: '',
@@ -127,10 +123,8 @@ const RecommendedDestionationDetailPage = () => {
 			cacheTime: false,
 			enabled: Boolean(id),
 			onSuccess: (res) => {
-				console.log(res);
 				reset({
 					...res.data,
-					'locations-image': res.data.imageURL,
 				});
 			},
 		},
@@ -184,10 +178,10 @@ const RecommendedDestionationDetailPage = () => {
 			</Header>
 
 			<Page p={4} h="calc(100vh - 64px)">
-				<PageCard w={400}>
+				<PageCard w="30%">
 					<PageCardHeader>
 						<HeaderLeftSide>
-							<Heading fontSize="xl">Locations</Heading>
+							<Heading fontSize="xl">Location</Heading>
 						</HeaderLeftSide>
 					</PageCardHeader>
 

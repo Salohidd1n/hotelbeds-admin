@@ -16,8 +16,9 @@ import {
 } from 'react-icons/bi';
 import { IoLocationOutline } from 'react-icons/io5';
 import { TbLocation } from 'react-icons/tb';
-
+import { MdModeOfTravel } from 'react-icons/md';
 import { Outlet } from 'react-router-dom';
+import { MdOutlineDataExploration } from 'react-icons/md';
 
 const elements = [
 	// {
@@ -46,20 +47,27 @@ const elements = [
 		link: '/zones',
 	},
 	{
-		label: 'Locations',
-		icon: IoLocationOutline,
-		link: '/locations',
+		label: 'Promotions',
+		icon: MdOutlineDataExploration,
+		link: '/promotions',
+		children: [
+			{
+				label: 'Locations',
+				icon: IoLocationOutline,
+				link: '/promotions/locations',
+			},
+			{
+				label: 'Travel Destinations',
+				icon: MdModeOfTravel,
+				link: '/promotions/recommended-destinations',
+			},
+			{
+				label: 'Destinations',
+				icon: TbLocation,
+				link: '/promotions/destinations',
+			},
+		],
 	},
-	{
-		label: 'Destinations',
-		icon: TbLocation,
-		link: '/recommended-destinations',
-	},
-	// {
-	// 	label: 'Пользователи',
-	// 	icon: FiUser,
-	// 	link: '/users',
-	// },
 ];
 
 const MainLayout = () => {
