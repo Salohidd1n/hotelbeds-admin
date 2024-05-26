@@ -130,14 +130,14 @@ const RecommendedDestionationDetailPage = () => {
 		},
 	});
 
-	const { mutate: createLocation, isLoading: createLoading } =
+	const { mutate: create, isLoading: createLoading } =
     useRecommendedDestinationsCreate({
     	onSuccess: () => {
     		successToast();
     		navigate(-1);
     	},
     });
-	const { mutate: updateLocation, isLoading: updateLoading } =
+	const { mutate: update, isLoading: updateLoading } =
     useRecommendedDestinationsUpdate({
     	onSuccess: () => {
     		successToast();
@@ -146,9 +146,9 @@ const RecommendedDestionationDetailPage = () => {
     });
 
 	const onSubmit = (values) => {
-		if (!id) createLocation(values);
+		if (!id) create(values);
 		else {
-			updateLocation({
+			update({
 				id,
 				data: values,
 			});

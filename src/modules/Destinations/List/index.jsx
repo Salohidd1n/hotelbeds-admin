@@ -26,7 +26,7 @@ const DestinationListPage = () => {
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
 	const [page, setPage] = useState(1);
-	const [deletableZone, setDeletableZone] = useState(false);
+	const [deletableItem, setDeletableItem] = useState(false);
 	const [term, setTerm] = useState();
 	const { data, isLoading, refetch } = useGetDestinations({
 		params: {
@@ -44,7 +44,7 @@ const DestinationListPage = () => {
     useDestinationsDelete({
     	onSuccess: () => {
     		refetch();
-    		setDeletableZone(null);
+    		setDeletableItem(null);
     	},
     });
 
@@ -109,7 +109,7 @@ const DestinationListPage = () => {
 				<IconButton
 					onClick={(e) => {
 						e.stopPropagation();
-						setDeletableZone(row);
+						setDeletableItem(row);
 					}}
 					colorScheme="red"
 					variant="outline"
@@ -173,11 +173,11 @@ const DestinationListPage = () => {
 				</Page>
 			</Box>
 			<CustomPopup
-				isOpen={!!deletableZone}
-				title="Delete Location"
+				isOpen={!!deletableItem}
+				title="Delete Destination"
 				footerContent={
 					<Box display="flex" gap="3">
-						<Button variant="outline" onClick={() => setDeletableZone(null)}>
+						<Button variant="outline" onClick={() => setDeletableItem(null)}>
               Cancel
 						</Button>
 						<Button
@@ -185,7 +185,7 @@ const DestinationListPage = () => {
 							bg="red"
 							disabled={deleteLoading}
 							isLoading={deleteLoading}
-							onClick={(e) => onDeleteClick(e, deletableZone)}
+							onClick={(e) => onDeleteClick(e, deletableItem)}
 							_hover={{
 								background: 'red',
 							}}
@@ -194,10 +194,10 @@ const DestinationListPage = () => {
 						</Button>
 					</Box>
 				}
-				onClose={() => setDeletableZone(null)}
+				onClose={() => setDeletableItem(null)}
 			>
 				<p>
-          Are you sure want to delete <b>{deletableZone?.header?.en_title}</b>{' '}
+          Are you sure want to delete <b>{deletableItem?.header?.en_title}</b>{' '}
           group destination?
 					<br />
 				</p>

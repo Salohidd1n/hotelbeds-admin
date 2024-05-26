@@ -26,7 +26,7 @@ const RecommendedDestinationListPage = () => {
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
 	const [page, setPage] = useState(1);
-	const [deletableZone, setDeletableZone] = useState(false);
+	const [deletableItem, setDeletableItem] = useState(false);
 	const [term, setTerm] = useState();
 	const { data, isLoading, refetch } = useGetRecommendedDestinations({
 		params: {
@@ -40,11 +40,11 @@ const RecommendedDestinationListPage = () => {
 		setTerm(e.target.value);
 	}, 700);
 
-	const { mutate: deleteZones, isLoading: deleteLoading } =
+	const { mutate: deleteDestination, isLoading: deleteLoading } =
     useRecommendedDestinationsDelete({
     	onSuccess: () => {
     		refetch();
-    		setDeletableZone(null);
+    		setDeletableItem(null);
     	},
     });
 
@@ -62,7 +62,7 @@ const RecommendedDestinationListPage = () => {
 
 	const onDeleteClick = (e, row) => {
 		e.stopPropagation();
-		deleteZones(row._id);
+		deleteDestination(row._id);
 	};
 
 	const columns = [
@@ -109,7 +109,7 @@ const RecommendedDestinationListPage = () => {
 				<IconButton
 					onClick={(e) => {
 						e.stopPropagation();
-						setDeletableZone(row);
+						setDeletableItem(row);
 					}}
 					colorScheme="red"
 					variant="outline"
@@ -173,11 +173,11 @@ const RecommendedDestinationListPage = () => {
 				</Page>
 			</Box>
 			<CustomPopup
-				isOpen={!!deletableZone}
+				isOpen={!!deletableItem}
 				title="Delete Travel Destination"
 				footerContent={
 					<Box display="flex" gap="3">
-						<Button variant="outline" onClick={() => setDeletableZone(null)}>
+						<Button variant="outline" onClick={() => setDeletableItem(null)}>
               Cancel
 						</Button>
 						<Button
@@ -185,7 +185,7 @@ const RecommendedDestinationListPage = () => {
 							bg="red"
 							disabled={deleteLoading}
 							isLoading={deleteLoading}
-							onClick={(e) => onDeleteClick(e, deletableZone)}
+							onClick={(e) => onDeleteClick(e, deletableItem)}
 							_hover={{
 								background: 'red',
 							}}
@@ -194,12 +194,12 @@ const RecommendedDestinationListPage = () => {
 						</Button>
 					</Box>
 				}
-				onClose={() => setDeletableZone(null)}
+				onClose={() => setDeletableItem(null)}
 			>
 				<p>
           Are you sure want to delete{' '}
 					<b>
-						{deletableZone?.header && deletableZone?.header[0]?.en_headerTitle}
+						{deletableItem?.header && deletableItem?.header[0]?.en_headerTitle}
 					</b>{' '}
           travel destinations?
 					<br />

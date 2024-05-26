@@ -29,7 +29,6 @@ import {
 	useGetDestinationsById,
 } from 'services/destination.service';
 import { useGetLocations } from 'services/location.service';
-import { useState } from 'react';
 import { useGetRecommendedDestinationsByLocationId } from 'services/recommended-destination.service';
 import FormMultipleImageUpload from 'components/FormElements/ImageUpload/FormMultipleImageUpload';
 import MultipleImageUpload from 'components/FormElements/ImageUpload/MultipleImageUpload';
@@ -50,7 +49,6 @@ const DestinationDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
-	const [location, setLocation] = useState(null);
 	const locationsData = useGetLocations({
 		params: {
 			page: 1,
@@ -131,25 +129,23 @@ const DestinationDetailPage = () => {
 		},
 	});
 
-	const { mutate: createLocation, isLoading: createLoading } =
-    useDestinationsCreate({
-    	onSuccess: () => {
-    		successToast();
-    		navigate(-1);
-    	},
-    });
-	const { mutate: updateLocation, isLoading: updateLoading } =
-    useDestinationsUpdate({
-    	onSuccess: () => {
-    		successToast();
-    		navigate(-1);
-    	},
-    });
+	const { mutate: create, isLoading: createLoading } = useDestinationsCreate({
+		onSuccess: () => {
+			successToast();
+			navigate(-1);
+		},
+	});
+	const { mutate: update, isLoading: updateLoading } = useDestinationsUpdate({
+		onSuccess: () => {
+			successToast();
+			navigate(-1);
+		},
+	});
 
 	const onSubmit = (values) => {
-		if (!id) createLocation(values);
+		if (!id) create(values);
 		else {
-			updateLocation({
+			update({
 				id,
 				data: values,
 			});
