@@ -80,7 +80,7 @@ const ZoneDetailPage = () => {
 				</HeaderExtraSide>
 			</Header>
 
-			<Page p={4} h="calc(100vh - 56px)">
+			<Page p={4} h="calc(100vh - 64px)">
 				<PageCard w={600}>
 					<PageCardHeader>
 						<HeaderLeftSide>
@@ -103,7 +103,6 @@ const ZoneDetailPage = () => {
 								control={control}
 								name="ParentJPDCode"
 								placeholder="Enter Parent JPD Code"
-								autoFocus
 								required
 							/>
 						</FormRow>
@@ -112,7 +111,6 @@ const ZoneDetailPage = () => {
 								control={control}
 								name="AreaType"
 								placeholder="Enter Area Type"
-								autoFocus
 								required
 							/>
 						</FormRow>
@@ -124,7 +122,6 @@ const ZoneDetailPage = () => {
 								control={control}
 								name="Code"
 								placeholder="Enter Code"
-								autoFocus
 								required
 							/>
 						</FormRow>
@@ -134,7 +131,6 @@ const ZoneDetailPage = () => {
 								control={control}
 								name="ParentCode"
 								placeholder="Enter Parent Code"
-								autoFocus
 								required
 							/>
 						</FormRow>

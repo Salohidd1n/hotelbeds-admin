@@ -43,7 +43,7 @@ export const useLocationsUpdate = (mutationSettings) => {
 	return useMutation((data) => locationService.update(data), mutationSettings);
 };
 
-export const useLocationssDelete = (mutationSettings, params) => {
+export const useLocationsDelete = (mutationSettings, params) => {
 	return useMutation(
 		(id) => locationService.delete(id, params),
 		mutationSettings,

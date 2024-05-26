@@ -16,16 +16,19 @@ import styles from './index.module.scss';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
-import { useGetLocations, useLocationsDelete } from 'services/location.service';
+import {
+	useGetRecommendedDestinations,
+	useRecommendedDestinationsDelete,
+} from 'services/recommended-destination.service';
 
-const LocationListPage = () => {
+const RecommendedDestinationListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
 	const [page, setPage] = useState(1);
 	const [deletableZone, setDeletableZone] = useState(false);
 	const [term, setTerm] = useState();
-	const { data, isLoading, refetch } = useGetLocations({
+	const { data, isLoading, refetch } = useGetRecommendedDestinations({
 		params: {
 			page,
 			limit: pageSize,
@@ -37,12 +40,13 @@ const LocationListPage = () => {
 		setTerm(e.target.value);
 	}, 700);
 
-	const { mutate: deleteZones, isLoading: deleteLoading } = useLocationsDelete({
-		onSuccess: () => {
-			refetch();
-			setDeletableZone(null);
-		},
-	});
+	const { mutate: deleteZones, isLoading: deleteLoading } =
+    useRecommendedDestinationsDelete({
+    	onSuccess: () => {
+    		refetch();
+    		setDeletableZone(null);
+    	},
+    });
 
 	const navigateToCreatePage = () => {
 		navigate(`${pathname}/create`);
@@ -58,7 +62,7 @@ const LocationListPage = () => {
 
 	const onDeleteClick = (e, row) => {
 		e.stopPropagation();
-		deleteZones(row.id);
+		deleteZones(row._id);
 	};
 
 	const columns = [
@@ -73,18 +77,30 @@ const LocationListPage = () => {
 			title: 'Image',
 			width: 80,
 			render: (_, row, index) => (
-				<Image src={row.imageURL} w="100%" h="100%" objectFit="cover"></Image>
+				<Image
+					src={row?.header[0]?.headerImageURL}
+					w="100%"
+					h="100%"
+					objectFit="cover"
+				></Image>
 			),
 		},
 		{
 			title: 'EN title',
-			dataIndex: 'en_title',
+			render: (_, row, index) => row?.header[0]?.en_headerTitle,
 		},
 		{
 			title: 'KR title',
-			dataIndex: 'kr_title',
+			render: (_, row, index) => row?.header[0]?.kr_headerTitle,
 		},
-
+		{
+			title: 'EN content',
+			render: (_, row, index) => row?.header[0]?.en_hederContent,
+		},
+		{
+			title: 'KR content',
+			render: (_, row, index) => row?.header[0]?.kr_hederContent,
+		},
 		{
 			title: '',
 			width: 50,
@@ -109,7 +125,7 @@ const LocationListPage = () => {
 			<Box>
 				<Header>
 					<HeaderLeftSide>
-						<HeaderTitle>Locations</HeaderTitle>
+						<HeaderTitle>Recommended destinations</HeaderTitle>
 					</HeaderLeftSide>
 					<HeaderExtraSide>
 						<NotificationMenu />
@@ -129,7 +145,7 @@ const LocationListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create location
+                  Create destination
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>
@@ -148,7 +164,7 @@ const LocationListPage = () => {
 									current: page,
 								}}
 								onRow={(row, index) => ({
-									onClick: () => navigateToEditPage(row.id),
+									onClick: () => navigateToEditPage(row._id),
 								})}
 								className={styles.table}
 							/>
@@ -187,4 +203,4 @@ const LocationListPage = () => {
 		</>
 	);
 };
-export default LocationListPage;
+export default RecommendedDestinationListPage;

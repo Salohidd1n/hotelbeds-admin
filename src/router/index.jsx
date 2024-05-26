@@ -15,6 +15,8 @@ import CountriesListPage from 'modules/Countries/List';
 import CountryDetailPage from 'modules/Countries/Detail';
 import LocationListPage from 'modules/Locations/List';
 import LocationDetailPage from 'modules/Locations/Detail';
+import RecommendedDestinationListPage from 'modules/RecommendedDestinations/List';
+import RecommendedDestionationDetailPage from 'modules/RecommendedDestinations/Detail';
 
 const Router = () => {
 	const { isAuth } = authStore;
@@ -48,6 +50,19 @@ const Router = () => {
 				<Route path="locations" element={<LocationListPage />} />
 				<Route path="locations/create" element={<LocationDetailPage />} />
 				<Route path="locations/:id" element={<LocationDetailPage />} />
+
+				<Route
+					path="recommended-destinations"
+					element={<RecommendedDestinationListPage />}
+				/>
+				<Route
+					path="recommended-destinations/create"
+					element={<RecommendedDestionationDetailPage />}
+				/>
+				<Route
+					path="recommended-destinations/:id"
+					element={<RecommendedDestionationDetailPage />}
+				/>
 
 				<Route path="countries" element={<CountriesListPage />} />
 				<Route path="countries/create" element={<CountryDetailPage />} />

@@ -14,6 +14,9 @@ import {
 	BiMoney,
 	BiTask,
 } from 'react-icons/bi';
+import { IoLocationOutline } from 'react-icons/io5';
+import { TbLocation } from 'react-icons/tb';
+
 import { Outlet } from 'react-router-dom';
 
 const elements = [
@@ -44,8 +47,13 @@ const elements = [
 	},
 	{
 		label: 'Locations',
-		icon: BiCurrentLocation,
+		icon: IoLocationOutline,
 		link: '/locations',
+	},
+	{
+		label: 'Destinations',
+		icon: TbLocation,
+		link: '/recommended-destinations',
 	},
 	// {
 	// 	label: 'Пользователи',

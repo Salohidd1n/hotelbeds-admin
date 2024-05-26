@@ -90,7 +90,7 @@ const LocationDetailPage = () => {
 				</HeaderExtraSide>
 			</Header>
 
-			<Page p={4} h="calc(100vh - 56px)">
+			<Page p={4} h="calc(100vh - 64px)">
 				<PageCard w={600}>
 					<PageCardHeader>
 						<HeaderLeftSide>
@@ -113,7 +113,6 @@ const LocationDetailPage = () => {
 								control={control}
 								name="en_title"
 								placeholder="Enter EN title"
-								autoFocus
 								required
 							/>
 						</FormRow>
@@ -122,7 +121,6 @@ const LocationDetailPage = () => {
 								control={control}
 								name="order"
 								placeholder="Enter order"
-								autoFocus
 								required
 							/>
 						</FormRow>

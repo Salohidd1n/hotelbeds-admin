@@ -105,7 +105,7 @@ const HotelPortfoliosDetailPage = () => {
 				</HeaderExtraSide>
 			</Header>
 
-			<Page p={4} h="calc(100vh - 56px)">
+			<Page p={4} h="calc(100vh - 64px)">
 				<PageCard w={600}>
 					<PageCardHeader>
 						<HeaderLeftSide>
