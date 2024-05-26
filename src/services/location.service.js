@@ -9,7 +9,7 @@ const locationService = {
 	getById: (id, params) =>
 		httpRequestV2.get(`/v1/promotions/locations/${id}`, { params }),
 	update: (data) =>
-		httpRequestV2.put(`/v1/promotions/locations/${data.id}`, data.formData),
+		httpRequestV2.put(`/v1/promotions/locations/${data.id}`, data.data),
 	delete: (id, params) =>
 		httpRequestV2.delete(`/v1/promotions/locations/${id}`, { params }),
 	create: (data) => httpRequestV2.post('/v1/promotions/locations', data),

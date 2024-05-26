@@ -28,11 +28,7 @@ const LocationListPage = () => {
 	const [page, setPage] = useState(1);
 	const [deletableZone, setDeletableZone] = useState(false);
 	const [term, setTerm] = useState();
-	const {
-		data: { data } = {},
-		isLoading,
-		refetch,
-	} = useGetLocations({
+	const { data, isLoading, refetch } = useGetLocations({
 		params: {
 			page,
 			page_size: pageSize,
@@ -146,11 +142,11 @@ const LocationListPage = () => {
 						<Box p={3}>
 							<DataTable
 								columns={columns}
-								data={data}
+								data={data?.data?.results}
 								scroll={{ y: 'calc(100vh - 260px)' }}
 								isLoading={isLoading}
 								pagination={{
-									// total: Number(count || 0),
+									total: Number(data?.data?.totalResults || 0),
 									pageSize,
 									onPageSizeChange: setPageSize,
 									onChange: onChangePage,

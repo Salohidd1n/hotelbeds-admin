@@ -19,10 +19,9 @@ import PageCard, {
 } from '../../../components/PageCard';
 import ProfileMenu from '../../../components/ProfileMenu';
 import useCustomToast from '../../../hooks/useCustomToast';
-import { useGetZonesById } from 'services/zone.service';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
-import ImageUpload from 'components/FormElements/ImageUpload/ImageUpload';
+import ImageUpload from 'components/FormElements/ImageUpload/FormImageUpload';
 import {
 	useGetLocationsById,
 	useLocationsCreate,
@@ -67,25 +66,11 @@ const LocationDetailPage = () => {
     });
 
 	const onSubmit = (values) => {
-		const formData = new FormData();
-
-		for (const key in values) {
-			if (key === 'locations-image') {
-				const file = new File([values[key]], values[key].name, {
-					type: values[key].type,
-					lastModified: values[key].lastModified,
-				});
-				formData.append(key, file);
-			} else {
-				formData.append(key, values[key]);
-			}
-		}
-
-		if (!id) createLocation(formData);
+		if (!id) createLocation(values);
 		else {
 			updateLocation({
 				id,
-				formData,
+				data: values,
 			});
 		}
 	};
@@ -145,7 +130,7 @@ const LocationDetailPage = () => {
 							<FormSwitch control={control} name="is_active" />
 						</FormRow>
 						<FormRow label="Image:" required>
-							<ImageUpload control={control} name="locations-image" required />
+							<ImageUpload control={control} name="imageURL" required />
 						</FormRow>
 					</PageCardForm>
 
