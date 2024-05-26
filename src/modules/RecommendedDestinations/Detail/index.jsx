@@ -354,6 +354,14 @@ const RecommendedDestionationDetailPage = () => {
 											required
 										/>
 									</FormRow>
+									<FormRow label="Order:" required>
+										<FormNumberInput
+											control={control}
+											name={`groupDestination[${index}].order`}
+											placeholder="Enter order"
+											required
+										/>
+									</FormRow>
 									<FormRow label="Image:" required>
 										<ImageUpload
 											control={control}
