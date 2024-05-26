@@ -192,7 +192,7 @@ const RecommendedDestionationDetailPage = () => {
 					</PageCardHeader>
 
 					<PageCardForm p={6} spacing={8}>
-						<FormRow label="KR title:" required>
+						<FormRow label="Select location:" required>
 							<FormSelect
 								control={control}
 								name="locationId"
