@@ -68,10 +68,10 @@ const DestinationDetailPage = () => {
 	const { control, reset, handleSubmit, watch } = useForm({
 		defaultValues: {
 			nearbyHotes: [initialHearbyHotes],
-			location: [initialLocations],
-			restourants: {
-				destination: [initialDestination],
-			},
+			//   location: [initialLocations],
+			//   restourants: {
+			//     destination: [initialDestination]
+			//   }
 		},
 	});
 
@@ -204,7 +204,7 @@ const DestinationDetailPage = () => {
 						</PageCardHeader>
 
 						<PageCardForm p={6} spacing={8}>
-							<FormRow label="Select destination:" required>
+							<FormRow label="Select group destination:" required>
 								<FormSelect
 									control={control}
 									name="groupDestinationId"
@@ -226,52 +226,52 @@ const DestinationDetailPage = () => {
 
 					<PageCardForm p={6} spacing={8}>
 						<Grid templateColumns="repeat(3, 1fr)" gap={6}>
-							<FormRow label="EN title:" required>
+							<FormRow label="Title (EN):" required>
 								<FormInput
 									control={control}
 									name="header.en_title"
-									placeholder="Enter EN title"
+									placeholder="Enter title"
 									required
 								/>
 							</FormRow>
-							<FormRow label="KR title:" required>
+							<FormRow label="Title (KR):" required>
 								<FormInput
 									control={control}
 									name="header.kr_title"
-									placeholder="Enter KR title"
+									placeholder="Enter title"
 									required
 								/>
 							</FormRow>
 
-							<FormRow label="EN content:" required>
+							<FormRow label="Content (EN):" required>
 								<FormInput
 									control={control}
 									name="header.en_content"
-									placeholder="Enter EN content"
+									placeholder="Enter content"
 									required
 								/>
 							</FormRow>
-							<FormRow label="KR content:" required>
+							<FormRow label="Content (KR):" required>
 								<FormInput
 									control={control}
 									name="header.kr_content"
-									placeholder="Enter KR content"
+									placeholder="Enter content"
 									required
 								/>
 							</FormRow>
-							<FormRow label="EN sub content:" required>
+							<FormRow label="Sub content (EN):" required>
 								<FormInput
 									control={control}
 									name="header.en_subContent"
-									placeholder="Enter EN content"
+									placeholder="Enter sub content"
 									required
 								/>
 							</FormRow>
-							<FormRow label="KR sub content:" required>
+							<FormRow label="Sub content (KR):" required>
 								<FormInput
 									control={control}
 									name="header.kr_subContent"
-									placeholder="Enter KR sub content"
+									placeholder="Enter sub content"
 									required
 								/>
 							</FormRow>
@@ -285,7 +285,7 @@ const DestinationDetailPage = () => {
 						</FormRow>
 					</PageCardForm>
 				</PageCard>
-				<PageCard mt={4} w="100%">
+				{/* <PageCard mt={4} w="100%">
 					<PageCardHeader>
 						<HeaderLeftSide>
 							<Heading fontSize="xl">Map Locations</Heading>
@@ -402,8 +402,8 @@ const DestinationDetailPage = () => {
 							</Flex>
 						))}
 					</PageCardForm>
-				</PageCard>
-				<PageCard mt={4} w="100%">
+				</PageCard> */}
+				{/* <PageCard mt={4} w="100%">
 					<PageCardHeader>
 						<HeaderLeftSide>
 							<Heading fontSize="xl">Restourants</Heading>
@@ -510,7 +510,7 @@ const DestinationDetailPage = () => {
 							</Flex>
 						))}
 					</PageCardForm>
-				</PageCard>
+				</PageCard> */}
 				<PageCard mt={4} w="100%">
 					<PageCardHeader>
 						<HeaderLeftSide>

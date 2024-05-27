@@ -127,36 +127,36 @@ const GroupCardDestinationsDetailPage = () => {
 						</PageCardHeader>
 
 						<PageCardForm p={6} spacing={8}>
-							<FormRow label="EN location:" required>
+							<FormRow label="Location (EN):" required>
 								<FormInput
 									control={control}
 									name="en_location"
-									placeholder="Enter EN location"
+									placeholder="Enter location"
 									autoFocus
 									required
 								/>
 							</FormRow>
-							<FormRow label="KR location:" required>
+							<FormRow label="Location (KR):" required>
 								<FormInput
 									control={control}
 									name="kr_location"
-									placeholder="Enter KR location"
+									placeholder="Enter location"
 									required
 								/>
 							</FormRow>
-							<FormRow label="EN content:" required>
+							<FormRow label="Content (EN):" required>
 								<FormInput
 									control={control}
 									name="en_content"
-									placeholder="Enter EN content"
+									placeholder="Enter content"
 									required
 								/>
 							</FormRow>
-							<FormRow label="KR content:" required>
+							<FormRow label="Content (KR):" required>
 								<FormInput
 									control={control}
 									name="kr_content"
-									placeholder="Enter KR content"
+									placeholder="Enter content"
 									required
 								/>
 							</FormRow>

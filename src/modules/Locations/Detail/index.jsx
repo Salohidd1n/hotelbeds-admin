@@ -97,20 +97,20 @@ const LocationDetailPage = () => {
 					</PageCardHeader>
 
 					<PageCardForm p={6} spacing={8}>
-						<FormRow label="KR title:" required>
+						<FormRow label="Title (KR):" required>
 							<FormInput
 								control={control}
 								name="kr_title"
-								placeholder="Enter KR title"
+								placeholder="Enter title"
 								autoFocus
 								required
 							/>
 						</FormRow>
-						<FormRow label="EN title:" required>
+						<FormRow label="Title (EN):" required>
 							<FormInput
 								control={control}
 								name="en_title"
-								placeholder="Enter EN title"
+								placeholder="Enter title"
 								required
 							/>
 						</FormRow>
@@ -122,7 +122,7 @@ const LocationDetailPage = () => {
 								required
 							/>
 						</FormRow>
-						<FormRow label="Is Active:">
+						<FormRow label="Active:">
 							<FormSwitch control={control} name="is_active" />
 						</FormRow>
 						<FormRow label="Image:" required>

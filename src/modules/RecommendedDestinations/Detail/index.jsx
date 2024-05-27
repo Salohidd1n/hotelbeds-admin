@@ -222,35 +222,35 @@ const RecommendedDestionationDetailPage = () => {
 									templateColumns="repeat(3, 1fr)"
 									gap={6}
 								>
-									<FormRow label="KR title:" required>
+									<FormRow label="Title (EN):" required>
 										<FormInput
 											control={control}
 											name={`header[${index}].en_headerTitle`}
-											placeholder="Enter EN title"
+											placeholder="Enter title"
 											required
 										/>
 									</FormRow>
-									<FormRow label="KR title:" required>
+									<FormRow label="Title (KR):" required>
 										<FormInput
 											control={control}
 											name={`header[${index}].kr_headerTitle`}
-											placeholder="Enter KR title"
+											placeholder="Enter title"
 											required
 										/>
 									</FormRow>
-									<FormRow label="EN content:" required>
+									<FormRow label="Content (EN):" required>
 										<FormTextarea
 											control={control}
 											name={`header[${index}].en_hederContent`}
-											placeholder="Enter EN content"
+											placeholder="Enter content"
 											required
 										/>
 									</FormRow>
-									<FormRow label="KR content:" required>
+									<FormRow label="Content (KR):" required>
 										<FormTextarea
 											control={control}
 											name={`header[${index}].kr_hederContent`}
-											placeholder="Enter KR content"
+											placeholder="Enter content"
 											required
 										/>
 									</FormRow>
@@ -300,51 +300,51 @@ const RecommendedDestionationDetailPage = () => {
 									templateColumns="repeat(3, 1fr)"
 									gap={6}
 								>
-									<FormRow label="EN title:" required>
+									<FormRow label="Title (EN):" required>
 										<FormInput
 											control={control}
 											name={`groupDestination[${index}].en_title`}
-											placeholder="Enter EN title"
+											placeholder="Enter title"
 											required
 										/>
 									</FormRow>
-									<FormRow label="KR title:" required>
+									<FormRow label="Title (KR):" required>
 										<FormInput
 											control={control}
 											name={`groupDestination[${index}].kr_title`}
-											placeholder="Enter KR title"
+											placeholder="Enter title"
 											required
 										/>
 									</FormRow>
-									<FormRow label="EN address:" required>
+									<FormRow label="Address (EN):" required>
 										<FormInput
 											control={control}
 											name={`groupDestination[${index}].en_address`}
-											placeholder="Enter EN address"
+											placeholder="Enter address"
 											required
 										/>
 									</FormRow>
-									<FormRow label="KR address:" required>
+									<FormRow label="Address (KR):" required>
 										<FormInput
 											control={control}
 											name={`groupDestination[${index}].kr_address`}
-											placeholder="Enter KR address"
+											placeholder="Enter address"
 											required
 										/>
 									</FormRow>
-									<FormRow label="EN content:" required>
+									<FormRow label="Content (EN):" required>
 										<FormTextarea
 											control={control}
 											name={`groupDestination[${index}].en_content`}
-											placeholder="Enter EN content"
+											placeholder="Enter content"
 											required
 										/>
 									</FormRow>
-									<FormRow label="KR content:" required>
+									<FormRow label="Content (KR):" required>
 										<FormTextarea
 											control={control}
 											name={`groupDestination[${index}].kr_content`}
-											placeholder="Enter KR content"
+											placeholder="Enter content"
 											required
 										/>
 									</FormRow>

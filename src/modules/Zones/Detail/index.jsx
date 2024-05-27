@@ -134,7 +134,7 @@ const ZoneDetailPage = () => {
 								required
 							/>
 						</FormRow>
-						<FormRow label="EN name:" required>
+						<FormRow label="Name (EN):" required>
 							<FormInput
 								control={control}
 								name="en_name"
@@ -142,7 +142,7 @@ const ZoneDetailPage = () => {
 								required
 							/>
 						</FormRow>
-						<FormRow label="KR name:" required>
+						<FormRow label="Name (KR):" required>
 							<FormInput
 								control={control}
 								name="kr_name"

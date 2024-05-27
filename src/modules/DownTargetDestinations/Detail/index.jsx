@@ -132,7 +132,7 @@ const DownTargetDestinationDetailPage = () => {
 						</PageCardHeader>
 
 						<PageCardForm p={6} spacing={8}>
-							<FormRow label="EN location:" required>
+							<FormRow label="Location:" required>
 								<FormInput
 									control={control}
 									name="location"
