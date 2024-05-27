@@ -48,7 +48,7 @@ const elements = [
 		link: '/zones',
 	},
 	{
-		label: 'Promotions',
+		label: 'AI recommended travel destinations',
 		icon: MdOutlineDataExploration,
 		link: '/promotions',
 		children: [
@@ -75,9 +75,19 @@ const elements = [
 		link: '/target',
 		children: [
 			{
-				label: 'Group Destinations',
+				label: 'Recommended hotels for summer travel',
 				icon: MdModeOfTravel,
 				link: '/target/group-destinations',
+			},
+			{
+				label: '‘Lowest Price Guaranteed’ Free Travel Partner~',
+				icon: IoLocationOutline,
+				link: '/target/up-target-destinations',
+			},
+			{
+				label: 'Get closer to the Europe you want to visit',
+				icon: TbLocation,
+				link: '/target/down-target-destinations',
 			},
 		],
 	},

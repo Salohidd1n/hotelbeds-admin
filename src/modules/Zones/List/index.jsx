@@ -138,7 +138,7 @@ const ZoneListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create zone
+                  Create
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>

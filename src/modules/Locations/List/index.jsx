@@ -129,7 +129,7 @@ const LocationListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create location
+                  Create
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>

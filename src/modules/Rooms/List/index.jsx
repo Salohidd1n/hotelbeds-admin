@@ -131,7 +131,7 @@ const RoomListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create room
+                  Create
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>

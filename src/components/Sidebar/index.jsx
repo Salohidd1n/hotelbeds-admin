@@ -1,4 +1,4 @@
-import { Box, Icon, Text } from '@chakra-ui/react';
+import { Box, Icon, Text, Tooltip } from '@chakra-ui/react';
 import styles from './index.module.scss';
 
 import clsx from 'clsx';
@@ -37,10 +37,13 @@ const Sidebar = ({ elements }) => {
 							})}
 							onClick={() => onRowClick(element)}
 						>
-							<Box className={styles.element}>
-								<Icon as={element.icon} className={styles.icon} />
-								<Text className={styles.label}>{element.label}</Text>
-							</Box>
+							<Tooltip label={element.label}>
+								<Box className={styles.element}>
+									<Icon as={element.icon} className={styles.icon} />
+
+									<Text className={styles.label}>{element.label}</Text>
+								</Box>
+							</Tooltip>
 						</Box>
 
 						{pathname.includes(element.link) && (
@@ -53,10 +56,13 @@ const Sidebar = ({ elements }) => {
 										})}
 										onClick={() => onRowClick(value)}
 									>
-										<Box className={styles.element}>
-											<Icon as={value.icon} className={styles.icon} />
-											<Text className={styles.label}>{value.label}</Text>
-										</Box>
+										<Tooltip label={value.label}>
+											<Box className={styles.element}>
+												<Icon as={value.icon} className={styles.icon} />
+
+												<Text className={styles.label}>{value.label}</Text>
+											</Box>
+										</Tooltip>
 									</Box>
 								))}
 							</Box>

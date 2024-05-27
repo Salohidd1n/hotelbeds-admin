@@ -13,23 +13,22 @@ import { Page } from '../../../components/Page';
 import PageCard, { PageCardHeader } from '../../../components/PageCard';
 import ProfileMenu from '../../../components/ProfileMenu';
 import styles from './index.module.scss';
-import { useGetRooms, useRoomsDelete } from 'services/room.service';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
 import {
-	useGetGroupDestinations,
-	useGroupDestinationsDelete,
-} from 'services/group-destinations.service';
+	useGetUpTargetDestinations,
+	useUpTargetDestinationsDelete,
+} from 'services/up-target-destinations.service';
 
-const GroupCardDestinationsListPage = () => {
+const UpTargetDestinationsListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
 	const [page, setPage] = useState(1);
 	const [deletableItem, setDeletableItem] = useState(false);
 	const [term, setTerm] = useState();
-	const { data, isLoading, refetch } = useGetGroupDestinations({
+	const { data, isLoading, refetch } = useGetUpTargetDestinations({
 		params: {
 			page,
 			limit: pageSize,
@@ -41,8 +40,8 @@ const GroupCardDestinationsListPage = () => {
 		setTerm(e.target.value);
 	}, 700);
 
-	const { mutate: deleteUser, isLoading: deleteLoading } =
-    useGroupDestinationsDelete({
+	const { mutate: deleteDestination, isLoading: deleteLoading } =
+    useUpTargetDestinationsDelete({
     	onSuccess: () => {
     		refetch();
     		setDeletableItem(null);
@@ -63,7 +62,7 @@ const GroupCardDestinationsListPage = () => {
 
 	const onDeleteClick = (e, row) => {
 		e.stopPropagation();
-		deleteUser(row.id);
+		deleteDestination(row.id);
 	};
 
 	const columns = [
@@ -75,20 +74,12 @@ const GroupCardDestinationsListPage = () => {
 			render: (_, __, index) => (page - 1) * pageSize + index + 1,
 		},
 		{
-			title: 'EN location',
-			dataIndex: 'en_location',
+			title: 'Location',
+			dataIndex: 'location',
 		},
 		{
-			title: 'KR location',
-			dataIndex: 'kr_location',
-		},
-		{
-			title: 'EN content',
-			dataIndex: 'en_content',
-		},
-		{
-			title: 'KR content',
-			dataIndex: 'kr_content',
+			title: 'Order',
+			dataIndex: 'order',
 		},
 		{
 			title: '',
@@ -114,7 +105,9 @@ const GroupCardDestinationsListPage = () => {
 			<Box>
 				<Header>
 					<HeaderLeftSide>
-						<HeaderTitle>Recommended hotels for summer travel</HeaderTitle>
+						<HeaderTitle>
+              ‘Lowest Price Guaranteed’ Free Travel Partner~
+						</HeaderTitle>
 					</HeaderLeftSide>
 					<HeaderExtraSide>
 						<NotificationMenu />
@@ -193,4 +186,4 @@ const GroupCardDestinationsListPage = () => {
 		</>
 	);
 };
-export default GroupCardDestinationsListPage;
+export default UpTargetDestinationsListPage;

@@ -21,6 +21,10 @@ import DestinationDetailPage from 'modules/Destinations/Detail';
 import DestinationListPage from 'modules/Destinations/List';
 import GroupCardDestinationsListPage from 'modules/GroupCardDestinations/List';
 import GroupCardDestinationsDetailPage from 'modules/GroupCardDestinations/Detail';
+import UpTargetDestinationsListPage from 'modules/UpTargetDestinations/List';
+import UpTargetDestinationDetailPage from 'modules/UpTargetDestinations/Detail';
+import DownTargetDestinationDetailPage from 'modules/DownTargetDestinations/Detail';
+import DownTargetDestinationsListPage from 'modules/DownTargetDestinations/List';
 
 const Router = () => {
 	const { isAuth } = authStore;
@@ -50,6 +54,32 @@ const Router = () => {
 				<Route path="zones" element={<ZoneListPage />} />
 				<Route path="zones/create" element={<ZoneDetailPage />} />
 				<Route path="zones/:id" element={<ZoneDetailPage />} />
+
+				<Route
+					path="target/down-target-destinations"
+					element={<DownTargetDestinationsListPage />}
+				/>
+				<Route
+					path="target/down-target-destinations/create"
+					element={<DownTargetDestinationDetailPage />}
+				/>
+				<Route
+					path="target/down-target-destinations/:id"
+					element={<DownTargetDestinationDetailPage />}
+				/>
+
+				<Route
+					path="target/up-target-destinations"
+					element={<UpTargetDestinationsListPage />}
+				/>
+				<Route
+					path="target/up-target-destinations/create"
+					element={<UpTargetDestinationDetailPage />}
+				/>
+				<Route
+					path="target/up-target-destinations/:id"
+					element={<UpTargetDestinationDetailPage />}
+				/>
 
 				<Route
 					path="target/group-destinations"

@@ -145,7 +145,7 @@ const RecommendedDestinationListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create recommended destination
+                  Create
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>

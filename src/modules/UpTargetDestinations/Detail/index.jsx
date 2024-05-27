@@ -19,15 +19,15 @@ import PageCard, {
 import ProfileMenu from '../../../components/ProfileMenu';
 import useCustomToast from '../../../hooks/useCustomToast';
 import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
-import FormImageUpload from 'components/FormElements/ImageUpload/FormImageUpload';
-import {
-	useGetGroupDestinationsById,
-	useGroupDestinationsCreate,
-	useGroupDestinationsUpdate,
-} from 'services/group-destinations.service';
-import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 
-const GroupCardDestinationsDetailPage = () => {
+import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+import {
+	useGetUpTargetDestinationsById,
+	useUpTargetDestinationsCreate,
+	useUpTargetDestinationsUpdate,
+} from 'services/up-target-destinations.service';
+
+const UpTargetDestinationDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
@@ -47,7 +47,7 @@ const GroupCardDestinationsDetailPage = () => {
 		name: 'hotelCode',
 	});
 
-	const { isLoading } = useGetGroupDestinationsById({
+	const { isLoading } = useGetUpTargetDestinationsById({
 		id,
 		queryParams: {
 			cacheTime: false,
@@ -64,14 +64,14 @@ const GroupCardDestinationsDetailPage = () => {
 	});
 
 	const { mutate: create, isLoading: createLoading } =
-    useGroupDestinationsCreate({
+    useUpTargetDestinationsCreate({
     	onSuccess: () => {
     		successToast();
     		navigate(-1);
     	},
     });
 	const { mutate: update, isLoading: updateLoading } =
-    useGroupDestinationsUpdate({
+    useUpTargetDestinationsUpdate({
     	onSuccess: () => {
     		successToast();
     		navigate(-1);
@@ -102,7 +102,9 @@ const GroupCardDestinationsDetailPage = () => {
 			<Header>
 				<HeaderLeftSide>
 					<BackButton />
-					<HeaderTitle>Recommended hotels for summer travel</HeaderTitle>
+					<HeaderTitle>
+            ‘Lowest Price Guaranteed’ Free Travel Partner~
+					</HeaderTitle>
 				</HeaderLeftSide>
 				<HeaderExtraSide>
 					<Button
@@ -130,36 +132,13 @@ const GroupCardDestinationsDetailPage = () => {
 							<FormRow label="EN location:" required>
 								<FormInput
 									control={control}
-									name="en_location"
-									placeholder="Enter EN location"
+									name="location"
+									placeholder="Enter location"
 									autoFocus
 									required
 								/>
 							</FormRow>
-							<FormRow label="KR location:" required>
-								<FormInput
-									control={control}
-									name="kr_location"
-									placeholder="Enter KR location"
-									required
-								/>
-							</FormRow>
-							<FormRow label="EN content:" required>
-								<FormInput
-									control={control}
-									name="en_content"
-									placeholder="Enter EN content"
-									required
-								/>
-							</FormRow>
-							<FormRow label="KR content:" required>
-								<FormInput
-									control={control}
-									name="kr_content"
-									placeholder="Enter KR content"
-									required
-								/>
-							</FormRow>
+
 							<FormRow label="Order:" required>
 								<FormNumberInput
 									control={control}
@@ -168,8 +147,21 @@ const GroupCardDestinationsDetailPage = () => {
 									required
 								/>
 							</FormRow>
-							<FormRow label="Image:" required>
-								<FormImageUpload control={control} name="imageURL" required />
+							<FormRow label="Tripadvisor Review Rating:" required>
+								<FormNumberInput
+									control={control}
+									name="tripadvisorReview.rayting"
+									placeholder="Enter rayting"
+									required
+								/>
+							</FormRow>
+							<FormRow label="Tripadvisor Review Count:" required>
+								<FormNumberInput
+									control={control}
+									name="tripadvisorReview.reviews"
+									placeholder="Enter reviews count"
+									required
+								/>
 							</FormRow>
 						</PageCardForm>
 					</PageCard>
@@ -225,4 +217,4 @@ const GroupCardDestinationsDetailPage = () => {
 		</form>
 	);
 };
-export default GroupCardDestinationsDetailPage;
+export default UpTargetDestinationDetailPage;

@@ -145,7 +145,7 @@ const DestinationListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create group destination
+                  Create
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>
