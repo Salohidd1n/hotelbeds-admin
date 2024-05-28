@@ -130,7 +130,7 @@ const CountriesListPage = () => {
 
 				<Page p={4}>
 					<PageCard h="calc(100vh - 90px)">
-						<PageCardHeader>
+						{/* <PageCardHeader>
 							<HeaderExtraSide>
 								<Box w="250px">
 									<SearchInput onChange={onChangeTerm} />
@@ -143,7 +143,7 @@ const CountriesListPage = () => {
                   Create country
 								</Button>
 							</HeaderExtraSide>
-						</PageCardHeader>
+						</PageCardHeader> */}
 
 						<Box p={3}>
 							<DataTable

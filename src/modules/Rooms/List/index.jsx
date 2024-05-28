@@ -121,7 +121,7 @@ const RoomListPage = () => {
 
 				<Page p={4}>
 					<PageCard h="calc(100vh - 90px)">
-						<PageCardHeader>
+						{/* <PageCardHeader>
 							<HeaderExtraSide>
 								<Box w="250px">
 									<SearchInput onChange={onChangeTerm} />
@@ -134,7 +134,7 @@ const RoomListPage = () => {
                   Create
 								</Button>
 							</HeaderExtraSide>
-						</PageCardHeader>
+						</PageCardHeader> */}
 
 						<Box p={3}>
 							<DataTable
