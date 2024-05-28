@@ -84,6 +84,11 @@ const elements = [
 		link: '/target',
 		children: [
 			{
+				label: 'Banner',
+				icon: MdModeOfTravel,
+				link: '/target/banner',
+			},
+			{
 				label: 'Recommended hotels for summer travel',
 				icon: MdModeOfTravel,
 				link: '/target/group-destinations',

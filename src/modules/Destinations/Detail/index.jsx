@@ -35,6 +35,7 @@ import useRestaurants from '../hooks/useRestaurants';
 import { IoIosRestaurant } from 'react-icons/io';
 import styles from './index.module.scss';
 import classNames from 'classnames';
+import { RestaurantModal } from '../components/RestaurantModal';
 
 const initialHearbyHotes = {
 	JPCode: '',
@@ -46,6 +47,7 @@ const DestinationDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
+	const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 	const [JPCode, setJPCode] = useState(null);
 	const locationsData = useGetLocations({
 		params: {
@@ -390,13 +392,30 @@ const DestinationDetailPage = () => {
 												>
 													<img src={item?.photos[0]?.images?.small?.url} />
 													<div className={styles.content}>
-														<p>{item?.locationDetails?.name}</p>
-														<p>
+														<p className={styles.name}>
+															{item?.locationDetails?.name}
+														</p>
+														<p className={styles.address}>
 															{
 																item?.locationDetails?.address_obj
 																	?.address_string
 															}
 														</p>
+														{/* <Button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setSelectedRestaurant({
+                                  ...item?.locationDetails,
+                                  ...item?.nearbyPlace,
+                                  images: item?.photos
+                                })
+                              }}
+                              variant='outline'
+                              mt={5}
+                              w='100%'
+                            >
+                              Show more
+                            </Button> */}
 													</div>
 												</div>
 											),
@@ -439,6 +458,38 @@ const DestinationDetailPage = () => {
 					</PageCardForm>
 				</PageCard>
 			</Page>
+			{/* <RestaurantModal
+        isOpen={!!selectedRestaurant}
+        onClose={() => setSelectedRestaurant(null)}
+        locationId={selectedRestaurant?.location_id}
+        title={selectedRestaurant?.name}
+        rating={selectedRestaurant?.rating}
+        reviewsCount={selectedRestaurant?.num_reviews}
+        address={selectedRestaurant?.address_obj?.address_string}
+        overallRate={selectedRestaurant?.ranking_data?.ranking_string}
+        phone={selectedRestaurant?.phone}
+        cuisines={selectedRestaurant?.cuisine
+          ?.map((cus) => cus?.localized_name)
+          .join(',')}
+        openTime={selectedRestaurant?.hours?.periods?.[0]?.open?.time?.replace(
+          '00',
+          ':00'
+        )}
+        rateFood={Object.values(selectedRestaurant?.subratings || {})?.find(
+          (el) => el?.name === 'rate_food'
+        )}
+        rateService={Object.values(selectedRestaurant?.subratings || {})?.find(
+          (el) => el?.name === 'rate_service'
+        )}
+        rateValue={Object.values(selectedRestaurant?.subratings || {})?.find(
+          (el) => el?.name === 'rate_value'
+        )}
+        images={[
+          ...(selectedRestaurant?.images || [])?.map(
+            (image) => image?.images?.original?.url
+          )
+        ]}
+      /> */}
 		</form>
 	);
 };

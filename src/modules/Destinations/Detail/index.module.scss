@@ -14,16 +14,18 @@
   }
   .content {
     margin-top: 12px;
-    p {
-      &:first-child {
-        font-size: 14px;
-        text-align: center;
-        font-weight: 500;
-      }
-      &:last-child {
-        font-size: 14px;
-        text-align: center;
-      }
+    .name {
+      font-size: 14px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .address {
+      font-size: 14px;
+      text-align: center;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      width: 180px;
     }
   }
 }

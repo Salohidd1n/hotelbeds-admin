@@ -25,6 +25,8 @@ import UpTargetDestinationsListPage from 'modules/UpTargetDestinations/List';
 import UpTargetDestinationDetailPage from 'modules/UpTargetDestinations/Detail';
 import DownTargetDestinationDetailPage from 'modules/DownTargetDestinations/Detail';
 import DownTargetDestinationsListPage from 'modules/DownTargetDestinations/List';
+import BannerListPage from 'modules/Banner/List';
+import BannerDetailPage from 'modules/Banner/Detail';
 
 const Router = () => {
 	const { isAuth } = authStore;
@@ -54,6 +56,10 @@ const Router = () => {
 				<Route path="static-data/zones" element={<ZoneListPage />} />
 				<Route path="static-data/zones/create" element={<ZoneDetailPage />} />
 				<Route path="static-data/zones/:id" element={<ZoneDetailPage />} />
+
+				<Route path="target/banner" element={<BannerListPage />} />
+				<Route path="target/banner/create" element={<BannerDetailPage />} />
+				<Route path="target/banner/:id" element={<BannerDetailPage />} />
 
 				<Route
 					path="target/down-target-destinations"
