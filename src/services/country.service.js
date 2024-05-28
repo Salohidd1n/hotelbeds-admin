@@ -2,7 +2,7 @@ import { useMutation, useQuery } from 'react-query';
 import httpRequest from './httpRequest';
 
 const countryService = {
-	getList: (params) => httpRequest.get('v1/country', params),
+	getList: (params) => httpRequest.get('v1/country', { params }),
 	getByID: (id, params) => httpRequest.get(`v1/country/${id}`, { params }),
 	update: ({ id, data }) => httpRequest.put(`v1/country/${id}`, data),
 	delete: (id, params) => httpRequest.delete(`v1/country/${id}`, { params }),

@@ -154,7 +154,7 @@ const HotelPortfoliosListPage = () => {
 								scroll={{ y: 'calc(100vh - 260px)' }}
 								isLoading={isLoading || deleteLoading}
 								pagination={{
-									total: Number(data?.count),
+									total: Number(data?.count || 0),
 									pageSize,
 									onPageSizeChange: setPageSize,
 									onChange: onChangePage,
