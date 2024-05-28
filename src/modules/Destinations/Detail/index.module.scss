@@ -1,0 +1,29 @@
+.restaurantCard {
+  padding: 12px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  &.isActive {
+    border: 2px solid $primary;
+  }
+  img {
+    height: 150px;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 10px;
+  }
+  .content {
+    margin-top: 12px;
+    p {
+      &:first-child {
+        font-size: 14px;
+        text-align: center;
+        font-weight: 500;
+      }
+      &:last-child {
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+  }
+}

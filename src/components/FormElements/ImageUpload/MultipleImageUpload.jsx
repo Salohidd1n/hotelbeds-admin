@@ -61,9 +61,8 @@ const MultipleImageUpload = ({ value, onChange, required }) => {
 					w="0"
 					h="0"
 					ref={ref}
-					required={required}
+					required={value?.length > 0 ? false : required}
 					borderColor="transparent"
-					//   multiple
 				/>
 			</Flex>
 

@@ -1,5 +1,5 @@
 import { Button, Flex, Grid, Heading, IconButton } from '@chakra-ui/react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
 import FormRow from '../../../components/FormElements/FormRow';
@@ -13,14 +13,12 @@ import SimpleLoader from '../../../components/Loaders/SimpleLoader';
 import NotificationMenu from '../../../components/NotificationMenu';
 import { Page } from '../../../components/Page';
 import PageCard, {
-	PageCardFooter,
 	PageCardForm,
 	PageCardHeader,
 } from '../../../components/PageCard';
 import ProfileMenu from '../../../components/ProfileMenu';
 import useCustomToast from '../../../hooks/useCustomToast';
 import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
-import FormTextarea from 'components/FormElements/Input/FormTextarea';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import FormSelect from 'components/FormElements/Select/FormSelect';
 import {
@@ -31,24 +29,24 @@ import {
 import { useGetLocations } from 'services/location.service';
 import { useGetRecommendedDestinationsByLocationId } from 'services/recommended-destination.service';
 import FormMultipleImageUpload from 'components/FormElements/ImageUpload/FormMultipleImageUpload';
-import MultipleImageUpload from 'components/FormElements/ImageUpload/MultipleImageUpload';
-import FormImageUpload from 'components/FormElements/ImageUpload/FormImageUpload';
+import useHotelAvail from '../hooks/useHotelAvail';
+import { useState } from 'react';
+import useRestaurants from '../hooks/useRestaurants';
+import { IoIosRestaurant } from 'react-icons/io';
+import styles from './index.module.scss';
+import classNames from 'classnames';
 
 const initialHearbyHotes = {
 	JPCode: '',
+	restaurant: [],
+	allRestaurants: [],
 };
 
-const initialLocations = {
-	JPCode: '',
-};
-
-const initialDestination = {
-	en_name: '',
-};
 const DestinationDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
+	const [JPCode, setJPCode] = useState(null);
 	const locationsData = useGetLocations({
 		params: {
 			page: 1,
@@ -65,24 +63,58 @@ const DestinationDetailPage = () => {
 		},
 	});
 
-	const { control, reset, handleSubmit, watch } = useForm({
+	const { control, reset, handleSubmit, watch, setValue } = useForm({
 		defaultValues: {
 			nearbyHotes: [initialHearbyHotes],
-			//   location: [initialLocations],
-			//   restourants: {
-			//     destination: [initialDestination]
-			//   }
 		},
 	});
 
-	const {
-		fields: destination,
-		append: destinationAppend,
-		remove: destinationRemove,
-	} = useFieldArray({
+	const nearbyHotelList = useWatch({
 		control,
-		name: 'restourants.destination',
+		name: 'nearbyHotes',
 	});
+
+	const { hotels, isLoading: isLoadingHotel } = useHotelAvail({
+		hotelCodes: JPCode ? [JPCode] : [],
+	});
+
+	const onChangeNearbyHotels = (JPCode, restaurants) => {
+		const _nearbyHotelList = JSON.parse(JSON.stringify(nearbyHotelList));
+		_nearbyHotelList.forEach((hotel) => {
+			if (hotel.JPCode === JPCode) {
+				hotel.allRestaurants = restaurants;
+			}
+		});
+		setValue('nearbyHotes', _nearbyHotelList);
+		setJPCode(null);
+	};
+
+	const { isLoading: isLoadingRestaurant } = useRestaurants({
+		hotels,
+		onChangeNearbyHotels,
+	});
+
+	const onSelectRestaurant = (index, value) => {
+		const _nearbyHotelList = JSON.parse(JSON.stringify(nearbyHotelList));
+		const selectedRestaurants = _nearbyHotelList[index]?.restaurant;
+
+		if (
+			selectedRestaurants.find(
+				(item) =>
+					item.nearbyPlace.location_id === value.nearbyPlace.location_id,
+			)
+		) {
+			_nearbyHotelList[index].restaurant = selectedRestaurants?.filter(
+				(item) =>
+					item.nearbyPlace.location_id !== value.nearbyPlace.location_id,
+			);
+		} else {
+			_nearbyHotelList[index].restaurant.push(value);
+		}
+
+		setValue('nearbyHotes', _nearbyHotelList);
+	};
+
 	const {
 		fields: nearbyHotes,
 		append: nearbyHotesAppend,
@@ -90,15 +122,6 @@ const DestinationDetailPage = () => {
 	} = useFieldArray({
 		control,
 		name: 'nearbyHotes',
-	});
-
-	const {
-		fields: locations,
-		append: locationsAppend,
-		remove: locationsRemove,
-	} = useFieldArray({
-		control,
-		name: 'location',
 	});
 
 	const groupDestinationsData = useGetRecommendedDestinationsByLocationId({
@@ -124,6 +147,10 @@ const DestinationDetailPage = () => {
 			onSuccess: (res) => {
 				reset({
 					...res.data,
+					nearbyHotes: res.data.nearbyHotes.map((item) => ({
+						...item,
+						allRestaurants: item.restaurant,
+					})),
 				});
 			},
 		},
@@ -285,232 +312,7 @@ const DestinationDetailPage = () => {
 						</FormRow>
 					</PageCardForm>
 				</PageCard>
-				{/* <PageCard mt={4} w="100%">
-					<PageCardHeader>
-						<HeaderLeftSide>
-							<Heading fontSize="xl">Map Locations</Heading>
-						</HeaderLeftSide>
-						<HeaderExtraSide>
-							<Button
-								onClick={() => locationsAppend(initialLocations)}
-								bgColor="primary.main"
-								leftIcon={<AddIcon />}
-							>
-                Add location
-							</Button>
-						</HeaderExtraSide>
-					</PageCardHeader>
 
-					<PageCardForm p={6} spacing={8}>
-						{locations.map((_, index) => (
-							<Flex gap={2} key={index + 'locations'}>
-								<Grid
-									w="calc(100% - 50px)"
-									templateColumns="repeat(3, 1fr)"
-									gap={6}
-								>
-									<FormRow label="JP Code:" required>
-										<FormInput
-											control={control}
-											name={`location[${index}].JPCode`}
-											placeholder="Enter JP Code"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Latitude:" required>
-										<FormNumberInput
-											control={control}
-											name={`location[${index}].latitude`}
-											placeholder="Enter latitude"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Longitude:" required>
-										<FormNumberInput
-											control={control}
-											name={`location[${index}].longitude`}
-											placeholder="Enter longitude"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Hotel name EN:" required>
-										<FormInput
-											control={control}
-											name={`location[${index}].en_hotelName`}
-											placeholder="Enter hotel name EN"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Hotel name KR:" required>
-										<FormInput
-											control={control}
-											name={`location[${index}].kr_hotelName`}
-											placeholder="Enter hotel name KR"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Hotel Address EN:" required>
-										<FormInput
-											control={control}
-											name={`location[${index}].en_hotelAddress`}
-											placeholder="Enter hotel address EN"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Hotel Address KR:" required>
-										<FormInput
-											control={control}
-											name={`location[${index}].kr_hotelAddress`}
-											placeholder="Enter hotel address KR"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Hotel Description EN:" required>
-										<FormTextarea
-											control={control}
-											name={`location[${index}].en_hotelDescription`}
-											placeholder="Enter hotel description EN"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Hotel Description KR:" required>
-										<FormTextarea
-											control={control}
-											name={`location[${index}].KR_hotelDescription`}
-											placeholder="Enter hotel description KR"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Image:" required>
-										<MultipleImageUpload
-											control={control}
-											name={`location[${index}].hotelImages`}
-											required
-										/>
-									</FormRow>
-								</Grid>
-								{locations.length > 1 && (
-									<IconButton
-										onClick={() => locationsRemove(index)}
-										mt={8}
-										colorScheme="red"
-										variant="outline"
-									>
-										<DeleteIcon />
-									</IconButton>
-								)}
-							</Flex>
-						))}
-					</PageCardForm>
-				</PageCard> */}
-				{/* <PageCard mt={4} w="100%">
-					<PageCardHeader>
-						<HeaderLeftSide>
-							<Heading fontSize="xl">Restourants</Heading>
-						</HeaderLeftSide>
-						<HeaderExtraSide>
-							<Button
-								onClick={() => destinationAppend(initialDestination)}
-								bgColor="primary.main"
-								leftIcon={<AddIcon />}
-							>
-                Add restourant
-							</Button>
-						</HeaderExtraSide>
-					</PageCardHeader>
-
-					<PageCardForm p={6} spacing={8}>
-						<Grid
-							w="calc(100% - 50px)"
-							templateColumns="repeat(3, 1fr)"
-							gap={6}
-						>
-							<FormRow label="EN title:" required>
-								<FormInput
-									control={control}
-									name={'restourants.en_title'}
-									placeholder="Enter EN title"
-									required
-								/>
-							</FormRow>
-							<FormRow label="KR title:" required>
-								<FormInput
-									control={control}
-									name={'restourants.kr_title'}
-									placeholder="Enter KR title"
-									required
-								/>
-							</FormRow>
-							<FormRow label="Order:" required>
-								<FormNumberInput
-									control={control}
-									name={'restourants.order'}
-									placeholder="Enter order"
-									required
-								/>
-							</FormRow>
-						</Grid>
-						{destination.map((_, index) => (
-							<Flex key={index + 'destination'} gap={2}>
-								<Grid
-									w="calc(100% - 50px)"
-									templateColumns="repeat(3, 1fr)"
-									gap={6}
-								>
-									<FormRow label="EN name:" required>
-										<FormInput
-											control={control}
-											name={`restourants.destination[${index}].en_name`}
-											placeholder="Enter EN name"
-											required
-										/>
-									</FormRow>
-									<FormRow label="KR name:" required>
-										<FormInput
-											control={control}
-											name={`restourants.destination[${index}].kr_name`}
-											placeholder="Enter KR name"
-											required
-										/>
-									</FormRow>
-									<FormRow label="EN address:" required>
-										<FormInput
-											control={control}
-											name={`restourants.destination[${index}].en_address`}
-											placeholder="Enter EN address"
-											required
-										/>
-									</FormRow>
-									<FormRow label="KR address:" required>
-										<FormInput
-											control={control}
-											name={`restourants.destination[${index}].kr_address`}
-											placeholder="Enter KR address"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Image:" required>
-										<FormImageUpload
-											control={control}
-											name={`restourants.destination[${index}].imageURL`}
-											required
-										/>
-									</FormRow>
-								</Grid>
-								{destination.length > 1 && (
-									<IconButton
-										onClick={() => destinationRemove(index)}
-										mt={8}
-										colorScheme="red"
-										variant="outline"
-									>
-										<DeleteIcon />
-									</IconButton>
-								)}
-							</Flex>
-						))}
-					</PageCardForm>
-				</PageCard> */}
 				<PageCard mt={4} w="100%">
 					<PageCardHeader>
 						<HeaderLeftSide>
@@ -530,54 +332,108 @@ const DestinationDetailPage = () => {
 					<PageCardForm p={6} spacing={8}>
 						{nearbyHotes.map((_, index) => (
 							<Flex key={index + 'initialHearbyHotes'} gap={2}>
-								<Grid
-									w="calc(100% - 50px)"
-									templateColumns="repeat(4, 1fr)"
-									gap={6}
-								>
-									<FormRow label="JP Code:" required>
-										<FormInput
-											control={control}
-											name={`nearbyHotes[${index}].JPCode`}
-											placeholder="Enter JPCode"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Order:" required>
-										<FormNumberInput
-											control={control}
-											name={`nearbyHotes[${index}].order`}
-											placeholder="Enter order"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Tripadvisor Review Rating:" required>
-										<FormNumberInput
-											control={control}
-											name={`nearbyHotes[${index}].tripadvisorReview.rayting`}
-											placeholder="Enter rayting"
-											required
-										/>
-									</FormRow>
-									<FormRow label="Tripadvisor Review Count:" required>
-										<FormNumberInput
-											control={control}
-											name={`nearbyHotes[${index}].tripadvisorReview.reviews`}
-											placeholder="Enter reviews count"
-											required
-										/>
-									</FormRow>
-								</Grid>
-								{nearbyHotes.length > 1 && (
-									<IconButton
-										onClick={() => nearbyHotesRemove(index)}
-										mt={8}
-										colorScheme="red"
-										variant="outline"
+								<Flex w="92%" flexDirection="column">
+									<Grid w="100%" templateColumns="repeat(4, 1fr)" gap={6}>
+										<FormRow label="JP Code:" required>
+											<FormInput
+												control={control}
+												name={`nearbyHotes[${index}].JPCode`}
+												placeholder="Enter JPCode"
+												required
+											/>
+										</FormRow>
+										<FormRow label="Order:" required>
+											<FormNumberInput
+												control={control}
+												name={`nearbyHotes[${index}].order`}
+												placeholder="Enter order"
+												required
+											/>
+										</FormRow>
+										<FormRow label="Tripadvisor Review Rating:" required>
+											<FormNumberInput
+												control={control}
+												name={`nearbyHotes[${index}].tripadvisorReview.rayting`}
+												placeholder="Enter rayting"
+												required
+											/>
+										</FormRow>
+										<FormRow label="Tripadvisor Review Count:" required>
+											<FormNumberInput
+												control={control}
+												name={`nearbyHotes[${index}].tripadvisorReview.reviews`}
+												placeholder="Enter reviews count"
+												required
+											/>
+										</FormRow>
+									</Grid>
+									<Grid
+										mt={6}
+										w="100%"
+										templateColumns="repeat(4, 1fr)"
+										gap={6}
 									>
-										<DeleteIcon />
+										{nearbyHotelList[index]?.allRestaurants?.map(
+											(item, ind) => (
+												<div
+													key={item.nearbyPlace.location_id}
+													onClick={() => onSelectRestaurant(index, item)}
+													className={classNames(styles.restaurantCard, {
+														[styles.isActive]: nearbyHotelList[
+															index
+														]?.restaurant?.find(
+															(value) =>
+																value?.nearbyPlace?.location_id ===
+                                item.nearbyPlace.location_id,
+														),
+													})}
+												>
+													<img src={item?.photos[0]?.images?.small?.url} />
+													<div className={styles.content}>
+														<p>{item?.locationDetails?.name}</p>
+														<p>
+															{
+																item?.locationDetails?.address_obj
+																	?.address_string
+															}
+														</p>
+													</div>
+												</div>
+											),
+										)}
+									</Grid>
+								</Flex>
+								<Flex
+									w="8%"
+									mt={8}
+									alignItems="flex-start"
+									justifyContent="flex-end"
+									gap={3}
+								>
+									<IconButton
+										onClick={() => {
+											setJPCode(nearbyHotelList[index]?.JPCode);
+										}}
+										colorScheme="blue"
+										variant="outline"
+										isLoading={
+											JPCode === nearbyHotelList[index]?.JPCode
+												? isLoadingRestaurant || isLoadingHotel
+												: false
+										}
+									>
+										<IoIosRestaurant size="18" />
 									</IconButton>
-								)}
+									{nearbyHotes.length > 1 && (
+										<IconButton
+											onClick={() => nearbyHotesRemove(index)}
+											colorScheme="red"
+											variant="outline"
+										>
+											<DeleteIcon />
+										</IconButton>
+									)}
+								</Flex>
 							</Flex>
 						))}
 					</PageCardForm>
