@@ -132,20 +132,20 @@ const HotelPortfoliosListPage = () => {
 
 				<Page p={4}>
 					<PageCard h="calc(100vh - 90px)">
-						{/* <PageCardHeader>
+						<PageCardHeader>
 							<HeaderExtraSide>
 								<Box w="250px">
 									<SearchInput onChange={onChangeTerm} />
 								</Box>
-								<Button
+								{/* <Button
 									onClick={navigateToCreatePage}
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
                   Create Portfolio
-								</Button>
+								</Button> */}
 							</HeaderExtraSide>
-						</PageCardHeader> */}
+						</PageCardHeader>
 
 						<Box p={3}>
 							<DataTable
