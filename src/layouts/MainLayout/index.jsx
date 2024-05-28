@@ -20,6 +20,7 @@ import { MdModeOfTravel } from 'react-icons/md';
 import { Outlet } from 'react-router-dom';
 import { MdOutlineDataExploration } from 'react-icons/md';
 import { GiTriangleTarget } from 'react-icons/gi';
+import { MdDataArray } from 'react-icons/md';
 
 const elements = [
 	// {
@@ -28,25 +29,33 @@ const elements = [
 	// 	link: '/dashboard',
 	// },
 	{
-		label: 'Hotel Portfolios',
-		icon: BiHome,
-		link: '/hotel-portfolios',
+		label: 'Static Data',
+		icon: MdDataArray,
+		link: '/static-data',
+		children: [
+			{
+				label: 'Hotel Portfolios',
+				icon: BiHome,
+				link: '/static-data/hotel-portfolios',
+			},
+			{
+				label: 'Countries',
+				icon: BiMap,
+				link: '/static-data/countries',
+			},
+			{
+				label: 'Rooms',
+				icon: BiHotel,
+				link: '/static-data/rooms',
+			},
+			{
+				label: 'Zones',
+				icon: BiCurrentLocation,
+				link: '/static-data/zones',
+			},
+		],
 	},
-	{
-		label: 'Countries',
-		icon: BiMap,
-		link: '/countries',
-	},
-	{
-		label: 'Rooms',
-		icon: BiHotel,
-		link: '/rooms',
-	},
-	{
-		label: 'Zones',
-		icon: BiCurrentLocation,
-		link: '/zones',
-	},
+
 	{
 		label: 'AI recommended travel destinations',
 		icon: MdOutlineDataExploration,

@@ -47,13 +47,13 @@ const Router = () => {
 				<Route index element={<Navigate to="/countries" />} />
 				{/* <Route path="dashboard" element={<Dashboard />} /> */}
 
-				<Route path="rooms" element={<RoomListPage />} />
-				<Route path="rooms/create" element={<RoomDetailPage />} />
-				<Route path="rooms/:id" element={<RoomDetailPage />} />
+				<Route path="static-data/rooms" element={<RoomListPage />} />
+				<Route path="static-data/rooms/create" element={<RoomDetailPage />} />
+				<Route path="static-data/rooms/:id" element={<RoomDetailPage />} />
 
-				<Route path="zones" element={<ZoneListPage />} />
-				<Route path="zones/create" element={<ZoneDetailPage />} />
-				<Route path="zones/:id" element={<ZoneDetailPage />} />
+				<Route path="static-data/zones" element={<ZoneListPage />} />
+				<Route path="static-data/zones/create" element={<ZoneDetailPage />} />
+				<Route path="static-data/zones/:id" element={<ZoneDetailPage />} />
 
 				<Route
 					path="target/down-target-destinations"
@@ -140,18 +140,32 @@ const Router = () => {
 					element={<Navigate to="/promotions/locations" />}
 				/>
 
-				<Route path="countries" element={<CountriesListPage />} />
-				<Route path="countries/create" element={<CountryDetailPage />} />
-				<Route path="countries/:id" element={<CountryDetailPage />} />
-
-				<Route path="hotel-portfolios" element={<HotelPortfoliosListPage />} />
+				<Route path="static-data/countries" element={<CountriesListPage />} />
 				<Route
-					path="hotel-portfolios/create"
+					path="static-data/countries/create"
+					element={<CountryDetailPage />}
+				/>
+				<Route
+					path="static-data/countries/:id"
+					element={<CountryDetailPage />}
+				/>
+
+				<Route
+					path="static-data/hotel-portfolios"
+					element={<HotelPortfoliosListPage />}
+				/>
+				<Route
+					path="static-data/hotel-portfolios/create"
 					element={<HotelPortfoliosDetailPage />}
 				/>
 				<Route
-					path="hotel-portfolios/:id"
+					path="static-data/hotel-portfolios/:id"
 					element={<HotelPortfoliosDetailPage />}
+				/>
+
+				<Route
+					path="static-data"
+					element={<Navigate to="/static-data/hotel-portfolios" />}
 				/>
 
 				<Route path="dashboard" element={<Dashboard />} />
