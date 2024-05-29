@@ -401,21 +401,21 @@ const DestinationDetailPage = () => {
 																	?.address_string
 															}
 														</p>
-														{/* <Button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setSelectedRestaurant({
-                                  ...item?.locationDetails,
-                                  ...item?.nearbyPlace,
-                                  images: item?.photos
-                                })
-                              }}
-                              variant='outline'
-                              mt={5}
-                              w='100%'
-                            >
+														<Button
+															onClick={(e) => {
+																e.stopPropagation();
+																setSelectedRestaurant({
+																	...item?.locationDetails,
+																	...item?.nearbyPlace,
+																	images: item?.photos,
+																});
+															}}
+															variant="outline"
+															mt={5}
+															w="100%"
+														>
                               Show more
-                            </Button> */}
+														</Button>
 													</div>
 												</div>
 											),
@@ -458,38 +458,36 @@ const DestinationDetailPage = () => {
 					</PageCardForm>
 				</PageCard>
 			</Page>
-			{/* <RestaurantModal
-        isOpen={!!selectedRestaurant}
-        onClose={() => setSelectedRestaurant(null)}
-        locationId={selectedRestaurant?.location_id}
-        title={selectedRestaurant?.name}
-        rating={selectedRestaurant?.rating}
-        reviewsCount={selectedRestaurant?.num_reviews}
-        address={selectedRestaurant?.address_obj?.address_string}
-        overallRate={selectedRestaurant?.ranking_data?.ranking_string}
-        phone={selectedRestaurant?.phone}
-        cuisines={selectedRestaurant?.cuisine
-          ?.map((cus) => cus?.localized_name)
-          .join(',')}
-        openTime={selectedRestaurant?.hours?.periods?.[0]?.open?.time?.replace(
-          '00',
-          ':00'
-        )}
-        rateFood={Object.values(selectedRestaurant?.subratings || {})?.find(
-          (el) => el?.name === 'rate_food'
-        )}
-        rateService={Object.values(selectedRestaurant?.subratings || {})?.find(
-          (el) => el?.name === 'rate_service'
-        )}
-        rateValue={Object.values(selectedRestaurant?.subratings || {})?.find(
-          (el) => el?.name === 'rate_value'
-        )}
-        images={[
-          ...(selectedRestaurant?.images || [])?.map(
-            (image) => image?.images?.original?.url
-          )
-        ]}
-      /> */}
+			<RestaurantModal
+				isOpen={!!selectedRestaurant}
+				onClose={() => setSelectedRestaurant(null)}
+				locationId={selectedRestaurant?.location_id}
+				title={selectedRestaurant?.name}
+				rating={selectedRestaurant?.rating}
+				reviewsCount={selectedRestaurant?.num_reviews}
+				address={selectedRestaurant?.address_obj?.address_string}
+				overallRate={selectedRestaurant?.ranking_data?.ranking_string}
+				phone={selectedRestaurant?.phone}
+				cuisines={selectedRestaurant?.cuisine
+					?.map((cus) => cus?.localized_name)
+					.join(',')}
+				openTime={selectedRestaurant?.hours?.periods?.[0]?.open?.time?.replace(
+					'00',
+					':00',
+				)}
+				rateFood={Object.values(selectedRestaurant?.subratings || {})?.find(
+					(el) => el?.name === 'rate_food',
+				)}
+				rateService={Object.values(selectedRestaurant?.subratings || {})?.find(
+					(el) => el?.name === 'rate_service',
+				)}
+				rateValue={Object.values(selectedRestaurant?.subratings || {})?.find(
+					(el) => el?.name === 'rate_value',
+				)}
+				images={(selectedRestaurant?.images || [])
+					?.filter((image) => !!image?.images?.original?.url)
+					?.map((image) => image.images.original.url)}
+			/>
 		</form>
 	);
 };
