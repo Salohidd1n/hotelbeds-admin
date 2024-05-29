@@ -78,7 +78,7 @@ const RecommendedDestinationListPage = () => {
 			width: 80,
 			render: (_, row, index) => (
 				<Image
-					src={row?.header[0]?.headerImageURL}
+					src={row?.header[0]?.headerImageURL?.mobile}
 					w="100%"
 					h="100%"
 					objectFit="cover"

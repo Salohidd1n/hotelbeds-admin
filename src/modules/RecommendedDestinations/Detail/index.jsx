@@ -1,4 +1,11 @@
-import { Button, Flex, Grid, Heading, IconButton } from '@chakra-ui/react';
+import {
+	Button,
+	Flex,
+	Grid,
+	GridItem,
+	Heading,
+	IconButton,
+} from '@chakra-ui/react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
@@ -254,13 +261,31 @@ const RecommendedDestionationDetailPage = () => {
 											required
 										/>
 									</FormRow>
-									<FormRow label="Image:" required>
-										<ImageUpload
-											control={control}
-											name={`header[${index}].headerImageURL`}
-											required
-										/>
-									</FormRow>
+									<GridItem colSpan={2}>
+										<Grid templateColumns="repeat(3, 1fr)">
+											<FormRow label="Browser Image:" required>
+												<ImageUpload
+													control={control}
+													name={`header[${index}].headerImageURL.browser`}
+													required
+												/>
+											</FormRow>
+											<FormRow label="Tablet Image:" required>
+												<ImageUpload
+													control={control}
+													name={`header[${index}].headerImageURL.tablet`}
+													required
+												/>
+											</FormRow>
+											<FormRow label="Mobile Image:" required>
+												<ImageUpload
+													control={control}
+													name={`header[${index}].headerImageURL.mobile`}
+													required
+												/>
+											</FormRow>
+										</Grid>
+									</GridItem>
 								</Grid>
 								{fields.length > 1 && (
 									<IconButton
