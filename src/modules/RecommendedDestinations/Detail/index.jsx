@@ -38,6 +38,7 @@ import {
 	useRecommendedDestinationsUpdate,
 } from 'services/recommended-destination.service';
 import { useGetLocations } from 'services/location.service';
+import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 
 const initialHeader = {
 	en_headerTitle: '',
@@ -81,7 +82,7 @@ const RecommendedDestionationDetailPage = () => {
 			},
 		},
 	});
-	const { control, reset, handleSubmit } = useForm({
+	const { control, reset, handleSubmit, watch } = useForm({
 		defaultValues: {
 			header: [
 				{
@@ -223,10 +224,17 @@ const RecommendedDestionationDetailPage = () => {
 
 					<PageCardForm p={6} spacing={8}>
 						{fields.map((_, index) => (
-							<Flex gap={2} key={index + 'banner'}>
+							<Flex
+								gap={2}
+								key={index + 'banner'}
+								borderBottom={
+									index === fields.length - 1 ? '' : '1px solid #E2E8F0'
+								}
+								pb={index === fields.length - 1 ? 0 : 10}
+							>
 								<Grid
 									w="calc(100% - 50px)"
-									templateColumns="repeat(3, 1fr)"
+									templateColumns="repeat(4, 1fr)"
 									gap={6}
 								>
 									<FormRow label="Title (EN):" required>
@@ -259,6 +267,20 @@ const RecommendedDestionationDetailPage = () => {
 											name={`header[${index}].kr_hederContent`}
 											placeholder="Enter content"
 											required
+										/>
+									</FormRow>
+									<FormRow label="Order:" required>
+										<FormNumberInput
+											control={control}
+											name={`header[${index}].order`}
+											placeholder="Enter order"
+											required
+										/>
+									</FormRow>
+									<FormRow label="Active:">
+										<FormSwitch
+											control={control}
+											name={`header[${index}].is_active`}
 										/>
 									</FormRow>
 									<GridItem colSpan={2}>
@@ -319,7 +341,16 @@ const RecommendedDestionationDetailPage = () => {
 
 					<PageCardForm p={6} spacing={8}>
 						{groupDestinations.map((_, index) => (
-							<Flex gap={2} key={index + 'groupDestinations'}>
+							<Flex
+								gap={2}
+								key={index + 'groupDestinations'}
+								borderBottom={
+									index === groupDestinations.length - 1
+										? ''
+										: '1px solid #E2E8F0'
+								}
+								pb={index === groupDestinations.length - 1 ? 0 : 10}
+							>
 								<Grid
 									w="calc(100% - 50px)"
 									templateColumns="repeat(3, 1fr)"
@@ -381,6 +412,12 @@ const RecommendedDestionationDetailPage = () => {
 											required
 										/>
 									</FormRow>
+									<FormRow label="Active:">
+										<FormSwitch
+											control={control}
+											name={`groupDestination[${index}].is_active`}
+										/>
+									</FormRow>
 									<FormRow label="Image:" required>
 										<ImageUpload
 											control={control}
@@ -424,7 +461,7 @@ const RecommendedDestionationDetailPage = () => {
 							<Flex key={index + 'popularHotels'} gap={2}>
 								<Grid
 									w="calc(100% - 50px)"
-									templateColumns="repeat(3, 1fr)"
+									templateColumns="repeat(5, 1fr)"
 									gap={6}
 								>
 									<FormRow label="JP Code:" required>
@@ -432,6 +469,14 @@ const RecommendedDestionationDetailPage = () => {
 											control={control}
 											name={`popular[${index}].JPCode`}
 											placeholder="Enter JPCode"
+											required
+										/>
+									</FormRow>
+									<FormRow label="Order:" required>
+										<FormNumberInput
+											control={control}
+											name={`popular[${index}].order`}
+											placeholder="Enter order"
 											required
 										/>
 									</FormRow>
@@ -451,7 +496,14 @@ const RecommendedDestionationDetailPage = () => {
 											required
 										/>
 									</FormRow>
+									<FormRow label="Active:">
+										<FormSwitch
+											control={control}
+											name={`popular[${index}].is_active`}
+										/>
+									</FormRow>
 								</Grid>
+
 								{popularHotels.length > 1 && (
 									<IconButton
 										onClick={() => popularHotelsRemove(index)}

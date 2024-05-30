@@ -1,5 +1,5 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Box, Button, IconButton, Image } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Image, Switch } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DataTable from '../../../components/DataTable';
@@ -16,7 +16,12 @@ import styles from './index.module.scss';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
-import { useGetLocations, useLocationsDelete } from 'services/location.service';
+import {
+	useGetLocations,
+	useLocationsDelete,
+	useLocationsUpdate,
+} from 'services/location.service';
+import useCustomToast from 'hooks/useCustomToast';
 
 const LocationListPage = () => {
 	const navigate = useNavigate();
@@ -25,6 +30,7 @@ const LocationListPage = () => {
 	const [page, setPage] = useState(1);
 	const [deletableItem, setDeletableItem] = useState(false);
 	const [term, setTerm] = useState();
+	const { successToast } = useCustomToast();
 	const { data, isLoading, refetch } = useGetLocations({
 		params: {
 			page,
@@ -44,6 +50,14 @@ const LocationListPage = () => {
 		},
 	});
 
+	const { mutate: updateLocation, isLoading: updateLoading } =
+    useLocationsUpdate({
+    	onSuccess: () => {
+    		refetch();
+    		successToast();
+    	},
+    });
+
 	const navigateToCreatePage = () => {
 		navigate(`${pathname}/create`);
 	};
@@ -59,6 +73,16 @@ const LocationListPage = () => {
 	const onDeleteClick = (e, row) => {
 		e.stopPropagation();
 		deleteZones(row.id);
+	};
+
+	const onChangeStatus = (row, event) => {
+		updateLocation({
+			id: row.id,
+			data: {
+				...row,
+				is_active: event.target.checked,
+			},
+		});
 	};
 
 	const columns = [
@@ -84,7 +108,20 @@ const LocationListPage = () => {
 			title: 'KR title',
 			dataIndex: 'kr_title',
 		},
-
+		{
+			title: 'Active',
+			width: 150,
+			render: (_, row) => {
+				return (
+					<Flex justifyContent="center" onClick={(e) => e.stopPropagation()}>
+						<Switch
+							onChange={(value) => onChangeStatus(row, value)}
+							isChecked={row.is_active}
+						/>
+					</Flex>
+				);
+			},
+		},
 		{
 			title: '',
 			width: 50,
@@ -148,7 +185,9 @@ const LocationListPage = () => {
 									current: page,
 								}}
 								onRow={(row, index) => ({
-									onClick: () => navigateToEditPage(row.id),
+									onClick: () => {
+										navigateToEditPage(row.id);
+									},
 								})}
 								className={styles.table}
 							/>

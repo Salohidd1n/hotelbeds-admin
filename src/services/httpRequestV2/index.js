@@ -12,36 +12,36 @@ const errorHandler = (error, hooks) => {
 	//     authStore.logout()
 	//   }
 
-	// if (error?.response) {
-	// 	if (error.response?.data?.data) {
-	// 		standaloneToast({
-	// 			title: `REQUEST FAILED (${error.response.status})`,
-	// 			description: JSON.stringify(error.response.data.data),
-	// 			status: 'error',
-	// 			duration: 3000,
-	// 			isClosable: true,
-	// 			position: 'top-right',
-	// 		});
-	// 	} else {
-	// 		standaloneToast({
-	// 			title: 'REQUEST FAILED',
-	// 			// description: `Status code: ${error.response.status}`,
-	// 			status: 'error',
-	// 			duration: 3000,
-	// 			isClosable: true,
-	// 			position: 'top-right',
-	// 		});
-	// 	}
-	// } else {
-	// 	standaloneToast({
-	// 		title: 'REQUEST FAILED',
-	// 		description: '',
-	// 		status: 'error',
-	// 		duration: 3000,
-	// 		isClosable: true,
-	// 		position: 'top-right',
-	// 	});
-	// }
+	if (error?.response) {
+		if (error.response?.data) {
+			standaloneToast({
+				title: `REQUEST FAILED (${error.response.status})`,
+				description: JSON.stringify(error.response.data.message),
+				status: 'error',
+				duration: 3000,
+				isClosable: true,
+				position: 'top-right',
+			});
+		} else {
+			standaloneToast({
+				title: 'REQUEST FAILED',
+				// description: `Status code: ${error.response.status}`,
+				status: 'error',
+				duration: 3000,
+				isClosable: true,
+				position: 'top-right',
+			});
+		}
+	} else {
+		standaloneToast({
+			title: 'REQUEST FAILED',
+			description: '',
+			status: 'error',
+			duration: 3000,
+			isClosable: true,
+			position: 'top-right',
+		});
+	}
 
 	return Promise.reject(error.response);
 };
