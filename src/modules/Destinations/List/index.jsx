@@ -77,7 +77,7 @@ const DestinationListPage = () => {
 	const getRecommendedDestinationTitleById = (id) => {
 		const title = recommendedDestinations?.data?.data?.results?.find(
 			(item) => item._id === id,
-		)?.header[0]?.kr_headerTitle;
+		)?.header[0]?.en_headerTitle;
 		return title || '';
 	};
 
@@ -91,7 +91,7 @@ const DestinationListPage = () => {
 		},
 		{
 			title: 'Location',
-			render: (_, row) => row?.parent?.locationId.kr_title,
+			render: (_, row) => row?.parent?.locationId.en_title,
 		},
 		{
 			title: 'Recommended Destination',
