@@ -14,15 +14,14 @@ const uniqueLocations = (locations) =>
 
 export default function useRestaurants({ hotels, onChangeNearbyHotels }) {
 	const [isLoading, setIsLoading] = useState(false);
+
 	useEffect(() => {
 		const getRestaurants = async () => {
 			setIsLoading(true);
 			const hotel = hotels[0];
 			const nearbyPlaces = await tripAdvisorServices.getNearbyPlaces({
 				category: 'restaurants',
-				latLong: [hotel?.HotelInfo.Latitude, hotel?.HotelInfo.Longitude].join(
-					',',
-				),
+				latLong: [hotel?.source?.Latitude, hotel?.source?.Longitude].join(','),
 			});
 
 			const restaurants = await Promise.all(
@@ -44,7 +43,7 @@ export default function useRestaurants({ hotels, onChangeNearbyHotels }) {
 			);
 
 			onChangeNearbyHotels(
-				hotel.attributes.JPCode,
+				hotel?.source?.attributes?.JPCode,
 				uniqueLocations(restaurants),
 			);
 
