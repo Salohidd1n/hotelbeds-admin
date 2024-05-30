@@ -20,6 +20,7 @@ import {
 	useDestinationsDelete,
 	useGetDestinations,
 } from 'services/destination.service';
+import { useGetRecommendedDestinations } from 'services/recommended-destination.service';
 
 const DestinationListPage = () => {
 	const navigate = useNavigate();
@@ -66,6 +67,20 @@ const DestinationListPage = () => {
 		deleteZones(row._id);
 	};
 
+	const recommendedDestinations = useGetRecommendedDestinations({
+		params: {
+			page: 1,
+			limit: 1000,
+		},
+	});
+
+	const getRecommendedDestinationTitleById = (id) => {
+		const title = recommendedDestinations?.data?.data?.results?.find(
+			(item) => item._id === id,
+		)?.header[0]?.kr_headerTitle;
+		return title || '';
+	};
+
 	const columns = [
 		{
 			title: 'No',
@@ -73,6 +88,25 @@ const DestinationListPage = () => {
 			textAlign: 'center',
 			align: 'center',
 			render: (_, __, index) => (page - 1) * pageSize + index + 1,
+		},
+		{
+			title: 'Location',
+			render: (_, row) => row?.parent?.locationId.kr_title,
+		},
+		{
+			title: 'Recommended Destination',
+			render: (_, row) =>
+				getRecommendedDestinationTitleById(
+					row?.parent?.recommendedDestinationId,
+				),
+		},
+		{
+			title: 'EN title',
+			render: (_, row) => row?.header?.en_title,
+		},
+		{
+			title: 'KR title',
+			render: (_, row) => row?.header?.kr_title,
 		},
 		{
 			title: 'Image',
@@ -87,26 +121,10 @@ const DestinationListPage = () => {
 			),
 		},
 		{
-			title: 'EN title',
-			render: (_, row, index) => row?.header?.en_title,
-		},
-		{
-			title: 'KR title',
-			render: (_, row, index) => row?.header?.kr_title,
-		},
-		{
-			title: 'EN content',
-			render: (_, row, index) => row?.header?.en_content,
-		},
-		{
-			title: 'KR content',
-			render: (_, row, index) => row?.header?.kr_content,
-		},
-		{
 			title: '',
 			width: 50,
 			align: 'center',
-			render: (_, row, index) => (
+			render: (_, row) => (
 				<IconButton
 					onClick={(e) => {
 						e.stopPropagation();
