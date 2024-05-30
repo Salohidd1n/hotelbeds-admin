@@ -33,6 +33,7 @@ const DestinationListPage = () => {
 			page,
 			limit: pageSize,
 			search: term,
+			populate: 'locationId,groupDestinationId',
 		},
 	});
 
@@ -62,7 +63,7 @@ const DestinationListPage = () => {
 
 	const onDeleteClick = (e, row) => {
 		e.stopPropagation();
-		deleteZones(row.id);
+		deleteZones(row._id);
 	};
 
 	const columns = [
@@ -164,7 +165,7 @@ const DestinationListPage = () => {
 									current: page,
 								}}
 								onRow={(row, index) => ({
-									onClick: () => navigateToEditPage(row.id),
+									onClick: () => navigateToEditPage(row._id),
 								})}
 								className={styles.table}
 							/>

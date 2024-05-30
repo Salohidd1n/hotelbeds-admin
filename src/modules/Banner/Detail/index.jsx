@@ -20,8 +20,6 @@ import PageCard, {
 import ProfileMenu from '../../../components/ProfileMenu';
 import useCustomToast from '../../../hooks/useCustomToast';
 import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
-
-import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import FormImageUpload from 'components/FormElements/ImageUpload/FormImageUpload';
 import FormTextarea from 'components/FormElements/Input/FormTextarea';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
@@ -36,7 +34,14 @@ const BannerDetailPage = () => {
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
 
-	const { control, reset, handleSubmit } = useForm();
+	const { control, reset, handleSubmit } = useForm({
+		defaultValues: {
+			is_active: true,
+			link_button: {
+				is_active: true,
+			},
+		},
+	});
 
 	const { isLoading } = useGetBannerById({
 		id,
@@ -121,7 +126,6 @@ const BannerDetailPage = () => {
 									required
 								/>
 							</FormRow>
-
 							<FormRow label="Order:" required>
 								<FormNumberInput
 									control={control}
@@ -129,6 +133,9 @@ const BannerDetailPage = () => {
 									placeholder="Enter order"
 									required
 								/>
+							</FormRow>
+							<FormRow label="Active:">
+								<FormSwitch control={control} name="is_active" />
 							</FormRow>
 							<Grid templateColumns="repeat(3, 1fr)" gap={6}>
 								<FormRow label="Browser Image:" required>

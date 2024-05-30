@@ -33,7 +33,11 @@ const LocationDetailPage = () => {
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
 
-	const { control, reset, handleSubmit } = useForm();
+	const { control, reset, handleSubmit } = useForm({
+		defaultValues: {
+			is_active: true,
+		},
+	});
 
 	const { isLoading } = useGetLocationsById({
 		id,

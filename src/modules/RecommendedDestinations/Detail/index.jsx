@@ -45,6 +45,7 @@ const initialHeader = {
 	kr_headerTitle: '',
 	en_hederContent: '',
 	kr_hederContent: '',
+	is_active: true,
 };
 
 const initialGroupDestination = {
@@ -54,10 +55,12 @@ const initialGroupDestination = {
 	kr_address: '',
 	en_content: '',
 	kr_content: '',
+	is_active: true,
 };
 
 const initialPopularHotels = {
 	JPCode: '',
+	is_active: true,
 	tripadvisorReview: {
 		rayting: undefined,
 		reviews: undefined,
