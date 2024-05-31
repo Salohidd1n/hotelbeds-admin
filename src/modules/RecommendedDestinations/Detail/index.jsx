@@ -181,8 +181,6 @@ const RecommendedDestionationDetailPage = () => {
     	},
     });
 
-	console.log('groupDestinations', groupDestinations);
-
 	if (isLoading) return <SimpleLoader h="100vh" />;
 
 	return (
@@ -360,106 +358,104 @@ const RecommendedDestionationDetailPage = () => {
 					</PageCardHeader>
 
 					<PageCardForm p={6} spacing={8}>
-						{groupDestinations
-							.sort((a, b) => a.order - b.order)
-							.map((_, index) => (
-								<Flex
-									gap={2}
-									key={index + 'groupDestinations'}
-									borderBottom={
-										index === groupDestinations.length - 1
-											? ''
-											: '1px solid #E2E8F0'
-									}
-									pb={index === groupDestinations.length - 1 ? 0 : 10}
+						{groupDestinations.map((_, index) => (
+							<Flex
+								gap={2}
+								key={index + 'groupDestinations'}
+								borderBottom={
+									index === groupDestinations.length - 1
+										? ''
+										: '1px solid #E2E8F0'
+								}
+								pb={index === groupDestinations.length - 1 ? 0 : 10}
+							>
+								<Grid
+									w="calc(100% - 50px)"
+									templateColumns="repeat(3, 1fr)"
+									gap={6}
 								>
-									<Grid
-										w="calc(100% - 50px)"
-										templateColumns="repeat(3, 1fr)"
-										gap={6}
+									<FormRow label="Title (EN):" required>
+										<FormInput
+											control={control}
+											name={`groupDestination[${index}].en_title`}
+											placeholder="Enter title"
+											required
+										/>
+									</FormRow>
+									<FormRow label="Title (KR):" required>
+										<FormInput
+											control={control}
+											name={`groupDestination[${index}].kr_title`}
+											placeholder="Enter title"
+											required
+										/>
+									</FormRow>
+									<FormRow label="Address (EN):" required>
+										<FormInput
+											control={control}
+											name={`groupDestination[${index}].en_address`}
+											placeholder="Enter address"
+											required
+										/>
+									</FormRow>
+									<FormRow label="Address (KR):" required>
+										<FormInput
+											control={control}
+											name={`groupDestination[${index}].kr_address`}
+											placeholder="Enter address"
+											required
+										/>
+									</FormRow>
+									<FormRow label="Content (EN):" required>
+										<FormTextarea
+											control={control}
+											name={`groupDestination[${index}].en_content`}
+											placeholder="Enter content"
+											required
+										/>
+									</FormRow>
+									<FormRow label="Content (KR):" required>
+										<FormTextarea
+											control={control}
+											name={`groupDestination[${index}].kr_content`}
+											placeholder="Enter content"
+											required
+										/>
+									</FormRow>
+									<FormRow label="Order:" required>
+										<FormNumberInput
+											control={control}
+											name={`groupDestination[${index}].order`}
+											placeholder="Enter order"
+											required
+										/>
+									</FormRow>
+									<FormRow label="Active:">
+										<FormSwitch
+											control={control}
+											name={`groupDestination[${index}].is_active`}
+										/>
+									</FormRow>
+									<FormRow label="Image:" required>
+										<ImageUpload
+											control={control}
+											name={`groupDestination[${index}].imageURL`}
+											required
+										/>
+									</FormRow>
+								</Grid>
+								{groupDestinations.length > 1 && (
+									<IconButton
+										onClick={() => groupDestinationsRemove(index)}
+										mt={8}
+										colorScheme="red"
+										variant="outline"
 									>
-										<FormRow label="Title (EN):" required>
-											<FormInput
-												control={control}
-												name={`groupDestination[${index}].en_title`}
-												placeholder="Enter title"
-												required
-											/>
-										</FormRow>
-										<FormRow label="Title (KR):" required>
-											<FormInput
-												control={control}
-												name={`groupDestination[${index}].kr_title`}
-												placeholder="Enter title"
-												required
-											/>
-										</FormRow>
-										<FormRow label="Address (EN):" required>
-											<FormInput
-												control={control}
-												name={`groupDestination[${index}].en_address`}
-												placeholder="Enter address"
-												required
-											/>
-										</FormRow>
-										<FormRow label="Address (KR):" required>
-											<FormInput
-												control={control}
-												name={`groupDestination[${index}].kr_address`}
-												placeholder="Enter address"
-												required
-											/>
-										</FormRow>
-										<FormRow label="Content (EN):" required>
-											<FormTextarea
-												control={control}
-												name={`groupDestination[${index}].en_content`}
-												placeholder="Enter content"
-												required
-											/>
-										</FormRow>
-										<FormRow label="Content (KR):" required>
-											<FormTextarea
-												control={control}
-												name={`groupDestination[${index}].kr_content`}
-												placeholder="Enter content"
-												required
-											/>
-										</FormRow>
-										<FormRow label="Order:" required>
-											<FormNumberInput
-												control={control}
-												name={`groupDestination[${index}].order`}
-												placeholder="Enter order"
-												required
-											/>
-										</FormRow>
-										<FormRow label="Active:">
-											<FormSwitch
-												control={control}
-												name={`groupDestination[${index}].is_active`}
-											/>
-										</FormRow>
-										<FormRow label="Image:" required>
-											<ImageUpload
-												control={control}
-												name={`groupDestination[${index}].imageURL`}
-												required
-											/>
-										</FormRow>
-									</Grid>
-									{groupDestinations.length > 1 && (
-										<IconButton
-											onClick={() => groupDestinationsRemove(index)}
-											mt={8}
-											colorScheme="red"
-											variant="outline"
-										>
-											<DeleteIcon />
-										</IconButton>
-									)}
-								</Flex>
-							))}
+										<DeleteIcon />
+									</IconButton>
+								)}
+							</Flex>
+						))}
 					</PageCardForm>
 				</PageCard>
 				<PageCard mt={4} w="100%">

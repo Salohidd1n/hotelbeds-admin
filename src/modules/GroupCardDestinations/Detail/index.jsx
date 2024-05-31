@@ -37,6 +37,7 @@ import {
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 import useHotelAction from 'hooks/useHotelAction';
+import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 
 const GroupCardDestinationsDetailPage = () => {
 	const navigate = useNavigate();
@@ -185,6 +186,9 @@ const GroupCardDestinationsDetailPage = () => {
 									placeholder="Enter order"
 									required
 								/>
+							</FormRow>
+							<FormRow label="Active:">
+								<FormSwitch control={control} name="is_active" />
 							</FormRow>
 							<FormRow label="Image:" required>
 								<FormImageUpload control={control} name="imageURL" required />
