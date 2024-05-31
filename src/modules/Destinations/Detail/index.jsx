@@ -1,4 +1,13 @@
-import { Button, Flex, Grid, Heading, IconButton } from '@chakra-ui/react';
+import {
+	Button,
+	Checkbox,
+	Flex,
+	Grid,
+	Heading,
+	IconButton,
+	Input,
+	Text,
+} from '@chakra-ui/react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
@@ -36,6 +45,8 @@ import { IoIosRestaurant } from 'react-icons/io';
 import styles from './index.module.scss';
 import classNames from 'classnames';
 import { RestaurantModal } from '../components/RestaurantModal';
+import useHotelAction from 'hooks/useHotelAction';
+import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 
 const initialHearbyHotes = {
 	JPCode: '',
@@ -67,7 +78,7 @@ const DestinationDetailPage = () => {
 
 	const { control, reset, handleSubmit, watch, setValue } = useForm({
 		defaultValues: {
-			nearbyHotes: [initialHearbyHotes],
+			nearbyHotes: [],
 		},
 	});
 
@@ -180,6 +191,20 @@ const DestinationDetailPage = () => {
 			});
 		}
 	};
+
+	const hotelCodes = useWatch({
+		control,
+		name: 'nearbyHotes',
+	});
+
+	const { onDelete, onSelectAll, selectedHotels, uploadFile, fileRef } =
+    useHotelAction({
+    	hotelCodes,
+    	onChange: (value) => setValue('nearbyHotes', value),
+    	initialFields: {
+    		restaurant: [],
+    	},
+    });
 
 	if (isLoading) return <SimpleLoader h="100vh" />;
 
@@ -318,9 +343,49 @@ const DestinationDetailPage = () => {
 				<PageCard mt={4} w="100%">
 					<PageCardHeader>
 						<HeaderLeftSide>
-							<Heading fontSize="xl">Hearby Hotels</Heading>
+							{hotelCodes.length > 0 ? (
+								<Flex gap={4}>
+									<Checkbox
+										size="lg"
+										onChange={onSelectAll}
+										isChecked={selectedHotels.length === hotelCodes.length}
+									/>
+									<Text fontWeight="500" fontSize="14px">
+                    Select all hotels
+									</Text>
+								</Flex>
+							) : (
+								<Heading fontSize="xl">Hearby Hotels</Heading>
+							)}
 						</HeaderLeftSide>
 						<HeaderExtraSide>
+							{selectedHotels.length > 0 && (
+								<Button
+									leftIcon={<DeleteIcon />}
+									variant="outline"
+									colorScheme="red"
+									onClick={onDelete}
+								>
+                  Delete
+								</Button>
+							)}
+							<Button
+								bgColor="primary.main"
+								onClick={() => fileRef.current.click()}
+								position="relative"
+							>
+								<Input
+									type="file"
+									onChange={uploadFile}
+									position="absolute"
+									w="0"
+									h="0"
+									borderColor="transparent"
+									ref={fileRef}
+									zIndex="-1"
+								/>
+                Upload File
+							</Button>
 							<Button
 								onClick={() => nearbyHotesAppend(initialHearbyHotes)}
 								bgColor="primary.main"
@@ -332,9 +397,15 @@ const DestinationDetailPage = () => {
 					</PageCardHeader>
 
 					<PageCardForm p={6} spacing={8}>
-						{nearbyHotes.map((_, index) => (
-							<Flex key={index + 'initialHearbyHotes'} gap={2}>
-								<Flex w="92%" flexDirection="column">
+						{nearbyHotes.map((item, index) => (
+							<Flex key={item.id} gap={2} alignItems="flex-start">
+								<FormCheckbox
+									control={control}
+									name={`nearbyHotes[${index}].checked`}
+									size="lg"
+									mt={10}
+								/>
+								<Flex w="96%" flexDirection="column">
 									<Grid w="100%" templateColumns="repeat(4, 1fr)" gap={6}>
 										<FormRow label="JP Code:" required>
 											<FormInput
@@ -443,15 +514,6 @@ const DestinationDetailPage = () => {
 									>
 										<IoIosRestaurant size="18" />
 									</IconButton>
-									{nearbyHotes.length > 1 && (
-										<IconButton
-											onClick={() => nearbyHotesRemove(index)}
-											colorScheme="red"
-											variant="outline"
-										>
-											<DeleteIcon />
-										</IconButton>
-									)}
 								</Flex>
 							</Flex>
 						))}

@@ -1,5 +1,14 @@
-import { Button, Flex, Grid, Heading, IconButton } from '@chakra-ui/react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import {
+	Button,
+	Checkbox,
+	Flex,
+	Grid,
+	Heading,
+	IconButton,
+	Input,
+	Text,
+} from '@chakra-ui/react';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
 import FormRow from '../../../components/FormElements/FormRow';
@@ -26,23 +35,26 @@ import {
 	useGroupDestinationsUpdate,
 } from 'services/group-destinations.service';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
+import useHotelAction from 'hooks/useHotelAction';
 
 const GroupCardDestinationsDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
 
-	const { control, reset, handleSubmit } = useForm({
+	const { control, reset, handleSubmit, setValue } = useForm({
 		defaultValues: {
-			hotelCode: [
-				{
-					JPCode: '',
-				},
-			],
+			hotelCode: [],
 		},
 	});
 
-	const { fields, append, remove } = useFieldArray({
+	const { fields, append } = useFieldArray({
+		control,
+		name: 'hotelCode',
+	});
+
+	const hotelCodes = useWatch({
 		control,
 		name: 'hotelCode',
 	});
@@ -94,6 +106,12 @@ const GroupCardDestinationsDetailPage = () => {
 			});
 		}
 	};
+
+	const { onDelete, onSelectAll, selectedHotels, uploadFile, fileRef } =
+    useHotelAction({
+    	hotelCodes,
+    	onChange: (value) => setValue('hotelCode', value),
+    });
 
 	if (isLoading) return <SimpleLoader h="100vh" />;
 
@@ -176,9 +194,49 @@ const GroupCardDestinationsDetailPage = () => {
 					<PageCard w="50%">
 						<PageCardHeader>
 							<HeaderLeftSide>
-								<Heading fontSize="xl">Hotels</Heading>
+								{hotelCodes.length > 0 ? (
+									<Flex gap={4}>
+										<Checkbox
+											size="lg"
+											onChange={onSelectAll}
+											isChecked={selectedHotels.length === hotelCodes.length}
+										/>
+										<Text fontWeight="500" fontSize="14px">
+                      Select all hotels
+										</Text>
+									</Flex>
+								) : (
+									<Heading fontSize="xl">Hotels</Heading>
+								)}
 							</HeaderLeftSide>
 							<HeaderExtraSide>
+								{selectedHotels.length > 0 && (
+									<Button
+										leftIcon={<DeleteIcon />}
+										variant="outline"
+										colorScheme="red"
+										onClick={onDelete}
+									>
+                    Delete
+									</Button>
+								)}
+								<Button
+									bgColor="primary.main"
+									onClick={() => fileRef.current.click()}
+									position="relative"
+								>
+									<Input
+										type="file"
+										onChange={uploadFile}
+										position="absolute"
+										w="0"
+										h="0"
+										borderColor="transparent"
+										ref={fileRef}
+										zIndex="-1"
+									/>
+                  Upload File
+								</Button>
 								<Button
 									onClick={() =>
 										append({
@@ -195,8 +253,15 @@ const GroupCardDestinationsDetailPage = () => {
 
 						<PageCardForm p={6} spacing={8}>
 							<Grid templateColumns="repeat(2, 1fr)" gap={6}>
-								{fields.map((_, index) => (
-									<Flex key={index} gap={3}>
+								{fields.map((item, index) => (
+									<Flex alignItems="center" key={item.id} gap={3}>
+										<FormCheckbox
+											control={control}
+											name={`hotelCode[${index}].checked`}
+											size="lg"
+											mt="25px"
+										/>
+
 										<FormRow label="JP Code:" required>
 											<FormInput
 												control={control}
@@ -205,16 +270,16 @@ const GroupCardDestinationsDetailPage = () => {
 												required
 											/>
 										</FormRow>
-										{fields.length > 1 && (
-											<IconButton
-												onClick={() => remove(index)}
-												mt={8}
-												colorScheme="red"
-												variant="outline"
-											>
-												<DeleteIcon />
-											</IconButton>
-										)}
+										{/* {fields.length > 1 && (
+                      <IconButton
+                        onClick={() => remove(index)}
+                        mt={8}
+                        colorScheme='red'
+                        variant='outline'
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )} */}
 									</Flex>
 								))}
 							</Grid>

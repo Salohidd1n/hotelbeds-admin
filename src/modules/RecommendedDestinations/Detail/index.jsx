@@ -1,12 +1,15 @@
 import {
 	Button,
+	Checkbox,
 	Flex,
 	Grid,
 	GridItem,
 	Heading,
 	IconButton,
+	Input,
+	Text,
 } from '@chakra-ui/react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
 import FormRow from '../../../components/FormElements/FormRow';
@@ -39,6 +42,8 @@ import {
 } from 'services/recommended-destination.service';
 import { useGetLocations } from 'services/location.service';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
+import useHotelAction from 'hooks/useHotelAction';
+import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 
 const initialHeader = {
 	en_headerTitle: '',
@@ -85,7 +90,7 @@ const RecommendedDestionationDetailPage = () => {
 			},
 		},
 	});
-	const { control, reset, handleSubmit, watch } = useForm({
+	const { control, reset, handleSubmit, setValue } = useForm({
 		defaultValues: {
 			header: [
 				{
@@ -97,11 +102,7 @@ const RecommendedDestionationDetailPage = () => {
 					...initialGroupDestination,
 				},
 			],
-			popular: [
-				{
-					...initialPopularHotels,
-				},
-			],
+			popular: [],
 		},
 	});
 
@@ -165,6 +166,20 @@ const RecommendedDestionationDetailPage = () => {
 			});
 		}
 	};
+
+	const hotelCodes = useWatch({
+		control,
+		name: 'popular',
+	});
+
+	const { onDelete, onSelectAll, selectedHotels, uploadFile, fileRef } =
+    useHotelAction({
+    	hotelCodes,
+    	onChange: (value) => setValue('popular', value),
+    	initialFields: {
+    		is_active: true,
+    	},
+    });
 
 	if (isLoading) return <SimpleLoader h="100vh" />;
 
@@ -446,9 +461,49 @@ const RecommendedDestionationDetailPage = () => {
 				<PageCard mt={4} w="100%">
 					<PageCardHeader>
 						<HeaderLeftSide>
-							<Heading fontSize="xl">Popular Hotels</Heading>
+							{hotelCodes.length > 0 ? (
+								<Flex gap={4}>
+									<Checkbox
+										size="lg"
+										onChange={onSelectAll}
+										isChecked={selectedHotels.length === hotelCodes.length}
+									/>
+									<Text fontWeight="500" fontSize="14px">
+                    Select all hotels
+									</Text>
+								</Flex>
+							) : (
+								<Heading fontSize="xl">Popular Hotels</Heading>
+							)}
 						</HeaderLeftSide>
 						<HeaderExtraSide>
+							{selectedHotels.length > 0 && (
+								<Button
+									leftIcon={<DeleteIcon />}
+									variant="outline"
+									colorScheme="red"
+									onClick={onDelete}
+								>
+                  Delete
+								</Button>
+							)}
+							<Button
+								bgColor="primary.main"
+								onClick={() => fileRef.current.click()}
+								position="relative"
+							>
+								<Input
+									type="file"
+									onChange={uploadFile}
+									position="absolute"
+									w="0"
+									h="0"
+									borderColor="transparent"
+									ref={fileRef}
+									zIndex="-1"
+								/>
+                Upload File
+							</Button>
 							<Button
 								onClick={() => popularHotelsAppend(initialPopularHotels)}
 								bgColor="primary.main"
@@ -460,13 +515,15 @@ const RecommendedDestionationDetailPage = () => {
 					</PageCardHeader>
 
 					<PageCardForm p={6} spacing={8}>
-						{popularHotels.map((_, index) => (
-							<Flex key={index + 'popularHotels'} gap={2}>
-								<Grid
-									w="calc(100% - 50px)"
-									templateColumns="repeat(5, 1fr)"
-									gap={6}
-								>
+						{popularHotels.map((item, index) => (
+							<Flex key={item.id} gap={4}>
+								<FormCheckbox
+									control={control}
+									name={`popular[${index}].checked`}
+									size="lg"
+									mt="25px"
+								/>
+								<Grid w="100%" templateColumns="repeat(5, 1fr)" gap={6}>
 									<FormRow label="JP Code:" required>
 										<FormInput
 											control={control}
@@ -506,17 +563,6 @@ const RecommendedDestionationDetailPage = () => {
 										/>
 									</FormRow>
 								</Grid>
-
-								{popularHotels.length > 1 && (
-									<IconButton
-										onClick={() => popularHotelsRemove(index)}
-										mt={8}
-										colorScheme="red"
-										variant="outline"
-									>
-										<DeleteIcon />
-									</IconButton>
-								)}
 							</Flex>
 						))}
 					</PageCardForm>
