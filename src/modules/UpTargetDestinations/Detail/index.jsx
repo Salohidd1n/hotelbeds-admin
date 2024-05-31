@@ -37,6 +37,7 @@ import {
 } from 'services/up-target-destinations.service';
 import useHotelAction from 'hooks/useHotelAction';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
+import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 
 const UpTargetDestinationDetailPage = () => {
 	const navigate = useNavigate();
@@ -180,6 +181,9 @@ const UpTargetDestinationDetailPage = () => {
 									placeholder="Enter reviews count"
 									required
 								/>
+							</FormRow>
+							<FormRow label="Active:">
+								<FormSwitch control={control} name="is_active" />
 							</FormRow>
 						</PageCardForm>
 					</PageCard>

@@ -37,6 +37,7 @@ import {
 } from 'services/down-target-destinations.service';
 import useHotelAction from 'hooks/useHotelAction';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
+import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 
 const DownTargetDestinationDetailPage = () => {
 	const navigate = useNavigate();
@@ -178,6 +179,9 @@ const DownTargetDestinationDetailPage = () => {
 									placeholder="Enter reviews count"
 									required
 								/>
+							</FormRow>
+							<FormRow label="Active:">
+								<FormSwitch control={control} name="is_active" />
 							</FormRow>
 						</PageCardForm>
 					</PageCard>
