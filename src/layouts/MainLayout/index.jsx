@@ -21,6 +21,7 @@ import { Outlet } from 'react-router-dom';
 import { MdOutlineDataExploration } from 'react-icons/md';
 import { GiTriangleTarget } from 'react-icons/gi';
 import { MdDataArray } from 'react-icons/md';
+import { AiFillDatabase } from 'react-icons/ai';
 
 const elements = [
 	// {
@@ -55,7 +56,11 @@ const elements = [
 			},
 		],
 	},
-
+	{
+		label: 'Banner',
+		icon: AiFillDatabase,
+		link: '/banner',
+	},
 	{
 		label: 'AI recommended travel destinations',
 		icon: MdOutlineDataExploration,
@@ -83,11 +88,6 @@ const elements = [
 		icon: GiTriangleTarget,
 		link: '/target',
 		children: [
-			{
-				label: 'Banner',
-				icon: MdModeOfTravel,
-				link: '/target/banner',
-			},
 			{
 				label: 'Recommended hotels for summer travel',
 				icon: MdModeOfTravel,

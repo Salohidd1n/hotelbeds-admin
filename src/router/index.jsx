@@ -57,9 +57,9 @@ const Router = () => {
 				<Route path="static-data/zones/create" element={<ZoneDetailPage />} />
 				<Route path="static-data/zones/:id" element={<ZoneDetailPage />} />
 
-				<Route path="target/banner" element={<BannerListPage />} />
-				<Route path="target/banner/create" element={<BannerDetailPage />} />
-				<Route path="target/banner/:id" element={<BannerDetailPage />} />
+				<Route path="banner" element={<BannerListPage />} />
+				<Route path="banner/create" element={<BannerDetailPage />} />
+				<Route path="banner/:id" element={<BannerDetailPage />} />
 
 				<Route
 					path="target/down-target-destinations"
