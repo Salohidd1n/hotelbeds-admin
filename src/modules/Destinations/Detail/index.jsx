@@ -47,6 +47,7 @@ import classNames from 'classnames';
 import { RestaurantModal } from '../components/RestaurantModal';
 import useHotelAction from 'hooks/useHotelAction';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
+import downloadTemplate from 'utils/downloadTemplate';
 
 const initialHearbyHotes = {
 	JPCode: '',
@@ -359,6 +360,13 @@ const DestinationDetailPage = () => {
 							)}
 						</HeaderLeftSide>
 						<HeaderExtraSide>
+							<Button
+								onClick={downloadTemplate}
+								bgColor="primary.main"
+								position="relative"
+							>
+                Download template
+							</Button>
 							{selectedHotels.length > 0 && (
 								<Button
 									leftIcon={<DeleteIcon />}

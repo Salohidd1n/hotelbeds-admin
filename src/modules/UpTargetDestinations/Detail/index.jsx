@@ -28,7 +28,6 @@ import PageCard, {
 import ProfileMenu from '../../../components/ProfileMenu';
 import useCustomToast from '../../../hooks/useCustomToast';
 import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
-
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
 	useGetUpTargetDestinationsById,
@@ -38,6 +37,9 @@ import {
 import useHotelAction from 'hooks/useHotelAction';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
+import downloadTemplate from 'utils/downloadTemplate';
+// import file1 from '../../../assets/files/jpcode_csv_template.csv'
+// import file2 from 'assets/files/jpcode_csv_template.xlsx'
 
 const UpTargetDestinationDetailPage = () => {
 	const navigate = useNavigate();
@@ -216,6 +218,15 @@ const UpTargetDestinationDetailPage = () => {
                     Delete
 									</Button>
 								)}
+
+								<Button
+									onClick={downloadTemplate}
+									bgColor="primary.main"
+									position="relative"
+								>
+                  Download template
+								</Button>
+
 								<Button
 									bgColor="primary.main"
 									onClick={() => fileRef.current.click()}

@@ -44,6 +44,7 @@ import { useGetLocations } from 'services/location.service';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 import useHotelAction from 'hooks/useHotelAction';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
+import downloadTemplate from 'utils/downloadTemplate';
 
 const initialHeader = {
 	en_headerTitle: '',
@@ -477,6 +478,13 @@ const RecommendedDestionationDetailPage = () => {
 							)}
 						</HeaderLeftSide>
 						<HeaderExtraSide>
+							<Button
+								onClick={downloadTemplate}
+								bgColor="primary.main"
+								position="relative"
+							>
+                Download template
+							</Button>
 							{selectedHotels.length > 0 && (
 								<Button
 									leftIcon={<DeleteIcon />}

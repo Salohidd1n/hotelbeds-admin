@@ -38,6 +38,7 @@ import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 import useHotelAction from 'hooks/useHotelAction';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
+import downloadTemplate from 'utils/downloadTemplate';
 
 const GroupCardDestinationsDetailPage = () => {
 	const navigate = useNavigate();
@@ -214,6 +215,13 @@ const GroupCardDestinationsDetailPage = () => {
 								)}
 							</HeaderLeftSide>
 							<HeaderExtraSide>
+								<Button
+									onClick={downloadTemplate}
+									bgColor="primary.main"
+									position="relative"
+								>
+                  Download template
+								</Button>
 								{selectedHotels.length > 0 && (
 									<Button
 										leftIcon={<DeleteIcon />}

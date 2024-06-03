@@ -38,6 +38,7 @@ import {
 import useHotelAction from 'hooks/useHotelAction';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
+import downloadTemplate from 'utils/downloadTemplate';
 
 const DownTargetDestinationDetailPage = () => {
 	const navigate = useNavigate();
@@ -204,6 +205,13 @@ const DownTargetDestinationDetailPage = () => {
 								)}
 							</HeaderLeftSide>
 							<HeaderExtraSide>
+								<Button
+									onClick={downloadTemplate}
+									bgColor="primary.main"
+									position="relative"
+								>
+                  Download template
+								</Button>
 								{selectedHotels.length > 0 && (
 									<Button
 										leftIcon={<DeleteIcon />}

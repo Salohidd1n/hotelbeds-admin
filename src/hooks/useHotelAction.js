@@ -24,7 +24,8 @@ export default function useHotelAction({
 					const worksheet = workbook.Sheets[sheetName];
 					const json = XLSX.utils.sheet_to_json(worksheet);
 					const jpCodes = json.map((item) => ({
-						JPCode: item.JPCode,
+						JPCode: item?.JPCode,
+						order: item?.Order,
 						...initialFields,
 					}));
 					let filteredJPCodes = jpCodes.filter(
@@ -41,7 +42,8 @@ export default function useHotelAction({
 					skipEmptyLines: true,
 					complete: (result) => {
 						const jpCodes = result.data.map((item) => ({
-							JPCode: item.JPCode,
+							JPCode: item?.JPCode,
+							// order: item?.Order,
 							...initialFields,
 						}));
 
