@@ -103,7 +103,7 @@ const RecommendedDestionationDetailPage = () => {
 					...initialGroupDestination,
 				},
 			],
-			popular: [],
+			popular: [{}],
 		},
 	});
 
@@ -532,12 +532,12 @@ const RecommendedDestionationDetailPage = () => {
 									mt="25px"
 								/>
 								<Grid w="100%" templateColumns="repeat(5, 1fr)" gap={6}>
-									<FormRow label="JP Code:" required>
+									<FormRow required label="JP Code:">
 										<FormInput
+											required
 											control={control}
 											name={`popular[${index}].JPCode`}
 											placeholder="Enter JPCode"
-											required
 										/>
 									</FormRow>
 									<FormRow label="Order:" required>

@@ -47,7 +47,7 @@ const DownTargetDestinationDetailPage = () => {
 
 	const { control, reset, handleSubmit, setValue } = useForm({
 		defaultValues: {
-			hotelCode: [],
+			hotelCode: [{}],
 		},
 	});
 

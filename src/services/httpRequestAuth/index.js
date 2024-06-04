@@ -13,6 +13,7 @@ const errorHandler = (error, hooks) => {
 	// }
 
 	if (error?.response) {
+		console.log('error', error.response);
 		if (error.response?.data?.data) {
 			standaloneToast({
 				title: `REQUEST FAILED (${error.response.status})`,
@@ -56,7 +57,7 @@ httpRequestAuth.interceptors.request.use((config) => {
 
 httpRequestAuth.interceptors.response.use(
 	(response) => response.data.data,
-	errorHandler
+	errorHandler,
 );
 
 export default httpRequestAuth;

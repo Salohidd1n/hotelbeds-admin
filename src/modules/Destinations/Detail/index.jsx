@@ -79,7 +79,7 @@ const DestinationDetailPage = () => {
 
 	const { control, reset, handleSubmit, watch, setValue } = useForm({
 		defaultValues: {
-			nearbyHotes: [],
+			nearbyHotes: [{}],
 		},
 	});
 

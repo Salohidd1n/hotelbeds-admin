@@ -13,10 +13,32 @@ const errorHandler = (error, hooks) => {
 	//   }
 
 	if (error?.response) {
+		if (
+			error.response.status === 500 &&
+      error?.response?.data?.data &&
+      Array.isArray(error?.response?.data?.data)
+		) {
+			error?.response?.data?.data.forEach((element) => {
+				standaloneToast({
+					title: error?.response?.data?.message || 'INTERNAL_SERVER_ERROR',
+					description: element.message,
+					status: 'error',
+					duration: 3000,
+					isClosable: true,
+					position: 'top-right',
+				});
+			});
+			return Promise.reject(error.response);
+		}
+
 		if (error.response?.data) {
 			standaloneToast({
-				title: `REQUEST FAILED (${error.response.status})`,
-				description: JSON.stringify(error.response.data.message),
+				title:
+          error?.response?.data?.message ||
+          `REQUEST FAILED (${error.response.status})`,
+				description: JSON.stringify(
+					error.response.data.data || error.response.data.message,
+				),
 				status: 'error',
 				duration: 3000,
 				isClosable: true,

@@ -47,7 +47,7 @@ const GroupCardDestinationsDetailPage = () => {
 
 	const { control, reset, handleSubmit, setValue } = useForm({
 		defaultValues: {
-			hotelCode: [],
+			hotelCode: [{}],
 		},
 	});
 
