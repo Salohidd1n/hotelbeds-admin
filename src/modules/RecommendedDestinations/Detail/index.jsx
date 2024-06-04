@@ -221,6 +221,7 @@ const RecommendedDestionationDetailPage = () => {
 								required
 								options={locations.data || []}
 								autoFocus
+								disabled={!!id}
 							/>
 						</FormRow>
 					</PageCardForm>
