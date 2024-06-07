@@ -1,7 +1,7 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, IconButton } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import DataTable from '../../../components/DataTable';
 import Header, {
 	HeaderExtraSide,
@@ -19,10 +19,12 @@ import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
 
 const RoomListPage = () => {
+	const [searchParams, setSearchParams] = useSearchParams();
+
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
-	const [page, setPage] = useState(1);
+	const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
 	const [deletableRoom, setDeletableRoom] = useState(false);
 	const [term, setTerm] = useState();
 	const {
@@ -53,7 +55,10 @@ const RoomListPage = () => {
 	};
 
 	const onChangePage = (current) => {
-		setPage(current);
+		setSearchParams({
+			page: current,
+		});
+		// setPage(current);
 	};
 
 	const navigateToEditPage = (id) => {
@@ -103,8 +108,6 @@ const RoomListPage = () => {
 			),
 		},
 	];
-
-	console.log('deletableRoom', deletableRoom);
 
 	return (
 		<>
