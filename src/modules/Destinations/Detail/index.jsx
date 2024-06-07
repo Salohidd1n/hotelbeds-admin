@@ -39,7 +39,7 @@ import { useGetLocations } from 'services/location.service';
 import { useGetRecommendedDestinationsByLocationId } from 'services/recommended-destination.service';
 import FormMultipleImageUpload from 'components/FormElements/ImageUpload/FormMultipleImageUpload';
 import useHotelAvail from '../hooks/useHotelAvail';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useRestaurants from '../hooks/useRestaurants';
 import { IoIosRestaurant } from 'react-icons/io';
 import styles from './index.module.scss';
@@ -48,6 +48,7 @@ import { RestaurantModal } from '../components/RestaurantModal';
 import useHotelAction from 'hooks/useHotelAction';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 import downloadTemplate from 'utils/downloadTemplate';
+import { useGetHotelContent } from 'services/hotel.service';
 
 const initialHearbyHotes = {
 	JPCode: '',
@@ -88,15 +89,30 @@ const DestinationDetailPage = () => {
 		name: 'nearbyHotes',
 	});
 
+	const getHotelContent = useGetHotelContent();
+
+	useEffect(() => {
+		function getHContent() {
+			getHotelContent.mutate({
+				language: 'kr',
+				JPCode: [JPCode],
+			});
+		}
+
+		if (JPCode) getHContent();
+	}, [JPCode]);
+
 	const { hotels, isLoading: isLoadingHotel } = useHotelAvail({
 		hotelCodes: JPCode ? [JPCode] : [],
 	});
 
-	const onChangeNearbyHotels = (JPCode, restaurants) => {
+	const onChangeNearbyHotels = (code, restaurants, rating, reviewsCount) => {
 		const _nearbyHotelList = JSON.parse(JSON.stringify(nearbyHotelList));
 		_nearbyHotelList.forEach((hotel) => {
-			if (hotel.JPCode === JPCode) {
+			if (hotel.JPCode === code) {
 				hotel.allRestaurants = restaurants;
+				hotel.tripadvisorReview.rayting = rating;
+				hotel.tripadvisorReview.reviews = reviewsCount;
 			}
 		});
 		setValue('nearbyHotes', _nearbyHotelList);
@@ -106,6 +122,7 @@ const DestinationDetailPage = () => {
 	const { isLoading: isLoadingRestaurant } = useRestaurants({
 		hotels,
 		onChangeNearbyHotels,
+		postalCode: getHotelContent?.data?.data?.HotelContent?.Address.PostalCode,
 	});
 
 	const onSelectRestaurant = (index, value) => {
@@ -514,9 +531,16 @@ const DestinationDetailPage = () => {
 										}}
 										colorScheme="blue"
 										variant="outline"
+										isDisabled={
+											isLoadingRestaurant ||
+                      isLoadingHotel ||
+                      getHotelContent.isLoading
+										}
 										isLoading={
 											JPCode === nearbyHotelList[index]?.JPCode
-												? isLoadingRestaurant || isLoadingHotel
+												? isLoadingRestaurant ||
+                          isLoadingHotel ||
+                          getHotelContent.isLoading
 												: false
 										}
 									>

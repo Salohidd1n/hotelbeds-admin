@@ -5,7 +5,8 @@ import axios from 'axios';
 export const searchService = {
 	createSessiionId: (data) =>
 		httpRequestV2.post('v1/search/hotel-availability', data),
-
+	getHotelContent: (data) =>
+		httpRequestV2.post('v1/search/hotel-content', data),
 	searchHotels: (params) =>
 		axios.get(
 			`https://static-api.wafflestay.net/v1/hotel-portfolios?jp_codes=${params.jp_codes}&request.page_size=100`,
@@ -22,4 +23,8 @@ export const useSearchHotels = ({ queryParams, sessionId, params }) => {
 		() => searchService.searchHotels(params),
 		queryParams,
 	);
+};
+
+export const useGetHotelContent = () => {
+	return useMutation((data) => searchService.getHotelContent(data));
 };

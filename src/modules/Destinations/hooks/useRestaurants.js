@@ -12,7 +12,11 @@ const uniqueLocations = (locations) =>
       ),
 	);
 
-export default function useRestaurants({ hotels, onChangeNearbyHotels }) {
+export default function useRestaurants({
+	hotels,
+	onChangeNearbyHotels,
+	postalCode,
+}) {
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
@@ -23,6 +27,25 @@ export default function useRestaurants({ hotels, onChangeNearbyHotels }) {
 				category: 'restaurants',
 				latLong: [hotel?.source?.Latitude, hotel?.source?.Longitude].join(','),
 			});
+
+			const nearbyObject = await tripAdvisorServices.getNearestObjects({
+				searchQuery: hotel.source.en_name,
+				language: 'ko',
+				category: 'hotels',
+				latLong: [hotel?.source?.Latitude, hotel?.source?.Longitude].join(','),
+			});
+
+			const currentHotelTripadvisorPlace =
+        nearbyObject?.data?.data?.find(
+        	(place) => place.address_obj.postalcode === postalCode,
+        ) || nearbyObject?.data?.data?.[0];
+
+			let hotelLocationDetails = null;
+			if (currentHotelTripadvisorPlace?.location_id) {
+				hotelLocationDetails = await tripAdvisorServices.getLocationDetails(
+					currentHotelTripadvisorPlace.location_id,
+				);
+			}
 
 			const restaurants = await Promise.all(
 				nearbyPlaces?.data?.data?.map(async (item) => {
@@ -45,12 +68,14 @@ export default function useRestaurants({ hotels, onChangeNearbyHotels }) {
 			onChangeNearbyHotels(
 				hotel?.source?.attributes?.JPCode,
 				uniqueLocations(restaurants),
+				Number(hotelLocationDetails?.data?.rating || 0),
+				Number(hotelLocationDetails?.data?.num_reviews || 0),
 			);
 
 			setIsLoading(false);
 		};
-		if (hotels?.length > 0) getRestaurants();
-	}, [JSON.stringify(hotels)]);
+		if (hotels?.length > 0 && postalCode) getRestaurants();
+	}, [JSON.stringify(hotels), postalCode]);
 
 	return {
 		isLoading,

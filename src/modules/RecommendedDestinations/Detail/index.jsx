@@ -1,4 +1,5 @@
 import {
+	Box,
 	Button,
 	Checkbox,
 	Flex,
@@ -45,6 +46,10 @@ import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 import useHotelAction from 'hooks/useHotelAction';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 import downloadTemplate from 'utils/downloadTemplate';
+import { useEffect, useState } from 'react';
+import { useGetHotelContent } from 'services/hotel.service';
+import useHotelAvail from 'modules/Destinations/hooks/useHotelAvail';
+import useReviews from 'modules/Destinations/hooks/useReviews';
 
 const initialHeader = {
 	en_headerTitle: '',
@@ -75,6 +80,8 @@ const initialPopularHotels = {
 const RecommendedDestionationDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
+	const [JPCode, setJPCode] = useState(null);
+	const getHotelContent = useGetHotelContent();
 	const { successToast } = useCustomToast();
 	const locations = useGetLocations({
 		params: {
@@ -105,6 +112,11 @@ const RecommendedDestionationDetailPage = () => {
 			],
 			popular: [{}],
 		},
+	});
+
+	const popularHotelsData = useWatch({
+		control,
+		name: 'popular',
 	});
 
 	const { fields, append, remove } = useFieldArray({
@@ -157,6 +169,43 @@ const RecommendedDestionationDetailPage = () => {
     		navigate(-1);
     	},
     });
+
+	const onChangeHotels = (code, reviewsAmount, rating) => {
+		const _popularHotelsData = JSON.parse(JSON.stringify(popularHotelsData));
+		_popularHotelsData.forEach((hotel) => {
+			if (hotel.JPCode === code) {
+				hotel.tripadvisorReview.rayting = rating;
+				hotel.tripadvisorReview.reviews = reviewsAmount;
+			}
+		});
+		setValue('popular', _popularHotelsData);
+		setJPCode(null);
+	};
+
+	useEffect(() => {
+		function getHContent() {
+			getHotelContent.mutate({
+				language: 'kr',
+				JPCode: [JPCode],
+			});
+		}
+
+		if (JPCode) getHContent();
+	}, [JPCode]);
+
+	const { hotels, isLoading: isLoadingHotel } = useHotelAvail({
+		hotelCodes: JPCode ? [JPCode] : [],
+	});
+
+	useReviews({
+		hotelName: hotels && hotels[0]?.source?.en_name,
+		hotelLat: hotels && hotels[0]?.source?.Latitude,
+		hotelLng: hotels && hotels[0]?.source?.Longitude,
+		language: 'ko',
+		postalCode: getHotelContent?.data?.data?.HotelContent?.Address.PostalCode,
+		onChange: onChangeHotels,
+		JPCode,
+	});
 
 	const onSubmit = (values) => {
 		if (!id) create(values);
@@ -565,12 +614,27 @@ const RecommendedDestionationDetailPage = () => {
 											required
 										/>
 									</FormRow>
-									<FormRow label="Active:">
-										<FormSwitch
-											control={control}
-											name={`popular[${index}].is_active`}
-										/>
-									</FormRow>
+									<Flex alignItems="center">
+										<Flex w="60px">
+											<FormRow label="Active:">
+												<FormSwitch
+													control={control}
+													name={`popular[${index}].is_active`}
+												/>
+											</FormRow>
+										</Flex>
+										<Button
+											onClick={() => setJPCode(popularHotelsData[index].JPCode)}
+											variant="outline"
+											isDisabled={getHotelContent.isLoading || isLoadingHotel}
+											isLoading={
+												(getHotelContent.isLoading || isLoadingHotel) &&
+                        JPCode === popularHotelsData[index].JPCode
+											}
+										>
+                      Get Tripadvisor Review
+										</Button>
+									</Flex>
 								</Grid>
 							</Flex>
 						))}
