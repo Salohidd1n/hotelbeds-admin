@@ -1,7 +1,7 @@
 import { AddIcon, DeleteIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Box, Button, IconButton } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import DataTable from '../../../components/DataTable';
 import Header, {
 	HeaderExtraSide,
@@ -24,7 +24,8 @@ const HotelPortfoliosListPage = () => {
 	const { pathname } = useLocation();
 
 	const [pageSize, setPageSize] = useState(30);
-	const [page, setPage] = useState(1);
+	const [searchParams, setSearchParams] = useSearchParams();
+	const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
 	const [deletableHP, setDeletableHP] = useState(false);
 	const [term, setTerm] = useState();
 
@@ -64,7 +65,9 @@ const HotelPortfoliosListPage = () => {
 	};
 
 	const onChangePage = (current) => {
-		setPage(current);
+		setSearchParams({
+			page: current,
+		});
 	};
 
 	const columns = [
@@ -73,7 +76,7 @@ const HotelPortfoliosListPage = () => {
 			width: 40,
 			textAlign: 'center',
 			align: 'center',
-			render: (_, __, index) => index + 1,
+			render: (_, __, index) => (page - 1) * pageSize + index + 1,
 		},
 		{
 			title: 'JPCode',

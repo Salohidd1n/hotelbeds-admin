@@ -1,7 +1,7 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, IconButton } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import DataTable from '../../../components/DataTable';
 import Header, {
 	HeaderExtraSide,
@@ -23,7 +23,8 @@ const ZoneListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
-	const [page, setPage] = useState(1);
+	const [searchParams, setSearchParams] = useSearchParams();
+	const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
 	const [deletableZone, setDeletableZone] = useState(false);
 	const [term, setTerm] = useState();
 	const {
@@ -54,7 +55,9 @@ const ZoneListPage = () => {
 	};
 
 	const onChangePage = (current) => {
-		setPage(current);
+		setSearchParams({
+			page: current,
+		});
 	};
 
 	const navigateToEditPage = (id) => {

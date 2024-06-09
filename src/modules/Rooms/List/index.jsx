@@ -19,12 +19,12 @@ import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
 
 const RoomListPage = () => {
-	const [searchParams, setSearchParams] = useSearchParams();
-
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
+	const [searchParams, setSearchParams] = useSearchParams();
 	const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
+
 	const [deletableRoom, setDeletableRoom] = useState(false);
 	const [term, setTerm] = useState();
 	const {
