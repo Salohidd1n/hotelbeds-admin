@@ -1,5 +1,5 @@
 import { Button, Heading } from '@chakra-ui/react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
 import FormRow from '../../../components/FormElements/FormRow';
@@ -25,6 +25,9 @@ import {
 	useZonesUpdate,
 } from 'services/zone.service';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
+import FormTags from 'components/FormElements/FormTags';
+import TagsInput from 'components/FormElements/FormTags';
+import { useState } from 'react';
 
 const ZoneDetailPage = () => {
 	const navigate = useNavigate();
@@ -33,12 +36,27 @@ const ZoneDetailPage = () => {
 
 	const { control, reset, handleSubmit } = useForm();
 
+	const [krTags, setKrTags] = useState([]);
+	const [enTags, setEnTags] = useState([]);
+
+	const addKrTag = (val) => setKrTags((prev) => [...prev, val]);
+	const removeKrTag = (index) =>
+		setKrTags((prev) => prev.filter((_, idx) => idx !== index));
+
+	const addEnTag = (val) => setEnTags((prev) => [...prev, val]);
+	const removeEnTag = (index) =>
+		setEnTags((prev) => prev.filter((_, idx) => idx !== index));
+
 	const { isLoading } = useGetZonesById({
 		id,
 		queryParams: {
 			cacheTime: false,
 			enabled: Boolean(id),
-			onSuccess: reset,
+			onSuccess: (res) => {
+				reset(res);
+				setKrTags(res?.kr_name_synonyms);
+				setEnTags(res?.en_name_synonyms);
+			},
 		},
 	});
 
@@ -56,11 +74,18 @@ const ZoneDetailPage = () => {
 	});
 
 	const onSubmit = (values) => {
-		if (!id) createZone(values);
+		if (!id)
+			createZone({
+				...values,
+				en_name_synonyms: enTags,
+				kr_name_synonyms: krTags,
+			});
 		else {
 			updateZone({
 				id,
 				...values,
+				en_name_synonyms: enTags,
+				kr_name_synonyms: krTags,
 			});
 		}
 	};
@@ -148,6 +173,22 @@ const ZoneDetailPage = () => {
 								name="kr_name"
 								placeholder="Enter KR name"
 								required
+							/>
+						</FormRow>
+
+						<FormRow label="Synonyms (KR):">
+							<TagsInput
+								tags={krTags}
+								removeTag={removeKrTag}
+								addTag={addKrTag}
+							/>
+						</FormRow>
+
+						<FormRow label="Synonyms (EN):">
+							<TagsInput
+								tags={enTags}
+								removeTag={removeEnTag}
+								addTag={addEnTag}
 							/>
 						</FormRow>
 					</PageCardForm>
