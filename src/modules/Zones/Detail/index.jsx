@@ -1,4 +1,4 @@
-import { Button, Heading } from '@chakra-ui/react';
+import { Box, Button, Heading } from '@chakra-ui/react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
@@ -22,6 +22,7 @@ import useCustomToast from '../../../hooks/useCustomToast';
 import {
 	useGetZonesById,
 	useZonesCreate,
+	useZonesStaticUpdate,
 	useZonesUpdate,
 } from 'services/zone.service';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
@@ -35,7 +36,7 @@ const ZoneDetailPage = () => {
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
 
-	const { control, reset, handleSubmit } = useForm();
+	const { control, reset, handleSubmit, getValues } = useForm();
 
 	const [krTags, setKrTags] = useState([]);
 	const [enTags, setEnTags] = useState([]);
@@ -70,10 +71,29 @@ const ZoneDetailPage = () => {
 	const { mutate: updateZone, isLoading: updateLoading } = useZonesUpdate({
 		onSuccess: () => {
 			successToast();
-			navigate(-1);
+			//   navigate(-1);
 		},
 	});
 
+	const { mutate: updateStaticZone, isLoading: updateStaticLoading } =
+    useZonesStaticUpdate({
+    	onSuccess: () => {
+    		successToast();
+    		// navigate(-1);
+    	},
+    });
+
+	const handleUpdateStaticZone = () => {
+		const values = getValues();
+		console.log(values);
+
+		updateStaticZone({
+			id,
+			...values,
+			en_name_synonyms: enTags,
+			kr_name_synonyms: krTags,
+		});
+	};
 	const onSubmit = (values) => {
 		if (!id)
 			createZone({
@@ -175,7 +195,6 @@ const ZoneDetailPage = () => {
 								name="kr_name"
 								disabled
 								placeholder="Enter KR name"
-								required
 							/>
 						</FormRow>
 
@@ -185,7 +204,6 @@ const ZoneDetailPage = () => {
 								control={control}
 								name="kr_name_oai"
 								placeholder="Enter KR name"
-								required
 							/>
 						</FormRow>
 
@@ -241,13 +259,25 @@ const ZoneDetailPage = () => {
 					</PageCardForm>
 
 					<PageCardFooter mt={6}>
-						<Button
-							isLoading={createLoading || updateLoading}
-							type="submit"
-							ml="auto"
-						>
-              Save
-						</Button>
+						<Box display="flex" justifyContent="flex-end" gap={3} width="100%">
+							<Button
+								isLoading={updateStaticLoading}
+								type="button"
+								ml="auto"
+								variant="outlined"
+								onClick={handleUpdateStaticZone}
+							>
+                Sync
+							</Button>
+
+							<Button
+								isLoading={createLoading || updateLoading}
+								type="submit"
+								// ml="auto"
+							>
+                Save
+							</Button>
+						</Box>
 					</PageCardFooter>
 				</PageCard>
 			</Page>

@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
 import httpRequest from './httpRequest';
+import httpStaticRequest from './httpRequest/staticApi';
 
 const zonesService = {
 	getList: (params) =>
@@ -8,6 +9,8 @@ const zonesService = {
 		}),
 	getById: (id, params) => httpRequest.get(`v1/zone_lists/${id}`, { params }),
 	update: (data) => httpRequest.put(`v1/zone_lists/${data.id}`, data),
+	updateStatic: (data) =>
+		httpStaticRequest.put(`v1/zone-lists/${data.id}`, data),
 	delete: (id, params) => httpRequest.delete(`v1/zone_lists/${id}`, { params }),
 	create: (data) => httpRequest.post('v1/zone_lists', data),
 };
@@ -38,6 +41,13 @@ export const useZonesCreate = (mutationSettings) => {
 
 export const useZonesUpdate = (mutationSettings) => {
 	return useMutation((data) => zonesService.update(data), mutationSettings);
+};
+
+export const useZonesStaticUpdate = (mutationSettings) => {
+	return useMutation(
+		(data) => zonesService.updateStatic(data),
+		mutationSettings,
+	);
 };
 
 export const useZonesDelete = (mutationSettings, params) => {
