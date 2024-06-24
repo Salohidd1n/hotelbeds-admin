@@ -168,10 +168,22 @@ const ZoneDetailPage = () => {
 								required
 							/>
 						</FormRow>
+
 						<FormRow label="Name (KR):" required>
 							<FormInput
 								control={control}
 								name="kr_name"
+								disabled
+								placeholder="Enter KR name"
+								required
+							/>
+						</FormRow>
+
+						<FormRow label="Open AI Name (KR):" required>
+							<FormInput
+								disabled
+								control={control}
+								name="kr_name_oai"
 								placeholder="Enter KR name"
 								required
 							/>
