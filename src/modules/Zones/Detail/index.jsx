@@ -28,6 +28,7 @@ import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 import FormTags from 'components/FormElements/FormTags';
 import TagsInput from 'components/FormElements/FormTags';
 import { useState } from 'react';
+import FormSelect from 'components/FormElements/Select/FormSelect';
 
 const ZoneDetailPage = () => {
 	const navigate = useNavigate();
@@ -173,6 +174,40 @@ const ZoneDetailPage = () => {
 								name="kr_name"
 								placeholder="Enter KR name"
 								required
+							/>
+						</FormRow>
+
+						<FormRow label="Manual Name (KR):" required>
+							<FormInput
+								control={control}
+								name="kr_name_manual"
+								placeholder="Enter name"
+								required
+							/>
+						</FormRow>
+
+						<FormRow label="Recommended Translation Option (KR):" required>
+							<FormSelect
+								control={control}
+								name="translatio_options.kr_name"
+								placeholder="Select prefered option"
+								required
+								options={
+									[
+										{
+											value: 'kr_name',
+											label: 'Original Korean Name',
+										},
+										{
+											value: 'kr_name_oai',
+											label: 'Korean Name from Open AI translation',
+										},
+										{
+											value: 'kr_name_manual',
+											label: 'Korean Name from Manual Input',
+										},
+									] || []
+								}
 							/>
 						</FormRow>
 
