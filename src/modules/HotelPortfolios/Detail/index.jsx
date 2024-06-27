@@ -25,9 +25,8 @@ import {
 	useGetSingHotelPortfolio,
 	useUpdateHotelPortfolio,
 } from 'services/hotel-portfolio.service';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import FormSelect from 'components/FormElements/Select/FormSelect';
-import TagsInput from 'components/FormElements/FormTags';
 
 const HotelPortfoliosDetailPage = () => {
 	const navigate = useNavigate();
@@ -39,18 +38,6 @@ const HotelPortfoliosDetailPage = () => {
 			user_type: 1,
 		},
 	});
-
-	const [krTags, setKrTags] = useState([]);
-	const [enTags, setEnTags] = useState([]);
-
-	const addKrTag = (val) => setKrTags((prev) => [...prev, val]);
-	const removeKrTag = (index) =>
-		setKrTags((prev) => prev.filter((_, idx) => idx !== index));
-
-	const addEnTag = (val) => setEnTags((prev) => [...prev, val]);
-	const removeEnTag = (index) =>
-		setEnTags((prev) => prev.filter((_, idx) => idx !== index));
-
 	const { isLoading, data } = useGetSingHotelPortfolio({
 		id,
 		queryParams: {
@@ -58,8 +45,6 @@ const HotelPortfoliosDetailPage = () => {
 			enabled: Boolean(id),
 			onSuccess: (res) => {
 				reset(res);
-				setKrTags(res?.kr_name_synonyms || []);
-				setEnTags(res?.en_name_synonyms || []);
 			},
 		},
 	});
@@ -89,6 +74,7 @@ const HotelPortfoliosDetailPage = () => {
 		const payload = {
 			...values,
 			attributes: { JPCode: values.JPCode, HasSynonyms: 'false' },
+
 			Zone: {
 				...values.Zone,
 				attributes: {
@@ -336,7 +322,7 @@ const HotelPortfoliosDetailPage = () => {
 						<FormRow label="Recommended Translation Option (KR):" required>
 							<FormSelect
 								control={control}
-								name="translatio_options.kr_name"
+								name="translation_options.kr_name"
 								placeholder="Select prefered option"
 								required
 								options={
@@ -355,22 +341,6 @@ const HotelPortfoliosDetailPage = () => {
 										},
 									] || []
 								}
-							/>
-						</FormRow>
-
-						<FormRow label="Synonyms (KR):">
-							<TagsInput
-								tags={krTags}
-								removeTag={removeKrTag}
-								addTag={addKrTag}
-							/>
-						</FormRow>
-
-						<FormRow label="Synonyms (EN):">
-							<TagsInput
-								tags={enTags}
-								removeTag={removeEnTag}
-								addTag={addEnTag}
 							/>
 						</FormRow>
 					</PageCardForm>
