@@ -213,7 +213,7 @@ const ZoneDetailPage = () => {
 
 						<FormRow label="Open AI Name (KR):" required>
 							<FormInput
-								disabled
+								// disabled
 								control={control}
 								name="kr_name_oai"
 								placeholder="Enter KR name"
