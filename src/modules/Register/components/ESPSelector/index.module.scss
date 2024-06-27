@@ -1,0 +1,88 @@
+.container {
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid $border-color;
+  height: calc(100vh - 300px);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.errorBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  gap: 25px;
+
+  .errorMessage {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    color: #000000a3;
+    padding: 0 20px;
+  }
+}
+
+.keyBlock {
+  background: #00cd690a;
+  padding: 30px 24px 24px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+
+  &:hover {
+    background: #00cd6a3b;
+  }
+
+  &.active {
+    border-color: #00cd69;
+  }
+
+  &.invalid {
+    // border-color: red;
+    background: rgba(255, 0, 0, 0.025);
+
+    .expired {
+      color: red;
+    }
+
+    &:hover {
+      background: rgba(255, 0, 0, 0.089);
+    }
+  }
+
+  .branch {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .user {
+    font-size: 20px;
+    color: #000000a3;
+  }
+
+  .organization {
+    font-size: 16px;
+    color: #5b6871;
+
+    b {
+      color: black;
+      // padding-left: 5px;
+    }
+  }
+
+  .expired {
+    // color: #D20404;
+    margin-top: 16px;
+  }
+
+  .warning {
+    color: #d20404;
+    margin-top: 16px;
+  }
+}

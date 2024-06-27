@@ -27,21 +27,23 @@ import DownTargetDestinationDetailPage from 'modules/DownTargetDestinations/Deta
 import DownTargetDestinationsListPage from 'modules/DownTargetDestinations/List';
 import BannerListPage from 'modules/Banner/List';
 import BannerDetailPage from 'modules/Banner/Detail';
+import Register from 'modules/Register';
 
 const Router = () => {
 	const { isAuth } = authStore;
 
-	// if (!isAuth)
-	// 	return (
-	// 		<Routes>
-	// 			<Route path="/" element={<AuthLayout />}>
-	// 				<Route index element={<Navigate to="/login " />} />
-	// 				<Route path="login" element={<Login />} />
-	// 				<Route path="*" element={<Navigate to="/login" />} />
-	// 			</Route>
-	// 			<Route path="*" element={<Navigate to="/login" />} />
-	// 		</Routes>
-	// 	);
+	if (!isAuth)
+		return (
+			<Routes>
+				<Route path="/" element={<AuthLayout />}>
+					<Route index element={<Navigate to="/login " />} />
+					<Route path="login" element={<Login />} />
+					<Route path="register" element={<Register />} />
+					<Route path="*" element={<Navigate to="/login" />} />
+				</Route>
+				<Route path="*" element={<Navigate to="/login" />} />
+			</Routes>
+		);
 
 	return (
 		<Routes>

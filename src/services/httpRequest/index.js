@@ -47,10 +47,10 @@ const errorHandler = (error, hooks) => {
 };
 
 httpRequest.interceptors.request.use((config) => {
-	//   const token = authStore.token.access_token
-	//   if (token) {
-	//     config.headers.Authorization = `Bearer ${token}`
-	//   }
+	const token = authStore.token.access;
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
 	return config;
 });
 

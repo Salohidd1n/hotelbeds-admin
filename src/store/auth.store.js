@@ -1,36 +1,39 @@
-import { makeAutoObservable } from "mobx";
-import { makePersistable } from "mobx-persist-store";
+import { makeAutoObservable } from 'mobx';
+import { makePersistable } from 'mobx-persist-store';
 
 class Store {
-  constructor() {
-    makeAutoObservable(this);
+	constructor() {
+		makeAutoObservable(this);
 
-    makePersistable(this, {
-      name: "authStore",
-      properties: ["isAuth", "userData", "token"],
-      storage: window.localStorage,
-    });
-  }
+		makePersistable(this, {
+			name: 'authStore',
+			properties: ['isAuth', 'userData', 'token'],
+			storage: window.localStorage,
+		});
+	}
 
-  isAuth = false;
-  userData = {};
-  token = {};
+	isAuth = false;
+	userData = {};
+	token = {};
 
-  setIsAuth(value) {
-    this.isAuth = value;
-  }
+	setIsAuth(value) {
+		this.isAuth = value;
+	}
 
-  login(data) {
-    this.isAuth = true;
-    this.userData = data.user;
-    this.token = data.token;
-  }
+	login(data) {
+		this.isAuth = true;
+		this.userData = data.user;
+		this.token = {
+			access: data?.tokens?.access?.token,
+			refresh: data?.tokens?.refresh?.token,
+		};
+	}
 
-  logout() {
-    this.isAuth = false;
-    this.userData = {};
-    this.token = {};
-  }
+	logout() {
+		this.isAuth = false;
+		this.userData = {};
+		this.token = {};
+	}
 }
 
 const authStore = new Store();

@@ -70,10 +70,10 @@ const errorHandler = (error, hooks) => {
 };
 
 httpRequestV2.interceptors.request.use((config) => {
-	//   const token = authStore.token.access_token
-	//   if (token) {
-	//     config.headers.Authorization = `Bearer ${token}`
-	//   }
+	const token = authStore.token.access;
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
 	const signature = generateSignature();
 	config.headers.apikey = import.meta.env.VITE_API_KEY;
 	config.headers.apisecret = signature.key;

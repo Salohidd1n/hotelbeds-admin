@@ -3,7 +3,7 @@ import { standaloneToast } from '../../App';
 import authStore from '../../store/auth.store';
 
 const httpRequestAuth = axios.create({
-	baseURL: import.meta.env.VITE_AUTH_BASE_URL,
+	baseURL: import.meta.env.VITE_BASE_URL_V2,
 	timeout: 100000,
 });
 
@@ -48,7 +48,7 @@ const errorHandler = (error, hooks) => {
 };
 
 httpRequestAuth.interceptors.request.use((config) => {
-	const token = authStore.token.access_token;
+	const token = authStore.token.access;
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
