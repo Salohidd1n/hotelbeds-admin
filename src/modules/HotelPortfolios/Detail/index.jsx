@@ -25,7 +25,9 @@ import {
 	useGetSingHotelPortfolio,
 	useUpdateHotelPortfolio,
 } from 'services/hotel-portfolio.service';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import FormSelect from 'components/FormElements/Select/FormSelect';
+import TagsInput from 'components/FormElements/FormTags';
 
 const HotelPortfoliosDetailPage = () => {
 	const navigate = useNavigate();
@@ -38,12 +40,27 @@ const HotelPortfoliosDetailPage = () => {
 		},
 	});
 
+	const [krTags, setKrTags] = useState([]);
+	const [enTags, setEnTags] = useState([]);
+
+	const addKrTag = (val) => setKrTags((prev) => [...prev, val]);
+	const removeKrTag = (index) =>
+		setKrTags((prev) => prev.filter((_, idx) => idx !== index));
+
+	const addEnTag = (val) => setEnTags((prev) => [...prev, val]);
+	const removeEnTag = (index) =>
+		setEnTags((prev) => prev.filter((_, idx) => idx !== index));
+
 	const { isLoading, data } = useGetSingHotelPortfolio({
 		id,
 		queryParams: {
 			cacheTime: false,
 			enabled: Boolean(id),
-			onSuccess: reset,
+			onSuccess: (res) => {
+				reset(res);
+				setKrTags(res?.kr_name_synonyms || []);
+				setEnTags(res?.en_name_synonyms || []);
+			},
 		},
 	});
 
@@ -286,6 +303,74 @@ const HotelPortfoliosDetailPage = () => {
 								placeholder="Enter City JPD Code"
 								required
 								disabled={!!id}
+							/>
+						</FormRow>
+
+						{/* <FormRow label="Open AI Name (EN):" required>
+              <FormInput
+                disabled
+                control={control}
+                name="en_name_oai"
+                placeholder="Enter EN name"
+              />
+            </FormRow> */}
+
+						<FormRow label="Open AI Name (KR):" required>
+							<FormInput
+								disabled
+								control={control}
+								name="kr_name_oai"
+								placeholder="Enter KR name"
+							/>
+						</FormRow>
+
+						<FormRow label="Manual Name (KR):" required>
+							<FormInput
+								control={control}
+								name="kr_name_manual"
+								placeholder="Enter name"
+								required
+							/>
+						</FormRow>
+
+						<FormRow label="Recommended Translation Option (KR):" required>
+							<FormSelect
+								control={control}
+								name="translatio_options.kr_name"
+								placeholder="Select prefered option"
+								required
+								options={
+									[
+										{
+											value: 'kr_name',
+											label: 'Original Korean Name',
+										},
+										{
+											value: 'kr_name_oai',
+											label: 'Korean Name from Open AI translation',
+										},
+										{
+											value: 'kr_name_manual',
+											label: 'Korean Name from Manual Input',
+										},
+									] || []
+								}
+							/>
+						</FormRow>
+
+						<FormRow label="Synonyms (KR):">
+							<TagsInput
+								tags={krTags}
+								removeTag={removeKrTag}
+								addTag={addKrTag}
+							/>
+						</FormRow>
+
+						<FormRow label="Synonyms (EN):">
+							<TagsInput
+								tags={enTags}
+								removeTag={removeEnTag}
+								addTag={addEnTag}
 							/>
 						</FormRow>
 					</PageCardForm>

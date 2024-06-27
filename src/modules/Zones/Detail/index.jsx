@@ -56,8 +56,8 @@ const ZoneDetailPage = () => {
 			enabled: Boolean(id),
 			onSuccess: (res) => {
 				reset(res);
-				setKrTags(res?.kr_name_synonyms);
-				setEnTags(res?.en_name_synonyms);
+				setKrTags(res?.kr_name_synonyms || []);
+				setEnTags(res?.en_name_synonyms || []);
 			},
 		},
 	});
@@ -85,7 +85,6 @@ const ZoneDetailPage = () => {
 
 	const handleUpdateStaticZone = () => {
 		const values = getValues();
-		console.log(values);
 
 		updateStaticZone({
 			id,
@@ -203,12 +202,30 @@ const ZoneDetailPage = () => {
 							/>
 						</FormRow>
 
+						{/* <FormRow label="Open AI Name (EN):" required>
+              <FormInput
+                disabled
+                control={control}
+                name="en_name_oai"
+                placeholder="Enter EN name"
+              />
+            </FormRow> */}
+
 						<FormRow label="Open AI Name (KR):" required>
 							<FormInput
 								disabled
 								control={control}
 								name="kr_name_oai"
 								placeholder="Enter KR name"
+							/>
+						</FormRow>
+
+						<FormRow label="Manual Name (EN):" required>
+							<FormInput
+								control={control}
+								name="en_name_manual"
+								placeholder="Enter name"
+								required
 							/>
 						</FormRow>
 
