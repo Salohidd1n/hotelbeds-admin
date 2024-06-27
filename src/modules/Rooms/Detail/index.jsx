@@ -95,6 +95,7 @@ const RoomDetailPage = () => {
 								placeholder="Enter JR Code"
 								autoFocus
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 						<FormRow label="Name (EN):" required>

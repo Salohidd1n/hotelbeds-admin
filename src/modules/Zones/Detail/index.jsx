@@ -142,6 +142,7 @@ const ZoneDetailPage = () => {
 								placeholder="Enter JPD Code"
 								autoFocus
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 						<FormRow label="Parent JPD Code:" required>
@@ -150,6 +151,7 @@ const ZoneDetailPage = () => {
 								name="ParentJPDCode"
 								placeholder="Enter Parent JPD Code"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 						<FormRow label="Area Type:" required>
@@ -158,6 +160,7 @@ const ZoneDetailPage = () => {
 								name="AreaType"
 								placeholder="Enter Area Type"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 						<FormRow label="Searchable:">
@@ -169,6 +172,7 @@ const ZoneDetailPage = () => {
 								name="Code"
 								placeholder="Enter Code"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 
@@ -178,6 +182,7 @@ const ZoneDetailPage = () => {
 								name="ParentCode"
 								placeholder="Enter Parent Code"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 						<FormRow label="Name (EN):" required>

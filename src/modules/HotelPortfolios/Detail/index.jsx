@@ -121,6 +121,7 @@ const HotelPortfoliosDetailPage = () => {
 								placeholder="Enter JPCode"
 								autoFocus
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 						<FormRow label="EN name:" required>
@@ -166,6 +167,7 @@ const HotelPortfoliosDetailPage = () => {
 								name="Zone.attributes.JPDCode"
 								placeholder="Enter JPD Code"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 
@@ -193,6 +195,7 @@ const HotelPortfoliosDetailPage = () => {
 								name="ZipCode"
 								placeholder="Enter Zip Code"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 
@@ -202,6 +205,7 @@ const HotelPortfoliosDetailPage = () => {
 								name="Latitude"
 								placeholder="Enter Latitude"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 
@@ -211,6 +215,7 @@ const HotelPortfoliosDetailPage = () => {
 								name="Longitude"
 								placeholder="Enter Longitude"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 
@@ -240,6 +245,7 @@ const HotelPortfoliosDetailPage = () => {
 								name="HotelCategory.attributes.Code"
 								placeholder="Enter Hotel Category Code"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 
@@ -269,6 +275,7 @@ const HotelPortfoliosDetailPage = () => {
 								name="City.attributes.Id"
 								placeholder="Enter City ID"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 
@@ -278,6 +285,7 @@ const HotelPortfoliosDetailPage = () => {
 								name="City.attributes.JPDCode"
 								placeholder="Enter City JPD Code"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 					</PageCardForm>

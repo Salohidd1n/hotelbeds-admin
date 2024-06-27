@@ -46,7 +46,7 @@ const CountryDetailPage = () => {
 			onSuccess: reset,
 		},
 	});
-	console.log(data);
+
 	useEffect(() => {
 		if (!data) return;
 
@@ -123,6 +123,7 @@ const CountryDetailPage = () => {
 								name="alpha2_code"
 								placeholder="Enter alpha2 code"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 
@@ -132,6 +133,7 @@ const CountryDetailPage = () => {
 								name="alpha3_code"
 								placeholder="Enter alpha3 code"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 
@@ -141,6 +143,7 @@ const CountryDetailPage = () => {
 								name="numeric"
 								placeholder="Enter numeric"
 								required
+								disabled={!!id}
 							/>
 						</FormRow>
 					</PageCardForm>
