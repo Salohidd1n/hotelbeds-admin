@@ -283,16 +283,6 @@ const ZoneDetailPage = () => {
 					<PageCardFooter mt={6}>
 						<Box display="flex" justifyContent="flex-end" gap={3} width="100%">
 							<Button
-								isLoading={updateStaticLoading}
-								type="button"
-								ml="auto"
-								variant="outlined"
-								onClick={handleUpdateStaticZone}
-							>
-                Sync
-							</Button>
-
-							<Button
 								isLoading={createLoading || updateLoading}
 								type="submit"
 								// ml="auto"
