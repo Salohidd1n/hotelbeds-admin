@@ -197,8 +197,8 @@ const HotelPortfoliosDetailPage = () => {
 								control={control}
 								name="ZipCode"
 								placeholder="Enter Zip Code"
-								required
-								disabled={!!id}
+								// required
+								// disabled={!!id}
 							/>
 						</FormRow>
 
@@ -207,7 +207,7 @@ const HotelPortfoliosDetailPage = () => {
 								control={control}
 								name="Latitude"
 								placeholder="Enter Latitude"
-								required
+								// required
 								disabled={!!id}
 							/>
 						</FormRow>
@@ -217,7 +217,7 @@ const HotelPortfoliosDetailPage = () => {
 								control={control}
 								name="Longitude"
 								placeholder="Enter Longitude"
-								required
+								// required
 								disabled={!!id}
 							/>
 						</FormRow>
@@ -229,7 +229,7 @@ const HotelPortfoliosDetailPage = () => {
 								control={control}
 								name="HotelCategory.value"
 								placeholder="Enter Hotel Category Value"
-								required
+								// required
 							/>
 						</FormRow>
 
@@ -238,7 +238,7 @@ const HotelPortfoliosDetailPage = () => {
 								control={control}
 								name="HotelCategory.attributes.Type"
 								placeholder="Enter Hotel Category Type"
-								required
+								// required
 							/>
 						</FormRow>
 
@@ -247,7 +247,7 @@ const HotelPortfoliosDetailPage = () => {
 								control={control}
 								name="HotelCategory.attributes.Code"
 								placeholder="Enter Hotel Category Code"
-								required
+								// required
 								disabled={!!id}
 							/>
 						</FormRow>
