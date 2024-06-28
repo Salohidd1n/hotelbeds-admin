@@ -192,7 +192,7 @@ const HotelPortfoliosDetailPage = () => {
 							/>
 						</FormRow>
 
-						<FormRow label="Zip Code:" required>
+						<FormRow label="Zip Code:">
 							<FormInput
 								control={control}
 								name="ZipCode"
@@ -202,7 +202,7 @@ const HotelPortfoliosDetailPage = () => {
 							/>
 						</FormRow>
 
-						<FormRow label="Latitude:" required>
+						<FormRow label="Latitude:">
 							<FormInput
 								control={control}
 								name="Latitude"
@@ -212,7 +212,7 @@ const HotelPortfoliosDetailPage = () => {
 							/>
 						</FormRow>
 
-						<FormRow label="Longitude:" required>
+						<FormRow label="Longitude:">
 							<FormInput
 								control={control}
 								name="Longitude"
@@ -224,7 +224,7 @@ const HotelPortfoliosDetailPage = () => {
 
 						<Divider />
 
-						<FormRow label="Hotel Category Value:" required>
+						<FormRow label="Hotel Category Value:">
 							<FormInput
 								control={control}
 								name="HotelCategory.value"
@@ -233,7 +233,7 @@ const HotelPortfoliosDetailPage = () => {
 							/>
 						</FormRow>
 
-						<FormRow label="Hotel Category Type:" required>
+						<FormRow label="Hotel Category Type:">
 							<FormInput
 								control={control}
 								name="HotelCategory.attributes.Type"
@@ -242,7 +242,7 @@ const HotelPortfoliosDetailPage = () => {
 							/>
 						</FormRow>
 
-						<FormRow label="Hotel Category Code:" required>
+						<FormRow label="Hotel Category Code:">
 							<FormInput
 								control={control}
 								name="HotelCategory.attributes.Code"
@@ -301,7 +301,7 @@ const HotelPortfoliosDetailPage = () => {
               />
             </FormRow> */}
 
-						<FormRow label="Open AI Name (KR):" required>
+						<FormRow label="Open AI Name (KR):">
 							<FormInput
 								// disabled
 								control={control}
