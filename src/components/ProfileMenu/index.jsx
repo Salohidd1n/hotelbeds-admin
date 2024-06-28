@@ -23,6 +23,7 @@ const ProfileMenu = () => {
 			},
 			{
 				onSuccess: () => {
+					console.log('Logging out');
 					authStore.logout();
 				},
 				onSettled: () => {
