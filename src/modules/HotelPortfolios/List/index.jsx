@@ -39,6 +39,8 @@ const HotelPortfoliosListPage = () => {
 
 	const list = data?.hits;
 
+	console.log(list);
+
 	const onChangeTerm = useDebounce((e) => {
 		setTerm(e.target.value);
 	}, 700);
@@ -90,6 +92,8 @@ const HotelPortfoliosListPage = () => {
 		{
 			title: 'Name (KR)',
 			dataIndex: 'kr_name',
+			render: (_, row, index) =>
+				row[row.translation_options.kr_name] || row.kr_name,
 		},
 		{
 			title: 'City (EN)',

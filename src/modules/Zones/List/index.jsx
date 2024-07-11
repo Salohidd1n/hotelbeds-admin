@@ -96,6 +96,8 @@ const ZoneListPage = () => {
 		{
 			title: 'KR name',
 			dataIndex: 'kr_name',
+			render: (_, row, index) =>
+				row[row.translation_options.kr_name] || row.kr_name,
 		},
 		{
 			title: '',
