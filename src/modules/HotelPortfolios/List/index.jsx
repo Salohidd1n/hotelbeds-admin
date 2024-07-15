@@ -18,6 +18,7 @@ import { useDeleteHotelPortfolio } from 'services/hotel-portfolio.service';
 import CustomPopup from 'components/CustomPopup';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
+import moment from 'moment';
 
 const HotelPortfoliosListPage = () => {
 	const navigate = useNavigate();
@@ -106,6 +107,14 @@ const HotelPortfoliosListPage = () => {
 			render: (_, row, index) => row.City.kr_value,
 		},
 		{
+			title: 'Updated At',
+			dataIndex: 'updated_at',
+			render: (_, row, index) =>
+				parseInt(row.updated_at) > 0
+					? moment.unix(parseInt(row.updated_at)).format('YYYY/MM/DD HH:mm:ss')
+					: '',
+		},
+		{
 			title: '',
 			width: 50,
 			align: 'center',
@@ -168,7 +177,14 @@ const HotelPortfoliosListPage = () => {
 									current: page,
 								}}
 								onRow={(row, index) => ({
-									onClick: () => navigateToEditPage(row.id),
+									onClick: (e) => {
+										const selection = window.getSelection().toString();
+										if (selection.length > 0) {
+											e.preventDefault();
+											return;
+										}
+										navigateToEditPage(row.id);
+									},
 								})}
 								className={styles.table}
 							/>

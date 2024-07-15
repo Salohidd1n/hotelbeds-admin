@@ -17,6 +17,7 @@ import { useGetRooms, useRoomsDelete } from 'services/room.service';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
+import moment from 'moment';
 
 const RoomListPage = () => {
 	const navigate = useNavigate();
@@ -91,6 +92,14 @@ const RoomListPage = () => {
 			dataIndex: 'kr_name',
 		},
 		{
+			title: 'Updated At',
+			dataIndex: 'updated_at',
+			render: (_, row, index) =>
+				parseInt(row.updated_at) > 0
+					? moment.unix(parseInt(row.updated_at)).format('YYYY/MM/DD HH:mm:ss')
+					: '',
+		},
+		{
 			title: '',
 			width: 50,
 			align: 'center',
@@ -153,7 +162,14 @@ const RoomListPage = () => {
 									current: page,
 								}}
 								onRow={(row, index) => ({
-									onClick: () => navigateToEditPage(row.id),
+									onClick: (e) => {
+										const selection = window.getSelection().toString();
+										if (selection.length > 0) {
+											e.preventDefault();
+											return;
+										}
+										navigateToEditPage(row.id);
+									},
 								})}
 								className={styles.table}
 							/>

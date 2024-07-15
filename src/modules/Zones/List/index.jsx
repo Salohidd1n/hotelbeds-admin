@@ -18,6 +18,7 @@ import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
 import { useGetZones, useZonesDelete } from 'services/zone.service';
+import moment from 'moment';
 
 const ZoneListPage = () => {
 	const navigate = useNavigate();
@@ -100,6 +101,14 @@ const ZoneListPage = () => {
 				row[row.translation_options.kr_name] || row.kr_name,
 		},
 		{
+			title: 'Updated At',
+			dataIndex: 'updated_at',
+			render: (_, row, index) =>
+				parseInt(row.updated_at) > 0
+					? moment.unix(parseInt(row.updated_at)).format('YYYY/MM/DD HH:mm:ss')
+					: '',
+		},
+		{
 			title: '',
 			width: 50,
 			align: 'center',
@@ -162,7 +171,14 @@ const ZoneListPage = () => {
 									current: page,
 								}}
 								onRow={(row, index) => ({
-									onClick: () => navigateToEditPage(row.id),
+									onClick: (e) => {
+										const selection = window.getSelection().toString();
+										if (selection.length > 0) {
+											e.preventDefault();
+											return;
+										}
+										navigateToEditPage(row.id);
+									},
 								})}
 								className={styles.table}
 							/>
