@@ -303,7 +303,7 @@ const HotelPortfoliosDetailPage = () => {
 
 						<FormRow label="Open AI Name (KR):">
 							<FormInput
-								// disabled
+								// disabled={!!id}
 								control={control}
 								name="kr_name_oai"
 								placeholder="Enter KR name"

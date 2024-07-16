@@ -2,4 +2,11 @@
   :global(.rc-table-body) {
     min-height: calc(100vh - 260px);
   }
+  tbody {
+    tr {
+      td {
+        padding: 0;
+      }
+    }
+  }
 }
