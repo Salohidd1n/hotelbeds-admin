@@ -55,9 +55,9 @@ httpRequestAuth.interceptors.request.use((config) => {
 	}
 
 	const signature = generateSignature();
-	config.headers.apikey = import.meta.env.VITE_API_KEY;
-	config.headers.apisecret = signature.key;
-	config.headers.timestamp = signature.timestamp;
+	config.headers['x-api-key'] = import.meta.env.VITE_API_KEY;
+	config.headers['x-api-secret'] = signature.key;
+	config.headers['x-timestamp'] = signature.timestamp;
 
 	return config;
 });
