@@ -14,7 +14,7 @@ const useReviews = ({
 	onChange,
 	JPCode,
 }) => {
-	const { data: nearestPlaces } = useGetNearestObjects({
+	const { data: nearestPlaces, isLoading } = useGetNearestObjects({
 		params: {
 			searchQuery: hotelName,
 			language: language,
@@ -34,7 +34,7 @@ const useReviews = ({
 		);
 	}, [nearestPlaces, postalCode]);
 
-	const { data: details } = useGetLocationDetails({
+	const { data: details, isLoading2 } = useGetLocationDetails({
 		locationId: currentHotelTripadvisorPlace?.location_id,
 		queryParams: {
 			enabled: !!currentHotelTripadvisorPlace?.location_id,
@@ -51,6 +51,7 @@ const useReviews = ({
 	return {
 		rating: Number(details?.data?.rating || 0),
 		reviewsCount: Number(details?.data?.num_reviews || 0),
+		isLoading: isLoading2 || isLoading,
 	};
 };
 

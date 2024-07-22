@@ -39,6 +39,10 @@ import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 import useHotelAction from 'hooks/useHotelAction';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 import downloadTemplate from 'utils/downloadTemplate';
+import { useGetSections } from 'services/section.service';
+import FormSelect from 'components/FormElements/Select/FormSelect';
+import { useGetMarkups } from 'services/markup.service';
+import markupPoolService from 'services/markupPool.service';
 
 const GroupCardDestinationsDetailPage = () => {
 	const navigate = useNavigate();
@@ -48,6 +52,41 @@ const GroupCardDestinationsDetailPage = () => {
 	const { control, reset, handleSubmit, setValue } = useForm({
 		defaultValues: {
 			hotelCode: [{}],
+		},
+	});
+
+	const { data: sections } = useGetSections({
+		params: {
+			page: 1,
+			page_size: 1000,
+		},
+		queryParams: {
+			select: (res) => {
+				return res.data.results
+					.filter((item) => item.template === 'group-card')
+					.map((value) => ({
+						label: value.kr_title,
+						value: value.id,
+					}));
+			},
+		},
+	});
+
+	const { data: markups } = useGetMarkups({
+		params: {
+			page: 1,
+			page_size: 1000,
+		},
+		queryParams: {
+			select: (res) => {
+				return [
+					{ label: 'none', value: '' },
+					...res.data.results.map((value) => ({
+						label: value.type,
+						value: value.id,
+					})),
+				];
+			},
 		},
 	});
 
@@ -77,14 +116,15 @@ const GroupCardDestinationsDetailPage = () => {
 		},
 	});
 
-	const { mutate: create, isLoading: createLoading } =
+	const { mutateAsync: create, isLoading: createLoading } =
     useGroupDestinationsCreate({
     	onSuccess: () => {
     		successToast();
     		navigate(-1);
     	},
     });
-	const { mutate: update, isLoading: updateLoading } =
+
+	const { mutateAsync: update, isLoading: updateLoading } =
     useGroupDestinationsUpdate({
     	onSuccess: () => {
     		successToast();
@@ -92,20 +132,65 @@ const GroupCardDestinationsDetailPage = () => {
     	},
     });
 
-	const onSubmit = (values) => {
-		if (!id)
-			create({
-				...values,
-				hotelCode: values.hotelCode.map((item) => item.JPCode),
-			});
-		else {
-			update({
-				id,
-				data: {
+	const onSubmit = async (data) => {
+		try {
+			const values = { ...data };
+			if (!id) {
+				let markUpPoolId = '';
+				if (values.markUpId) {
+					const res = await markupPoolService.create({
+						specialMarkupId: values.markUpId,
+						hotels: values.hotelCode.map((item) => ({
+							hotelCode: item.JPCode,
+						})),
+					});
+					markUpPoolId = res.data.id;
+				}
+				await create({
 					...values,
+					markUpId: values.markUpId,
 					hotelCode: values.hotelCode.map((item) => item.JPCode),
-				},
-			});
+					markUpPoolId,
+				});
+			} else {
+				if (values.markUpId && !values.markUpPoolId) {
+					const res = await markupPoolService.create({
+						specialMarkupId: values.markUpId,
+						hotels: values.hotelCode.map((item) => ({
+							hotelCode: item.JPCode,
+						})),
+					});
+					values.markUpPoolId = res.data.id;
+				}
+
+				if (values.markUpId && values.markUpPoolId) {
+					await markupPoolService.update({
+						id: values.markUpPoolId,
+						data: {
+							specialMarkupId: values.markUpId,
+							hotels: values.hotelCode.map((item) => ({
+								hotelCode: item.JPCode,
+							})),
+						},
+					});
+				}
+
+				if (!values.markUpId && values.markUpPoolId) {
+					await markupPoolService.delete(values.markUpPoolId);
+					values.markUpPoolId = '';
+					values.markUpId = '';
+				}
+
+				await update({
+					id,
+					data: {
+						...values,
+						hotelCode: values.hotelCode.map((item) => item.JPCode),
+					},
+				});
+			}
+		} catch (e) {
+			console.log('e', e);
 		}
 	};
 
@@ -122,7 +207,7 @@ const GroupCardDestinationsDetailPage = () => {
 			<Header>
 				<HeaderLeftSide>
 					<BackButton />
-					<HeaderTitle>Recommended hotels for summer travel</HeaderTitle>
+					<HeaderTitle>Group Cards</HeaderTitle>
 				</HeaderLeftSide>
 				<HeaderExtraSide>
 					<Button
@@ -178,6 +263,23 @@ const GroupCardDestinationsDetailPage = () => {
 									name="kr_content"
 									placeholder="Enter content"
 									required
+								/>
+							</FormRow>
+							<FormRow label="Select section:" required>
+								<FormSelect
+									control={control}
+									name="sectionId"
+									placeholder="Select section"
+									required
+									options={sections || []}
+								/>
+							</FormRow>
+							<FormRow label="Select markup:">
+								<FormSelect
+									control={control}
+									name="markUpId"
+									placeholder="Select markup"
+									options={markups || []}
 								/>
 							</FormRow>
 							<FormRow label="Order:" required>

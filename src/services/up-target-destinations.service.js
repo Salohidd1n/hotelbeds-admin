@@ -3,24 +3,24 @@ import httpRequestV2 from './httpRequestV2';
 
 const destinationService = {
 	getList: (params) =>
-		httpRequestV2.get('v1/promotions/up-target-destinations', {
+		httpRequestV2.get('v1/promotions/group-hotel-destinations', {
 			params,
 		}),
 	getById: (id, params) =>
-		httpRequestV2.get(`v1/promotions/up-target-destinations/${id}`, {
+		httpRequestV2.get(`v1/promotions/group-hotel-destinations/${id}`, {
 			params,
 		}),
 	update: (data) =>
 		httpRequestV2.put(
-			`v1/promotions/up-target-destinations/${data.id}`,
+			`v1/promotions/group-hotel-destinations/${data.id}`,
 			data.data,
 		),
 	delete: (id, params) =>
-		httpRequestV2.delete(`v1/promotions/up-target-destinations/${id}`, {
+		httpRequestV2.delete(`v1/promotions/group-hotel-destinations/${id}`, {
 			params,
 		}),
 	create: (data) =>
-		httpRequestV2.post('v1/promotions/up-target-destinations', data),
+		httpRequestV2.post('v1/promotions/group-hotel-destinations', data),
 };
 
 export const useGetUpTargetDestinations = ({

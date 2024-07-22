@@ -28,6 +28,10 @@ import DownTargetDestinationsListPage from 'modules/DownTargetDestinations/List'
 import BannerListPage from 'modules/Banner/List';
 import BannerDetailPage from 'modules/Banner/Detail';
 import Register from 'modules/Register';
+import MarkupListPage from 'modules/Markup/List';
+import MarkupDetailPage from 'modules/Markup/Detail';
+import SectionListPage from 'modules/Section/List';
+import SectionDetailPage from 'modules/Section/Detail';
 
 const Router = () => {
 	const { isAuth } = authStore;
@@ -59,9 +63,17 @@ const Router = () => {
 				<Route path="static-data/zones/create" element={<ZoneDetailPage />} />
 				<Route path="static-data/zones/:id" element={<ZoneDetailPage />} />
 
+				<Route path="section" element={<SectionListPage />} />
+				<Route path="section/create" element={<SectionDetailPage />} />
+				<Route path="section/:id" element={<SectionDetailPage />} />
+
 				<Route path="banner" element={<BannerListPage />} />
 				<Route path="banner/create" element={<BannerDetailPage />} />
 				<Route path="banner/:id" element={<BannerDetailPage />} />
+
+				<Route path="target/markup" element={<MarkupListPage />} />
+				<Route path="target/markup/create" element={<MarkupDetailPage />} />
+				<Route path="target/markup/:id" element={<MarkupDetailPage />} />
 
 				<Route
 					path="target/down-target-destinations"

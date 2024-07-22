@@ -1,7 +1,7 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, Button, IconButton } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import DataTable from '../../../components/DataTable';
 import Header, {
 	HeaderExtraSide,
@@ -15,23 +15,25 @@ import ProfileMenu from '../../../components/ProfileMenu';
 import styles from './index.module.scss';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
+import { useGetCountries } from 'services/country.service';
+import { useDeleteCountry } from 'services/country.service';
 import CustomPopup from 'components/CustomPopup';
-import {
-	useGetUpTargetDestinations,
-	useUpTargetDestinationsDelete,
-} from 'services/up-target-destinations.service';
+import moment from 'moment';
+import { useGetSections, useSectionsDelete } from 'services/section.service';
 
-const UpTargetDestinationsListPage = () => {
+const SectionListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
-	const [page, setPage] = useState(1);
-	const [deletableItem, setDeletableItem] = useState(false);
+	const [searchParams, setSearchParams] = useSearchParams();
+	const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
 	const [term, setTerm] = useState();
-	const { data, isLoading, refetch } = useGetUpTargetDestinations({
+	const [deletableCountry, setDeletableCountry] = useState(null);
+
+	const { data, isLoading, refetch } = useGetSections({
 		params: {
 			page,
-			limit: pageSize,
+			page_size: pageSize,
 			search: term,
 		},
 	});
@@ -40,20 +42,23 @@ const UpTargetDestinationsListPage = () => {
 		setTerm(e.target.value);
 	}, 700);
 
-	const { mutate: deleteDestination, isLoading: deleteLoading } =
-    useUpTargetDestinationsDelete({
-    	onSuccess: () => {
-    		refetch();
-    		setDeletableItem(null);
-    	},
-    });
+	const { mutate: deleteCountry, isLoading: deleteLoading } = useSectionsDelete(
+		{
+			onSuccess: () => {
+				refetch();
+				setDeletableCountry(null);
+			},
+		},
+	);
 
 	const navigateToCreatePage = () => {
 		navigate(`${pathname}/create`);
 	};
 
 	const onChangePage = (current) => {
-		setPage(current);
+		setSearchParams({
+			page: current,
+		});
 	};
 
 	const navigateToEditPage = (id) => {
@@ -62,7 +67,7 @@ const UpTargetDestinationsListPage = () => {
 
 	const onDeleteClick = (e, row) => {
 		e.stopPropagation();
-		deleteDestination(row.id);
+		deleteCountry(row.id);
 	};
 
 	const columns = [
@@ -74,9 +79,18 @@ const UpTargetDestinationsListPage = () => {
 			render: (_, __, index) => (page - 1) * pageSize + index + 1,
 		},
 		{
-			title: 'Location',
-			dataIndex: 'location',
+			title: 'Name EN',
+			dataIndex: 'en_title',
 		},
+		{
+			title: 'Name KR',
+			dataIndex: 'kr_title',
+		},
+		{
+			title: 'Template',
+			dataIndex: 'template',
+		},
+
 		{
 			title: 'Order',
 			dataIndex: 'order',
@@ -89,7 +103,7 @@ const UpTargetDestinationsListPage = () => {
 				<IconButton
 					onClick={(e) => {
 						e.stopPropagation();
-						setDeletableItem(row);
+						setDeletableCountry(row);
 					}}
 					colorScheme="red"
 					variant="outline"
@@ -105,7 +119,7 @@ const UpTargetDestinationsListPage = () => {
 			<Box>
 				<Header>
 					<HeaderLeftSide>
-						<HeaderTitle>Hotel group</HeaderTitle>
+						<HeaderTitle>Sections</HeaderTitle>
 					</HeaderLeftSide>
 					<HeaderExtraSide>
 						<NotificationMenu />
@@ -125,7 +139,7 @@ const UpTargetDestinationsListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Create
+                  Add section
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>
@@ -153,11 +167,11 @@ const UpTargetDestinationsListPage = () => {
 				</Page>
 			</Box>
 			<CustomPopup
-				isOpen={!!deletableItem}
-				title="Delete Group Destination"
+				isOpen={!!deletableCountry}
+				title="Delete Section"
 				footerContent={
-					<Box display="flex" gap="3">
-						<Button variant="outline" onClick={() => setDeletableItem(null)}>
+					<Box display="flex" gap="20px">
+						<Button variant="outline" onClick={() => setDeletableCountry(null)}>
               Cancel
 						</Button>
 						<Button
@@ -165,7 +179,7 @@ const UpTargetDestinationsListPage = () => {
 							bg="red"
 							disabled={deleteLoading}
 							isLoading={deleteLoading}
-							onClick={(e) => onDeleteClick(e, deletableItem)}
+							onClick={(e) => onDeleteClick(e, deletableCountry)}
 							_hover={{
 								background: 'red',
 							}}
@@ -174,14 +188,11 @@ const UpTargetDestinationsListPage = () => {
 						</Button>
 					</Box>
 				}
-				onClose={() => setDeletableItem(null)}
+				onClose={() => setDeletableCountry(null)}
 			>
-				<p>
-          Are you sure want to delete <b>{deletableItem?.en_location}</b> group
-          destination?
-				</p>
+				<p>Are you sure want to delete section?</p>
 			</CustomPopup>
 		</>
 	);
 };
-export default UpTargetDestinationsListPage;
+export default SectionListPage;

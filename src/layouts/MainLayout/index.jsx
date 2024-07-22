@@ -1,19 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
 import Sidebar from '../../components/Sidebar';
-import styles from './index.module.scss';
-import { FiUser, FiUsers } from 'react-icons/fi';
-import {
-	BiCog,
-	BiCurrentLocation,
-	BiExtension,
-	BiHome,
-	BiHomeSmile,
-	BiHotel,
-	BiLocationPlus,
-	BiMap,
-	BiMoney,
-	BiTask,
-} from 'react-icons/bi';
+import { BiCurrentLocation, BiHome, BiHotel, BiMap } from 'react-icons/bi';
 import { IoLocationOutline } from 'react-icons/io5';
 import { TbLocation } from 'react-icons/tb';
 import { MdModeOfTravel } from 'react-icons/md';
@@ -22,6 +9,8 @@ import { MdOutlineDataExploration } from 'react-icons/md';
 import { GiTriangleTarget } from 'react-icons/gi';
 import { MdDataArray } from 'react-icons/md';
 import { AiFillDatabase } from 'react-icons/ai';
+import { HiTemplate } from 'react-icons/hi';
+import { RiMarkupLine } from 'react-icons/ri';
 
 const elements = [
 	// {
@@ -57,6 +46,11 @@ const elements = [
 		],
 	},
 	{
+		label: 'Sections',
+		icon: HiTemplate,
+		link: '/section',
+	},
+	{
 		label: 'Banner',
 		icon: AiFillDatabase,
 		link: '/banner',
@@ -89,20 +83,25 @@ const elements = [
 		link: '/target',
 		children: [
 			{
-				label: 'Recommended hotels for summer travel',
+				label: 'Markup',
+				icon: RiMarkupLine,
+				link: '/target/markup',
+			},
+			{
+				label: 'Group cards',
 				icon: MdModeOfTravel,
 				link: '/target/group-destinations',
 			},
 			{
-				label: '‘Lowest Price Guaranteed’ Free Travel Partner~',
+				label: 'Hotel group',
 				icon: IoLocationOutline,
 				link: '/target/up-target-destinations',
 			},
-			{
-				label: 'Get closer to the Europe you want to visit',
-				icon: TbLocation,
-				link: '/target/down-target-destinations',
-			},
+			// {
+			//   label: 'Get closer to the Europe you want to visit',
+			//   icon: TbLocation,
+			//   link: '/target/down-target-destinations'
+			// }
 		],
 	},
 ];

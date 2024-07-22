@@ -34,6 +34,7 @@ const GroupCardDestinationsListPage = () => {
 			page,
 			limit: pageSize,
 			search: term,
+			populate: 'sectionId',
 		},
 	});
 
@@ -114,7 +115,7 @@ const GroupCardDestinationsListPage = () => {
 			<Box>
 				<Header>
 					<HeaderLeftSide>
-						<HeaderTitle>Recommended hotels for summer travel</HeaderTitle>
+						<HeaderTitle>Group Cards</HeaderTitle>
 					</HeaderLeftSide>
 					<HeaderExtraSide>
 						<NotificationMenu />

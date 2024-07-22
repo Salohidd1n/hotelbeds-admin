@@ -36,6 +36,7 @@ const LocationListPage = () => {
 			page,
 			limit: pageSize,
 			search: term,
+			populate: 'sectionId',
 		},
 	});
 
@@ -107,6 +108,10 @@ const LocationListPage = () => {
 		{
 			title: 'KR title',
 			dataIndex: 'kr_title',
+		},
+		{
+			title: 'Section',
+			render: (_, row, index) => row?.sectionId?.kr_title,
 		},
 		{
 			title: 'Active',

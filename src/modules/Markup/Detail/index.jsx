@@ -1,4 +1,4 @@
-import { Button, Heading } from '@chakra-ui/react';
+import { Button, Grid, Heading } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
@@ -20,76 +20,47 @@ import PageCard, {
 import ProfileMenu from '../../../components/ProfileMenu';
 import useCustomToast from '../../../hooks/useCustomToast';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
-import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
+import FormTextarea from 'components/FormElements/Input/FormTextarea';
 import FormImageUpload from 'components/FormElements/ImageUpload/FormImageUpload';
 import {
-	useGetLocationsById,
-	useLocationsCreate,
-	useLocationsUpdate,
-} from 'services/location.service';
-import { useGetSections } from 'services/section.service';
-import FormSelect from 'components/FormElements/Select/FormSelect';
+	useGetMarkupsById,
+	useMarkupCreate,
+	useMarkupUpdate,
+} from 'services/markup.service';
 
-const LocationDetailPage = () => {
+const MarkupDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
 
-	const { control, reset, handleSubmit } = useForm({
-		defaultValues: {
-			is_active: true,
-		},
-	});
+	const { control, reset, handleSubmit } = useForm();
 
-	const { data: sections } = useGetSections({
-		params: {
-			page: 1,
-			page_size: 1000,
-		},
-		queryParams: {
-			select: (res) => {
-				return res.data.results
-					.filter((item) => item.template === 'location')
-					.map((value) => ({
-						label: value.kr_title,
-						value: value.id,
-					}));
-			},
-		},
-	});
-
-	const { isLoading } = useGetLocationsById({
+	const { isLoading } = useGetMarkupsById({
 		id,
 		queryParams: {
 			cacheTime: false,
 			enabled: Boolean(id),
-			onSuccess: (res) => {
-				reset({
-					...res.data,
-				});
-			},
+			onSuccess: (res) => [reset(res.data)],
 		},
 	});
 
-	const { mutate: createLocation, isLoading: createLoading } =
-    useLocationsCreate({
-    	onSuccess: () => {
-    		successToast();
-    		navigate(-1);
-    	},
-    });
-	const { mutate: updateLocation, isLoading: updateLoading } =
-    useLocationsUpdate({
-    	onSuccess: () => {
-    		successToast();
-    		navigate(-1);
-    	},
-    });
+	const { mutate: createCountry, isLoading: createLoading } = useMarkupCreate({
+		onSuccess: () => {
+			successToast();
+			navigate(-1);
+		},
+	});
+	const { mutate: updateCountry, isLoading: updateLoading } = useMarkupUpdate({
+		onSuccess: () => {
+			successToast();
+			navigate(-1);
+		},
+	});
 
 	const onSubmit = (values) => {
-		if (!id) createLocation(values);
+		if (!id) createCountry(values);
 		else {
-			updateLocation({
+			updateCountry({
 				id,
 				data: values,
 			});
@@ -103,7 +74,7 @@ const LocationDetailPage = () => {
 			<Header>
 				<HeaderLeftSide>
 					<BackButton />
-					<HeaderTitle>Locations</HeaderTitle>
+					<HeaderTitle>Markup</HeaderTitle>
 				</HeaderLeftSide>
 				<HeaderExtraSide>
 					<NotificationMenu />
@@ -115,51 +86,53 @@ const LocationDetailPage = () => {
 				<PageCard w={600}>
 					<PageCardHeader>
 						<HeaderLeftSide>
-							<Heading fontSize="xl">Locations Data</Heading>
+							<Heading fontSize="xl">Markup Data</Heading>
 						</HeaderLeftSide>
 					</PageCardHeader>
 
 					<PageCardForm p={6} spacing={8}>
-						<FormRow label="Title (KR):" required>
+						<FormRow label="Type:" required>
 							<FormInput
 								control={control}
-								name="kr_title"
-								placeholder="Enter title"
+								name="type"
+								placeholder="Enter type"
 								autoFocus
 								required
 							/>
 						</FormRow>
-
-						<FormRow label="Title (EN):" required>
-							<FormInput
+						<FormRow label="Description:" required>
+							<FormTextarea
 								control={control}
-								name="en_title"
-								placeholder="Enter title"
+								name="description"
+								placeholder="Enter Description"
 								required
 							/>
 						</FormRow>
-						<FormRow label="Select section:" required>
-							<FormSelect
-								control={control}
-								name="sectionId"
-								placeholder="Select section"
-								required
-								options={sections || []}
-							/>
-						</FormRow>
-						<FormRow label="Order:" required>
-							<FormNumberInput
-								control={control}
-								name="order"
-								placeholder="Enter order"
-								required
-							/>
-						</FormRow>
+						<Grid templateColumns="repeat(3, 1fr)" gap={6}>
+							<FormRow label="Browser Image:" required>
+								<FormImageUpload
+									control={control}
+									name="imageURL.browser"
+									required
+								/>
+							</FormRow>
+							<FormRow label="Tablet Image:" required>
+								<FormImageUpload
+									control={control}
+									name="imageURL.tablet"
+									required
+								/>
+							</FormRow>
+							<FormRow label="Mobile Image:" required>
+								<FormImageUpload
+									control={control}
+									name="imageURL.mobile"
+									required
+								/>
+							</FormRow>
+						</Grid>
 						<FormRow label="Active:">
 							<FormSwitch control={control} name="is_active" />
-						</FormRow>
-						<FormRow label="Image:" required>
-							<FormImageUpload control={control} name="imageURL" required />
 						</FormRow>
 					</PageCardForm>
 
@@ -177,4 +150,4 @@ const LocationDetailPage = () => {
 		</form>
 	);
 };
-export default LocationDetailPage;
+export default MarkupDetailPage;

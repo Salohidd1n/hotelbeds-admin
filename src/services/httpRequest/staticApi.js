@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { standaloneToast } from '../../App';
 import authStore from '../../store/auth.store';
+import generateSignature from 'utils/generateSignature';
 
 const httpStaticRequest = axios.create({
 	baseURL: import.meta.env.VITE_STATIC_BASE_URL,
@@ -51,6 +51,10 @@ httpStaticRequest.interceptors.request.use((config) => {
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
+	const signature = generateSignature();
+	config.headers['x-api-key'] = import.meta.env.VITE_API_KEY;
+	config.headers['x-api-secret'] = signature.key;
+	config.headers['x-timestamp'] = signature.timestamp;
 	return config;
 });
 
