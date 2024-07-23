@@ -229,7 +229,7 @@ const GroupCardDestinationsDetailPage = () => {
 					markUpPoolId = markupPool.id;
 				}
 
-				if (!values.markUpId) {
+				if (!values.markUpId && groupDest.data.markUpPoolId) {
 					const deletedHotels = groupDest.data.hotelCode;
 					const res = await markupPoolService.getList({
 						page: 1,
