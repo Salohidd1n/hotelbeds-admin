@@ -42,16 +42,45 @@ import downloadTemplate from 'utils/downloadTemplate';
 import { useGetSections } from 'services/section.service';
 import FormSelect from 'components/FormElements/Select/FormSelect';
 import { useGetMarkups } from 'services/markup.service';
-import markupPoolService from 'services/markupPool.service';
+import markupPoolService, {
+	useGetMarkupsPool,
+} from 'services/markupPool.service';
+import { useState } from 'react';
+
+const removeDuplicates = (array) => {
+	const uniqueObjects = array.reduce((acc, current) => {
+		acc.set(current.hotelCode, current);
+		return acc;
+	}, new Map());
+
+	return Array.from(uniqueObjects.values());
+};
 
 const GroupCardDestinationsDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
-
+	const [isLoadingMarkup, setIsLoadingMarkup] = useState(false);
 	const { control, reset, handleSubmit, setValue } = useForm({
 		defaultValues: {
 			hotelCode: [{}],
+		},
+	});
+
+	const markUpId = useWatch({
+		control,
+		name: 'markUpId',
+	});
+
+	const { data: markupPool } = useGetMarkupsPool({
+		params: {
+			page: 1,
+			page_size: 100,
+			specialMarkupId: markUpId,
+		},
+		queryParams: {
+			enabled: !!markUpId,
+			select: (res) => res.data.results[0],
 		},
 	});
 
@@ -100,7 +129,7 @@ const GroupCardDestinationsDetailPage = () => {
 		name: 'hotelCode',
 	});
 
-	const { isLoading } = useGetGroupDestinationsById({
+	const { isLoading, data: groupDest } = useGetGroupDestinationsById({
 		id,
 		queryParams: {
 			cacheTime: false,
@@ -133,52 +162,91 @@ const GroupCardDestinationsDetailPage = () => {
     });
 
 	const onSubmit = async (data) => {
+		setIsLoadingMarkup(true);
 		try {
 			const values = { ...data };
 			if (!id) {
-				let markUpPoolId = '';
-				if (values.markUpId) {
-					const res = await markupPoolService.create({
-						specialMarkupId: values.markUpId,
-						hotels: values.hotelCode.map((item) => ({
+				let markUpPoolId = undefined;
+				if (markupPool) {
+					const markupHotels = removeDuplicates([
+						...values.hotelCode.map((item) => ({
 							hotelCode: item.JPCode,
 						})),
+						...markupPool.hotels,
+					]);
+					await markupPoolService.update({
+						id: markupPool.id,
+						data: {
+							specialMarkupId: markupPool.specialMarkupId,
+							hotels: markupHotels,
+						},
 					});
-					markUpPoolId = res.data.id;
+					markUpPoolId = markupPool.id;
 				}
 				await create({
 					...values,
-					markUpId: values.markUpId,
+					markUpId: values.markUpId || undefined,
 					hotelCode: values.hotelCode.map((item) => item.JPCode),
 					markUpPoolId,
 				});
 			} else {
-				if (values.markUpId && !values.markUpPoolId) {
-					const res = await markupPoolService.create({
-						specialMarkupId: values.markUpId,
-						hotels: values.hotelCode.map((item) => ({
+				let markUpPoolId = '';
+				if (markupPool && values.markUpId) {
+					if (
+						groupDest.data.markUpId &&
+            groupDest.data.markUpId !== values.markUpId
+					) {
+						const deletedHotels = groupDest.data.hotelCode;
+						const res = await markupPoolService.getList({
+							page: 1,
+							page_size: 100,
+							specialMarkupId: groupDest.data.markUpId,
+						});
+						const markupHotels = res.data.results[0].hotels.filter(
+							(item) => !deletedHotels.includes(item.hotelCode),
+						);
+						await markupPoolService.update({
+							id: groupDest.data.markUpPoolId,
+							data: {
+								specialMarkupId: groupDest.data.markUpId,
+								hotels: markupHotels,
+							},
+						});
+					}
+					const markupHotels = removeDuplicates([
+						...values.hotelCode.map((item) => ({
 							hotelCode: item.JPCode,
 						})),
-					});
-					values.markUpPoolId = res.data.id;
-				}
-
-				if (values.markUpId && values.markUpPoolId) {
+						...markupPool.hotels,
+					]);
 					await markupPoolService.update({
-						id: values.markUpPoolId,
+						id: markupPool.id,
 						data: {
-							specialMarkupId: values.markUpId,
-							hotels: values.hotelCode.map((item) => ({
-								hotelCode: item.JPCode,
-							})),
+							specialMarkupId: markupPool.specialMarkupId,
+							hotels: markupHotels,
 						},
 					});
+					markUpPoolId = markupPool.id;
 				}
 
-				if (!values.markUpId && values.markUpPoolId) {
-					await markupPoolService.delete(values.markUpPoolId);
-					values.markUpPoolId = '';
-					values.markUpId = '';
+				if (!values.markUpId) {
+					const deletedHotels = groupDest.data.hotelCode;
+					const res = await markupPoolService.getList({
+						page: 1,
+						page_size: 100,
+						specialMarkupId: groupDest.data.markUpId,
+					});
+					const markupHotels = res.data.results[0].hotels.filter(
+						(item) => !deletedHotels.includes(item.hotelCode),
+					);
+					await markupPoolService.update({
+						id: groupDest.data.markUpPoolId,
+						data: {
+							specialMarkupId: groupDest.data.markUpId,
+							hotels: markupHotels,
+						},
+					});
+					markUpPoolId = '';
 				}
 
 				await update({
@@ -186,11 +254,14 @@ const GroupCardDestinationsDetailPage = () => {
 					data: {
 						...values,
 						hotelCode: values.hotelCode.map((item) => item.JPCode),
+						markUpPoolId,
 					},
 				});
 			}
 		} catch (e) {
 			console.log('e', e);
+		} finally {
+			setIsLoadingMarkup(false);
 		}
 	};
 
@@ -211,7 +282,7 @@ const GroupCardDestinationsDetailPage = () => {
 				</HeaderLeftSide>
 				<HeaderExtraSide>
 					<Button
-						isLoading={createLoading || updateLoading}
+						isLoading={createLoading || updateLoading || isLoadingMarkup}
 						type="submit"
 						ml="auto"
 					>

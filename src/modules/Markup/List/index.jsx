@@ -13,14 +13,11 @@ import { Page } from '../../../components/Page';
 import PageCard, { PageCardHeader } from '../../../components/PageCard';
 import ProfileMenu from '../../../components/ProfileMenu';
 import styles from './index.module.scss';
-import { useGetRooms, useRoomsDelete } from 'services/room.service';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
-import { useGetCountries } from 'services/country.service';
-import { useDeleteCountry } from 'services/country.service';
 import CustomPopup from 'components/CustomPopup';
-import moment from 'moment';
 import { useGetMarkups, useMarkupDelte } from 'services/markup.service';
+import { useGetMarkupsPool } from 'services/markupPool.service';
 
 const MarkupListPage = () => {
 	const navigate = useNavigate();
