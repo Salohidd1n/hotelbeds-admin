@@ -336,7 +336,7 @@ const UpTargetDestinationDetailPage = () => {
 					markUpPoolId = markupPool.id;
 				}
 
-				if (!values.markUpId) {
+				if (!values.markUpId && groupDest.data.markUpPoolId) {
 					const deletedHotels = groupDest.data.hotel.map(
 						(item) => item.hotelCode,
 					);
