@@ -41,7 +41,9 @@ import downloadTemplate from 'utils/downloadTemplate';
 import { useGetSections } from 'services/section.service';
 import { useGetMarkups } from 'services/markup.service';
 import FormSelect from 'components/FormElements/Select/FormSelect';
-import markupPoolService from 'services/markupPool.service';
+import markupPoolService, {
+	useGetMarkupsPool,
+} from 'services/markupPool.service';
 import {
 	useCreateSession,
 	useGetHotelContent,
@@ -70,9 +72,19 @@ const __defaultPaxes = [
 	},
 ];
 
+const removeDuplicates = (array) => {
+	const uniqueObjects = array.reduce((acc, current) => {
+		acc.set(current.hotelCode, current);
+		return acc;
+	}, new Map());
+
+	return Array.from(uniqueObjects.values());
+};
+
 const UpTargetDestinationDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
+	const [isLoadingMarkup, setIsLoadingMarkup] = useState(false);
 	const { successToast } = useCustomToast();
 	const [JPCode, setJPCode] = useState(null);
 	const getHotelContent = useGetHotelContent();
@@ -84,6 +96,23 @@ const UpTargetDestinationDetailPage = () => {
 					metaData: {},
 				},
 			],
+		},
+	});
+
+	const markUpId = useWatch({
+		control,
+		name: 'markUpId',
+	});
+
+	const { data: markupPool } = useGetMarkupsPool({
+		params: {
+			page: 1,
+			page_size: 100,
+			specialMarkupId: markUpId,
+		},
+		queryParams: {
+			enabled: !!markUpId,
+			select: (res) => res.data.results[0],
 		},
 	});
 
@@ -134,7 +163,7 @@ const UpTargetDestinationDetailPage = () => {
 		},
 	});
 
-	const { isLoading } = useGetUpTargetDestinationsById({
+	const { isLoading, data: groupDest } = useGetUpTargetDestinationsById({
 		id,
 		queryParams: {
 			cacheTime: false,
@@ -235,60 +264,115 @@ const UpTargetDestinationDetailPage = () => {
     });
 
 	const onSubmit = async (data) => {
-		const values = { ...data };
-		if (!id) {
-			let markUpPoolId = '';
-			if (values.markUpId) {
-				const res = await markupPoolService.create({
-					specialMarkupId: values.markUpId,
-					hotels: values.hotelCode.map((item) => ({ hotelCode: item.JPCode })),
-				});
-				markUpPoolId = res.data.id;
-			}
-			create({
-				...values,
-				markUpPoolId,
-				hotel: values.hotelCode.map((item) => ({
-					hotelCode: item.JPCode,
-					metaData: item.metaData,
-				})),
-			});
-		} else {
-			if (values.markUpId && !values.markUpPoolId) {
-				const res = await markupPoolService.create({
-					specialMarkupId: values.markUpId,
-					hotels: values.hotelCode.map((item) => ({ hotelCode: item.JPCode })),
-				});
-				values.markUpPoolId = res.data.id;
-			}
-
-			if (values.markUpId && values.markUpPoolId) {
-				await markupPoolService.update({
-					id: values.markUpPoolId,
-					data: {
-						specialMarkupId: values.markUpId,
-						hotels: values.hotelCode.map((item) => ({
+		setIsLoadingMarkup(true);
+		try {
+			const values = { ...data };
+			if (!id) {
+				let markUpPoolId = undefined;
+				if (markupPool) {
+					const markupHotels = removeDuplicates([
+						...values.hotelCode.map((item) => ({
 							hotelCode: item.JPCode,
 						})),
-					},
-				});
-			}
-
-			if (!values.markUpId && values.markUpPoolId) {
-				await markupPoolService.delete(values.markUpPoolId);
-				values.markUpPoolId = '';
-				values.markUpId = '';
-			}
-			update({
-				id,
-				data: {
+						...markupPool.hotels,
+					]);
+					await markupPoolService.update({
+						id: markupPool.id,
+						data: {
+							specialMarkupId: markupPool.specialMarkupId,
+							hotels: markupHotels,
+						},
+					});
+					markUpPoolId = markupPool.id;
+				}
+				create({
 					...values,
+					markUpPoolId,
+					markUpId: values.markUpId || undefined,
 					hotel: values.hotelCode.map((item) => ({
 						hotelCode: item.JPCode,
 						metaData: item.metaData,
 					})),
-				},
-			});
+				});
+			} else {
+				let markUpPoolId = '';
+				if (markupPool && values.markUpId) {
+					if (
+						groupDest.data.markUpId &&
+            groupDest.data.markUpId !== values.markUpId
+					) {
+						const deletedHotels = groupDest.data.hotel.map(
+							(item) => item.hotelCode,
+						);
+						const res = await markupPoolService.getList({
+							page: 1,
+							page_size: 100,
+							specialMarkupId: groupDest.data.markUpId,
+						});
+						const markupHotels = res.data.results[0].hotels.filter(
+							(item) => !deletedHotels.includes(item.hotelCode),
+						);
+						await markupPoolService.update({
+							id: groupDest.data.markUpPoolId,
+							data: {
+								specialMarkupId: groupDest.data.markUpId,
+								hotels: markupHotels,
+							},
+						});
+					}
+					const markupHotels = removeDuplicates([
+						...values.hotelCode.map((item) => ({
+							hotelCode: item.JPCode,
+						})),
+						...markupPool.hotels,
+					]);
+					await markupPoolService.update({
+						id: markupPool.id,
+						data: {
+							specialMarkupId: markupPool.specialMarkupId,
+							hotels: markupHotels,
+						},
+					});
+					markUpPoolId = markupPool.id;
+				}
+
+				if (!values.markUpId) {
+					const deletedHotels = groupDest.data.hotel.map(
+						(item) => item.hotelCode,
+					);
+					const res = await markupPoolService.getList({
+						page: 1,
+						page_size: 100,
+						specialMarkupId: groupDest.data.markUpId,
+					});
+					const markupHotels = res.data.results[0].hotels.filter(
+						(item) => !deletedHotels.includes(item.hotelCode),
+					);
+					await markupPoolService.update({
+						id: groupDest.data.markUpPoolId,
+						data: {
+							specialMarkupId: groupDest.data.markUpId,
+							hotels: markupHotels,
+						},
+					});
+					markUpPoolId = '';
+				}
+				update({
+					id,
+					data: {
+						...values,
+						markUpPoolId,
+						hotel: values.hotelCode.map((item) => ({
+							hotelCode: item.JPCode,
+							metaData: item.metaData,
+						})),
+					},
+				});
+			}
+		} catch (e) {
+			console.log('e===>', e);
+		} finally {
+			setIsLoadingMarkup(false);
 		}
 	};
 
@@ -314,7 +398,7 @@ const UpTargetDestinationDetailPage = () => {
 				</HeaderLeftSide>
 				<HeaderExtraSide>
 					<Button
-						isLoading={createLoading || updateLoading}
+						isLoading={createLoading || updateLoading || isLoadingMarkup}
 						type="submit"
 						ml="auto"
 					>

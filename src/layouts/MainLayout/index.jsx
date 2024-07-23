@@ -56,12 +56,12 @@ const elements = [
 		link: '/banner',
 	},
 	{
-		label: 'AI recommended travel destinations',
+		label: 'Locations',
 		icon: MdOutlineDataExploration,
 		link: '/promotions',
 		children: [
 			{
-				label: 'Locations',
+				label: 'Location',
 				icon: IoLocationOutline,
 				link: '/promotions/locations',
 			},
@@ -83,17 +83,17 @@ const elements = [
 		link: '/target',
 		children: [
 			{
-				label: 'Markup',
+				label: 'Special Markups',
 				icon: RiMarkupLine,
 				link: '/target/markup',
 			},
 			{
-				label: 'Group cards',
+				label: 'Group Cards',
 				icon: MdModeOfTravel,
 				link: '/target/group-destinations',
 			},
 			{
-				label: 'Hotel group',
+				label: 'Group Hotels',
 				icon: IoLocationOutline,
 				link: '/target/up-target-destinations',
 			},
