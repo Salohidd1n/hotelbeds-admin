@@ -39,10 +39,20 @@ import markupPoolService, {
 	useGetMarkupsPool,
 } from 'services/markupPool.service';
 import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useHotelAction from 'hooks/useHotelAction';
 import downloadTemplate from 'utils/downloadTemplate';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+import List from 'rc-virtual-list';
+
+function chunkArray(array, chunkSize) {
+	const result = [];
+	for (let i = 0; i < array.length; i += chunkSize) {
+		const chunk = array.slice(i, i + chunkSize);
+		result.push(chunk);
+	}
+	return result;
+}
 
 const MarkupDetailPage = () => {
 	const navigate = useNavigate();
@@ -59,6 +69,11 @@ const MarkupDetailPage = () => {
 		control,
 		name: 'hotelCode',
 	});
+
+	const chunkedArray = useMemo(() => {
+		if (fields.length > 0) return chunkArray(fields, 2);
+		return [];
+	}, [fields]);
 
 	const hotelCodes = useWatch({
 		control,
@@ -292,27 +307,42 @@ const MarkupDetailPage = () => {
 							</PageCardHeader>
 
 							<PageCardForm p={6} spacing={8}>
-								<Grid templateColumns="repeat(2, 1fr)" gap={6}>
-									{fields.map((item, index) => (
-										<Flex alignItems="center" key={item.id} gap={3}>
-											<FormCheckbox
-												control={control}
-												name={`hotelCode[${index}].checked`}
-												size="lg"
-												mt="25px"
-											/>
+								<List
+									data={chunkedArray}
+									height={550}
+									itemHeight={60}
+									itemKey="id"
+								>
+									{(items, index) => (
+										<HotelJPCode
+											control={control}
+											items={items}
+											index={index}
+										/>
+									)}
+								</List>
 
-											<FormRow label="JP Code:" required>
-												<FormInput
-													control={control}
-													name={`hotelCode[${index}].JPCode`}
-													placeholder="Enter JP Code"
-													required
-												/>
-											</FormRow>
-										</Flex>
-									))}
-								</Grid>
+								{/* <Grid templateColumns='repeat(2, 1fr)' gap={6}>
+                  {fields.map((item, index) => (
+                    <Flex alignItems='center' key={item.id} gap={3}>
+                      <FormCheckbox
+                        control={control}
+                        name={`hotelCode[${index}].checked`}
+                        size='lg'
+                        mt='25px'
+                      />
+
+                      <FormRow label='JP Code:' required>
+                        <FormInput
+                          control={control}
+                          name={`hotelCode[${index}].JPCode`}
+                          placeholder='Enter JP Code'
+                          required
+                        />
+                      </FormRow>
+                    </Flex>
+                  ))}
+                </Grid> */}
 							</PageCardForm>
 						</PageCard>
 					)}
@@ -322,3 +352,28 @@ const MarkupDetailPage = () => {
 	);
 };
 export default MarkupDetailPage;
+
+const HotelJPCode = ({ items, control, index }) => {
+	return (
+		<Grid templateColumns="repeat(2, 1fr)" gap={6} mb={3}>
+			{items.map((item, index2) => (
+				<Flex alignItems="center" key={item.id} gap={3}>
+					<FormCheckbox
+						control={control}
+						name={`hotelCode[${index * items.length + index2}].checked`}
+						size="lg"
+						mt="25px"
+					/>
+					<FormRow label="JP Code:" required>
+						<FormInput
+							control={control}
+							name={`hotelCode[${index * items.length + index2}].JPCode`}
+							placeholder="Enter JP Code"
+							required
+						/>
+					</FormRow>
+				</Flex>
+			))}
+		</Grid>
+	);
+};

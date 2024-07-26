@@ -1,5 +1,5 @@
-@import "./table.scss";
-@import "./dnd.scss";
+@import './table.scss';
+@import './dnd.scss';
 
 html {
   font-size: 0.8rem;
@@ -9,7 +9,7 @@ html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
   // text-decoration: none;
 }
 
@@ -19,4 +19,10 @@ html {
 
 .rc-table .rc-table-head.rc-table-hide-scrollbar::-webkit-scrollbar {
   width: 20px !important;
+}
+
+.grid-2 {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
 }

@@ -23,11 +23,13 @@ export default function useHotelAction({
 					const sheetName = workbook.SheetNames[0];
 					const worksheet = workbook.Sheets[sheetName];
 					const json = XLSX.utils.sheet_to_json(worksheet);
+
 					const jpCodes = json.map((item) => ({
 						JPCode: item?.JPCode,
 						order: item?.Order,
 						...initialFields,
 					}));
+
 					let filteredJPCodes = jpCodes.filter(
 						(item1) =>
 							!hotelCodes.some((item2) => item1.JPCode === item2.JPCode),
