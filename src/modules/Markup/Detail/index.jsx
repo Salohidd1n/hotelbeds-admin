@@ -75,6 +75,8 @@ const MarkupDetailPage = () => {
 		return [];
 	}, [fields]);
 
+	console.log('fields', fields, chunkedArray);
+
 	const hotelCodes = useWatch({
 		control,
 		name: 'hotelCode',
@@ -309,8 +311,8 @@ const MarkupDetailPage = () => {
 							<PageCardForm p={6} spacing={8}>
 								<List
 									data={chunkedArray}
-									height={550}
-									itemHeight={60}
+									height={500}
+									itemHeight={77}
 									itemKey="id"
 								>
 									{(items, index) => (
@@ -355,19 +357,19 @@ export default MarkupDetailPage;
 
 const HotelJPCode = ({ items, control, index }) => {
 	return (
-		<Grid templateColumns="repeat(2, 1fr)" gap={6} mb={3}>
+		<Grid templateColumns="repeat(2, 1fr)" gap={6} py={3}>
 			{items.map((item, index2) => (
 				<Flex alignItems="center" key={item.id} gap={3}>
 					<FormCheckbox
 						control={control}
-						name={`hotelCode[${index * items.length + index2}].checked`}
+						name={`hotelCode[${index * 2 + index2}].checked`}
 						size="lg"
 						mt="25px"
 					/>
 					<FormRow label="JP Code:" required>
 						<FormInput
 							control={control}
-							name={`hotelCode[${index * items.length + index2}].JPCode`}
+							name={`hotelCode[${index * 2 + index2}].JPCode`}
 							placeholder="Enter JP Code"
 							required
 						/>
