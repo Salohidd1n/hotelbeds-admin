@@ -29,6 +29,10 @@ import {
 } from 'services/location.service';
 import { useGetSections } from 'services/section.service';
 import FormSelect from 'components/FormElements/Select/FormSelect';
+import {
+	CustomOption,
+	CustomSingleValue,
+} from 'modules/UpTargetDestinations/Detail';
 
 const LocationDetailPage = () => {
 	const navigate = useNavigate();
@@ -51,7 +55,7 @@ const LocationDetailPage = () => {
 				return res.data.results
 					.filter((item) => item.template === 'location')
 					.map((value) => ({
-						label: value.kr_title,
+						label: decodeURIComponent(escape(atob(value.kr_title))),
 						value: value.id,
 					}));
 			},
@@ -145,6 +149,10 @@ const LocationDetailPage = () => {
 								placeholder="Select section"
 								required
 								options={sections || []}
+								components={{
+									Option: CustomOption,
+									SingleValue: CustomSingleValue,
+								}}
 							/>
 						</FormRow>
 						<FormRow label="Order:" required>

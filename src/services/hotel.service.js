@@ -2,6 +2,7 @@ import { useMutation, useQuery } from 'react-query';
 import httpRequestV2 from './httpRequestV2';
 import axios from 'axios';
 import generateSignature from 'utils/generateSignature';
+import httpRequest from './httpRequest';
 
 export const searchService = {
 	createSessiionId: (data) =>
@@ -10,6 +11,16 @@ export const searchService = {
 		httpRequestV2.get('v1/search/hotel-availability/' + sessionId),
 	getHotelContent: (data) =>
 		httpRequestV2.post('v1/search/hotel-content', data),
+	getHotelPortfolios: (params) => {
+		const signature = generateSignature();
+		const headers = {};
+		headers['x-api-key'] = import.meta.env.VITE_API_KEY;
+		headers['x-api-secret'] = signature.key;
+		headers['x-timestamp'] = signature.timestamp;
+		return httpRequest.get('/v1/hotel-portfolios', {
+			params,
+		});
+	},
 	searchHotels: (params) => {
 		const signature = generateSignature();
 		const headers = {};
@@ -36,6 +47,14 @@ export const useSearchHotels = ({ queryParams, sessionId, params }) => {
 	return useQuery(
 		['GET_HOTELS', params],
 		() => searchService.searchHotels(params),
+		queryParams,
+	);
+};
+
+export const useGetHotelPortfolios = ({ queryParams, sessionId, params }) => {
+	return useQuery(
+		['GET_HOTEL_PORTFOLIOS', params],
+		() => searchService.getHotelPortfolios(params),
 		queryParams,
 	);
 };

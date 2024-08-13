@@ -47,6 +47,7 @@ import markupPoolService, {
 import {
 	useCreateSession,
 	useGetHotelContent,
+	useGetHotelPortfolios,
 	useGetSessionById,
 } from 'services/hotel.service';
 import { useEffect, useState } from 'react';
@@ -55,6 +56,8 @@ import useReviews from 'modules/Destinations/hooks/useReviews';
 import moment from 'moment';
 // import file1 from '../../../assets/files/jpcode_csv_template.csv'
 // import file2 from 'assets/files/jpcode_csv_template.xlsx'
+
+import { chakraComponents } from 'chakra-react-select';
 
 const __defaultPaxes = [
 	{
@@ -79,6 +82,30 @@ const removeDuplicates = (array) => {
 	}, new Map());
 
 	return Array.from(uniqueObjects.values());
+};
+
+const getHotelName = (hotels) => {
+	return hotels?.hits?.[0]?.translation_options?.kr_name === 'kr_name_manual'
+		? hotels?.hits?.[0]?.kr_name_manual
+		: hotels?.hits?.[0]?.translation_options?.kr_name === 'kr_name_oai'
+			? hotels?.hits?.[0]?.kr_name_oai
+			: hotels?.hits?.[0]?.kr_name;
+};
+
+export const CustomOption = ({ children, ...props }) => {
+	return (
+		<chakraComponents.Option {...props}>
+			<Text dangerouslySetInnerHTML={{ __html: props.data.label }}></Text>
+		</chakraComponents.Option>
+	);
+};
+
+export const CustomSingleValue = ({ children, ...props }) => {
+	return (
+		<chakraComponents.SingleValue {...props}>
+			<Text dangerouslySetInnerHTML={{ __html: props?.data?.label }}></Text>
+		</chakraComponents.SingleValue>
+	);
 };
 
 const UpTargetDestinationDetailPage = () => {
@@ -138,7 +165,7 @@ const UpTargetDestinationDetailPage = () => {
 				return res.data.results
 					.filter((item) => item.template === 'group-hotel')
 					.map((value) => ({
-						label: value.kr_title,
+						label: decodeURIComponent(escape(atob(value.kr_title))),
 						value: value.id,
 					}));
 			},
@@ -184,27 +211,62 @@ const UpTargetDestinationDetailPage = () => {
 		sessionId: sessionId,
 		queryParams: {
 			enabled: !!sessionId,
+			onSuccess: (res) => {
+				const _popularHotelsData = JSON.parse(JSON.stringify(hotelCode));
+				_popularHotelsData.forEach((hotel) => {
+					if (hotel.JPCode === res.data.hotels[0].attributes.Code) {
+						let oldHotel = {};
+						if (hotel.metaData.hotel) oldHotel = hotel.metaData.hotel;
+						hotel.metaData.hotel = {
+							...oldHotel,
+							price: res?.data?.hotels?.[0]
+								? Array.isArray(res.data.hotels[0].HotelOptions.HotelOption)
+									? res.data.hotels[0].HotelOptions.HotelOption[0].Prices.Price
+										.TotalFixAmounts.attributes.Gross
+									: res.data.hotels[0].HotelOptions.HotelOption.Prices.Price
+										.TotalFixAmounts.attributes.Gross
+								: '0',
+						};
+					}
+				});
+				setValue('hotelCode', _popularHotelsData);
+				setSessionId(undefined);
+			},
 		},
 	});
 
-	const onChangeHotels = (code, reviewsAmount, rating) => {
+	const onChangeHotels = async (code, reviewsAmount, rating) => {
 		const _popularHotelsData = JSON.parse(JSON.stringify(hotelCode));
 		_popularHotelsData.forEach((hotel) => {
 			if (hotel.JPCode === code) {
 				hotel.metaData.tripadvisorReview.rayting = rating;
 				hotel.metaData.tripadvisorReview.reviews = reviewsAmount;
+				if (hotel.metaData.hotelAvail) delete hotel.metaData.hotelAvail;
+				// console.log('price===>', sessionHotels)
 				hotel.metaData.hotel = {
 					images: getHotelContent.data.data.HotelContent.Images,
-					...hotels[0].source,
+					kr_name: getHotelName(hotels),
+					en_name: hotels?.hits?.[0]?.en_name,
+					zone: hotels?.hits?.[0]?.Zone,
+					price: hotel?.metaData?.hotel?.price || '0',
+					//   price: sessionHotels?.data?.hotels?.[0]
+					//     ? Array.isArray(
+					//         sessionHotels.data.hotels[0].HotelOptions.HotelOption
+					//       )
+					//       ? sessionHotels.data.hotels[0].HotelOptions.HotelOption[0].Prices
+					//           .Price.TotalFixAmounts.attributes.Gross
+					//       : sessionHotels.data.hotels[0].HotelOptions.HotelOption.Prices
+					//           .Price.TotalFixAmounts.attributes.Gross
+					//     : '0'
 				};
-				hotel.metaData.hotelAvail = sessionHotels.data.hotels[0];
 			}
 		});
+
 		setValue('hotelCode', _popularHotelsData);
-		setTimeout(() => {
-			setJPCode(null);
-			setSessionId(null);
-		}, 3000);
+		// setTimeout(() => {
+		setJPCode(null);
+		// setSessionId(undefined)
+		// }, 2000)
 	};
 
 	useEffect(() => {
@@ -217,8 +279,8 @@ const UpTargetDestinationDetailPage = () => {
 				paxes: __defaultPaxes,
 				language: 'kr',
 				nationality: 'KR',
-				checkInDate: moment(new Date()).add(29, 'days').format('yyyy-MM-DD'),
-				checkOutDate: moment(new Date()).add(30, 'days').format('yyyy-MM-DD'),
+				checkInDate: moment(new Date()).add(30, 'days').format('yyyy-MM-DD'),
+				checkOutDate: moment(new Date()).add(31, 'days').format('yyyy-MM-DD'),
 				hotelCodes: JPCode ? [JPCode] : [],
 				useCurrency: 'KRW',
 			};
@@ -232,14 +294,25 @@ const UpTargetDestinationDetailPage = () => {
 		if (JPCode) getHContent();
 	}, [JPCode]);
 
-	const { hotels, isLoading: isLoadingHotel } = useHotelAvail({
-		hotelCodes: JPCode ? [JPCode] : [],
+	// const { hotels, isLoading: isLoadingHotel } = useHotelAvail({
+	// 	hotelCodes: JPCode ? [JPCode] : [],
+	// });
+
+	const { data: hotels, isLoading: isLoadingHotel } = useGetHotelPortfolios({
+		params: {
+			page: 1,
+			page_size: 10,
+			jp_code: JPCode,
+		},
+		queryParams: {
+			enabled: !!JPCode,
+		},
 	});
 
 	const { isLoading: isLoadingReview } = useReviews({
-		hotelName: hotels && hotels[0]?.source?.en_name,
-		hotelLat: hotels && hotels[0]?.source?.Latitude,
-		hotelLng: hotels && hotels[0]?.source?.Longitude,
+		hotelName: hotels && hotels?.hits[0]?.en_name,
+		hotelLat: hotels && hotels?.hits[0]?.Latitude,
+		hotelLng: hotels && hotels?.hits[0]?.Longitude,
 		language: 'ko',
 		postalCode: getHotelContent?.data?.data?.HotelContent?.Address.PostalCode,
 		onChange: onChangeHotels,
@@ -444,6 +517,32 @@ const UpTargetDestinationDetailPage = () => {
 									placeholder="Select section"
 									required
 									options={sections || []}
+									components={{
+										Option: CustomOption,
+										SingleValue: CustomSingleValue,
+									}}
+								/>
+							</FormRow>
+							<FormRow label="Select view:" required>
+								<FormSelect
+									control={control}
+									name="view"
+									placeholder="Select view"
+									required
+									options={[
+										{
+											label: 'None',
+											value: 'none',
+										},
+										{
+											label: 'Horizontal',
+											value: 'horizontal',
+										},
+										{
+											label: 'Vertical',
+											value: 'vertical',
+										},
+									]}
 								/>
 							</FormRow>
 							<FormRow label="Select markup:">
@@ -589,7 +688,9 @@ const UpTargetDestinationDetailPage = () => {
 									</FormRow>
 
 									<Button
-										onClick={() => setJPCode(hotelCode[index].JPCode)}
+										onClick={() => {
+											setJPCode(hotelCode[index].JPCode);
+										}}
 										variant="outline"
 										isDisabled={
 											getHotelContent.isLoading ||

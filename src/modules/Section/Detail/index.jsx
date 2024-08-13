@@ -1,5 +1,5 @@
-import { Button, Grid, Heading } from '@chakra-ui/react';
-import { useForm } from 'react-hook-form';
+import { Box, Button, Grid, Heading, IconButton } from '@chakra-ui/react';
+import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../../components/BackButton';
 import FormRow from '../../../components/FormElements/FormRow';
@@ -27,6 +27,9 @@ import {
 	useSectionsCreate,
 	useSectionsUpdate,
 } from 'services/section.service';
+import { MdOutlineViewTimeline } from 'react-icons/md';
+import { useState } from 'react';
+import FormTextarea from 'components/FormElements/Input/FormTextarea';
 
 const templates = [
 	{
@@ -41,17 +44,32 @@ const templates = [
 		label: 'Group hotel',
 		value: 'group-hotel',
 	},
+	{
+		label: 'Hotels preview',
+		value: 'preview-hotel',
+	},
 ];
+
+// function decodeHTMLEntities(text) {
+//   const textArea = document.createElement('textarea')
+//   textArea.innerHTML = text
+//   return textArea.value
+// }
 
 const SectionDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
-
+	const [isOpenPreview, setIsOpenPreview] = useState(true);
 	const { control, reset, handleSubmit } = useForm({
 		defaultValues: {
 			metaData: {},
 		},
+	});
+
+	const titleEn = useWatch({
+		control,
+		name: 'en_title',
 	});
 
 	const { isLoading, data } = useGetSectionsById({
@@ -59,7 +77,12 @@ const SectionDetailPage = () => {
 		queryParams: {
 			cacheTime: false,
 			enabled: Boolean(id),
-			onSuccess: (res) => reset(res.data),
+			onSuccess: (res) =>
+				reset({
+					...res.data,
+					en_title: decodeURIComponent(escape(atob(res.data.en_title))),
+					kr_title: decodeURIComponent(escape(atob(res.data.kr_title))),
+				}),
 		},
 	});
 
@@ -81,11 +104,20 @@ const SectionDetailPage = () => {
 	);
 
 	const onSubmit = (values) => {
-		if (!id) createCountry(values);
+		if (!id)
+			createCountry({
+				...values,
+				en_title: btoa(unescape(encodeURIComponent(values.en_title))),
+				kr_title: btoa(unescape(encodeURIComponent(values.kr_title))),
+			});
 		else {
 			updateCountry({
 				id,
-				data: values,
+				data: {
+					...values,
+					en_title: btoa(unescape(encodeURIComponent(values.en_title))),
+					kr_title: btoa(unescape(encodeURIComponent(values.kr_title))),
+				},
 			});
 		}
 	};
@@ -121,8 +153,20 @@ const SectionDetailPage = () => {
 								placeholder="Enter en title"
 								autoFocus
 								required
+								inputRightElement={
+									<IconButton
+										size="sm"
+										onClick={() => setIsOpenPreview((prev) => !prev)}
+										icon={<MdOutlineViewTimeline fontSize="16px" />}
+									/>
+								}
 							/>
 						</FormRow>
+
+						{isOpenPreview && (
+							<Box dangerouslySetInnerHTML={{ __html: titleEn }}></Box>
+						)}
+
 						<FormRow label="KR title:" required>
 							<FormInput
 								control={control}

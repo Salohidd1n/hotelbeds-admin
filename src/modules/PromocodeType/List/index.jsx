@@ -1,5 +1,5 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Box, Button, IconButton } from '@chakra-ui/react';
+import { Box, Button, IconButton, Image } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import DataTable from '../../../components/DataTable';
@@ -15,13 +15,13 @@ import ProfileMenu from '../../../components/ProfileMenu';
 import styles from './index.module.scss';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
-import { useGetCountries } from 'services/country.service';
-import { useDeleteCountry } from 'services/country.service';
 import CustomPopup from 'components/CustomPopup';
-import moment from 'moment';
-import { useGetSections, useSectionsDelete } from 'services/section.service';
+import {
+	useGetPromocodeTypes,
+	usePromocodeTypeDelete,
+} from 'services/promocodeType.service';
 
-const SectionListPage = () => {
+const PromocodeTypeListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const [pageSize, setPageSize] = useState(30);
@@ -30,10 +30,10 @@ const SectionListPage = () => {
 	const [term, setTerm] = useState();
 	const [deletableCountry, setDeletableCountry] = useState(null);
 
-	const { data, isLoading, refetch } = useGetSections({
+	const { data, isLoading, refetch } = useGetPromocodeTypes({
 		params: {
 			page,
-			page_size: pageSize,
+			limit: pageSize,
 			search: term,
 		},
 	});
@@ -42,14 +42,13 @@ const SectionListPage = () => {
 		setTerm(e.target.value);
 	}, 700);
 
-	const { mutate: deleteCountry, isLoading: deleteLoading } = useSectionsDelete(
-		{
-			onSuccess: () => {
-				refetch();
-				setDeletableCountry(null);
-			},
-		},
-	);
+	const { mutate: deleteCountry, isLoading: deleteLoading } =
+    usePromocodeTypeDelete({
+    	onSuccess: () => {
+    		refetch();
+    		setDeletableCountry(null);
+    	},
+    });
 
 	const navigateToCreatePage = () => {
 		navigate(`${pathname}/create`);
@@ -79,41 +78,30 @@ const SectionListPage = () => {
 			render: (_, __, index) => (page - 1) * pageSize + index + 1,
 		},
 		{
-			title: 'Name EN',
-			dataIndex: 'en_title',
-			render: (_, row) => decodeURIComponent(escape(atob(row.en_title))),
+			title: 'Type',
+			dataIndex: 'type',
 		},
 		{
-			title: 'Name KR',
-			dataIndex: 'kr_title',
-			render: (_, row) => decodeURIComponent(escape(atob(row.kr_title))),
+			title: 'Description',
+			dataIndex: 'description',
 		},
-		{
-			title: 'Template',
-			dataIndex: 'template',
-		},
-
-		{
-			title: 'Order',
-			dataIndex: 'order',
-		},
-		{
-			title: '',
-			width: 50,
-			align: 'center',
-			render: (_, row, index) => (
-				<IconButton
-					onClick={(e) => {
-						e.stopPropagation();
-						setDeletableCountry(row);
-					}}
-					colorScheme="red"
-					variant="outline"
-				>
-					<DeleteIcon />
-				</IconButton>
-			),
-		},
+		// {
+		//   title: '',
+		//   width: 50,
+		//   align: 'center',
+		//   render: (_, row, index) => (
+		//     <IconButton
+		//       onClick={(e) => {
+		//         e.stopPropagation()
+		//         setDeletableCountry(row)
+		//       }}
+		//       colorScheme='red'
+		//       variant='outline'
+		//     >
+		//       <DeleteIcon />
+		//     </IconButton>
+		//   )
+		// }
 	];
 
 	return (
@@ -121,7 +109,7 @@ const SectionListPage = () => {
 			<Box>
 				<Header>
 					<HeaderLeftSide>
-						<HeaderTitle>Sections</HeaderTitle>
+						<HeaderTitle>Promocode Types</HeaderTitle>
 					</HeaderLeftSide>
 					<HeaderExtraSide>
 						<NotificationMenu />
@@ -141,7 +129,7 @@ const SectionListPage = () => {
 									bgColor="primary.main"
 									leftIcon={<AddIcon />}
 								>
-                  Add section
+                  Create
 								</Button>
 							</HeaderExtraSide>
 						</PageCardHeader>
@@ -160,7 +148,9 @@ const SectionListPage = () => {
 									current: page,
 								}}
 								onRow={(row, index) => ({
-									onClick: () => navigateToEditPage(row.id),
+									onClick: () => {
+										navigateToEditPage(row.id);
+									},
 								})}
 								className={styles.table}
 							/>
@@ -170,7 +160,7 @@ const SectionListPage = () => {
 			</Box>
 			<CustomPopup
 				isOpen={!!deletableCountry}
-				title="Delete Section"
+				title="Delete Markup"
 				footerContent={
 					<Box display="flex" gap="20px">
 						<Button variant="outline" onClick={() => setDeletableCountry(null)}>
@@ -192,9 +182,9 @@ const SectionListPage = () => {
 				}
 				onClose={() => setDeletableCountry(null)}
 			>
-				<p>Are you sure want to delete section?</p>
+				<p>Are you sure want to delete Promocode type?</p>
 			</CustomPopup>
 		</>
 	);
 };
-export default SectionListPage;
+export default PromocodeTypeListPage;

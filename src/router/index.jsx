@@ -32,6 +32,12 @@ import MarkupListPage from 'modules/Markup/List';
 import MarkupDetailPage from 'modules/Markup/Detail';
 import SectionListPage from 'modules/Section/List';
 import SectionDetailPage from 'modules/Section/Detail';
+import PromocodeTypeListPage from 'modules/PromocodeType/List';
+import PromocodeTypeDetailPage from 'modules/PromocodeType/Detail';
+import PromocodeListPage from 'modules/Promocodes/List';
+import PromocodesDetailPage from 'modules/Promocodes/Detail';
+import HotelPreviewListPage from 'modules/HotelPreview/List';
+import HotelPreviewDetailPage from 'modules/HotelPreview/Detail';
 
 const Router = () => {
 	const { isAuth } = authStore;
@@ -75,6 +81,24 @@ const Router = () => {
 				<Route path="target/markup/create" element={<MarkupDetailPage />} />
 				<Route path="target/markup/:id" element={<MarkupDetailPage />} />
 
+				<Route path="promocode/types" element={<PromocodeTypeListPage />} />
+				<Route path="promocode" element={<PromocodeTypeListPage />} />
+				<Route
+					path="promocode/types/create"
+					element={<PromocodeTypeDetailPage />}
+				/>
+				<Route
+					path="promocode/types/:id"
+					element={<PromocodeTypeDetailPage />}
+				/>
+
+				<Route path="promocode/codes" element={<PromocodeListPage />} />
+				<Route
+					path="promocode/codes/create"
+					element={<PromocodesDetailPage />}
+				/>
+				<Route path="promocode/codes/:id" element={<PromocodesDetailPage />} />
+
 				<Route
 					path="target/down-target-destinations"
 					element={<DownTargetDestinationsListPage />}
@@ -99,6 +123,19 @@ const Router = () => {
 				<Route
 					path="target/up-target-destinations/:id"
 					element={<UpTargetDestinationDetailPage />}
+				/>
+
+				<Route
+					path="target/hotel-previews"
+					element={<HotelPreviewListPage />}
+				/>
+				<Route
+					path="target/hotel-previews/create"
+					element={<HotelPreviewDetailPage />}
+				/>
+				<Route
+					path="target/hotel-previews/:id"
+					element={<HotelPreviewDetailPage />}
 				/>
 
 				<Route

@@ -28,28 +28,57 @@ import PageCard, {
 import ProfileMenu from '../../../components/ProfileMenu';
 import useCustomToast from '../../../hooks/useCustomToast';
 import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
-import FormImageUpload from 'components/FormElements/ImageUpload/FormImageUpload';
-import {
-	useGetGroupDestinationsById,
-	useGroupDestinationsCreate,
-	useGroupDestinationsUpdate,
-} from 'services/group-destinations.service';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
-import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
+import {
+	useGetUpTargetDestinationsById,
+	useUpTargetDestinationsCreate,
+	useUpTargetDestinationsUpdate,
+} from 'services/up-target-destinations.service';
 import useHotelAction from 'hooks/useHotelAction';
+import FormCheckbox from 'components/FormElements/Checkbox/FormCheckbox';
 import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 import downloadTemplate from 'utils/downloadTemplate';
 import { useGetSections } from 'services/section.service';
-import FormSelect from 'components/FormElements/Select/FormSelect';
 import { useGetMarkups } from 'services/markup.service';
+import FormSelect from 'components/FormElements/Select/FormSelect';
 import markupPoolService, {
 	useGetMarkupsPool,
 } from 'services/markupPool.service';
-import { useState } from 'react';
 import {
-	CustomOption,
-	CustomSingleValue,
-} from 'modules/UpTargetDestinations/Detail';
+	useCreateSession,
+	useGetHotelContent,
+	useGetHotelPortfolios,
+	useGetSessionById,
+} from 'services/hotel.service';
+import { useEffect, useState } from 'react';
+import useHotelAvail from 'modules/Destinations/hooks/useHotelAvail';
+import useReviews from 'modules/Destinations/hooks/useReviews';
+import moment from 'moment';
+// import file1 from '../../../assets/files/jpcode_csv_template.csv'
+// import file2 from 'assets/files/jpcode_csv_template.xlsx'
+
+import { chakraComponents } from 'chakra-react-select';
+import {
+	useGetHotelPreviewById,
+	useHotelPreviewCreate,
+	useHotelPreviewUpdate,
+} from 'services/hotel-preview.service';
+
+const __defaultPaxes = [
+	{
+		roomId: 1,
+		passangers: [
+			{
+				idPax: 1,
+				age: 35,
+			},
+			{
+				idPax: 2,
+				age: 35,
+			},
+		],
+	},
+];
 
 const removeDuplicates = (array) => {
 	const uniqueObjects = array.reduce((acc, current) => {
@@ -60,14 +89,45 @@ const removeDuplicates = (array) => {
 	return Array.from(uniqueObjects.values());
 };
 
-const GroupCardDestinationsDetailPage = () => {
+const getHotelName = (hotels) => {
+	return hotels?.hits?.[0]?.translation_options?.kr_name === 'kr_name_manual'
+		? hotels?.hits?.[0]?.kr_name_manual
+		: hotels?.hits?.[0]?.translation_options?.kr_name === 'kr_name_oai'
+			? hotels?.hits?.[0]?.kr_name_oai
+			: hotels?.hits?.[0]?.kr_name;
+};
+
+export const CustomOption = ({ children, ...props }) => {
+	return (
+		<chakraComponents.Option {...props}>
+			<Text dangerouslySetInnerHTML={{ __html: props.data.label }}></Text>
+		</chakraComponents.Option>
+	);
+};
+
+export const CustomSingleValue = ({ children, ...props }) => {
+	return (
+		<chakraComponents.SingleValue {...props}>
+			<Text dangerouslySetInnerHTML={{ __html: props?.data?.label }}></Text>
+		</chakraComponents.SingleValue>
+	);
+};
+
+const HotelPreviewDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
-	const { successToast } = useCustomToast();
 	const [isLoadingMarkup, setIsLoadingMarkup] = useState(false);
+	const { successToast } = useCustomToast();
+	const [JPCode, setJPCode] = useState(null);
+	const getHotelContent = useGetHotelContent();
+	const [sessionId, setSessionId] = useState();
 	const { control, reset, handleSubmit, setValue } = useForm({
 		defaultValues: {
-			hotelCode: [{}],
+			hotelCode: [
+				{
+					metaData: {},
+				},
+			],
 		},
 	});
 
@@ -88,6 +148,16 @@ const GroupCardDestinationsDetailPage = () => {
 		},
 	});
 
+	const { fields, append } = useFieldArray({
+		control,
+		name: 'hotelCode',
+	});
+
+	const hotelCode = useWatch({
+		control,
+		name: 'hotelCode',
+	});
+
 	const { data: sections } = useGetSections({
 		params: {
 			page: 1,
@@ -96,7 +166,7 @@ const GroupCardDestinationsDetailPage = () => {
 		queryParams: {
 			select: (res) => {
 				return res.data.results
-					.filter((item) => item.template === 'group-card')
+					.filter((item) => item.template === 'preview-hotel')
 					.map((value) => ({
 						label: decodeURIComponent(escape(atob(value.kr_title))),
 						value: value.id,
@@ -123,17 +193,7 @@ const GroupCardDestinationsDetailPage = () => {
 		},
 	});
 
-	const { fields, append } = useFieldArray({
-		control,
-		name: 'hotelCode',
-	});
-
-	const hotelCodes = useWatch({
-		control,
-		name: 'hotelCode',
-	});
-
-	const { isLoading, data: groupDest } = useGetGroupDestinationsById({
+	const { isLoading, data: groupDest } = useGetHotelPreviewById({
 		id,
 		queryParams: {
 			cacheTime: false,
@@ -141,24 +201,76 @@ const GroupCardDestinationsDetailPage = () => {
 			onSuccess: (res) => {
 				reset({
 					...res.data,
-					hotelCode: res.data.hotelCode.map((item) => ({
-						JPCode: item,
+					hotelCode: res.data.hotel.map((item) => ({
+						JPCode: item.hotelCode,
+						...item,
 					})),
 				});
 			},
 		},
 	});
 
+	const onChangeHotels = async (code, reviewsAmount, rating) => {
+		const _popularHotelsData = JSON.parse(JSON.stringify(hotelCode));
+		_popularHotelsData.forEach((hotel) => {
+			if (hotel.JPCode === code) {
+				hotel.metaData.tripadvisorReview.rayting = rating;
+				hotel.metaData.tripadvisorReview.reviews = reviewsAmount;
+				hotel.metaData.kr_name = getHotelName(hotels);
+				hotel.metaData.en_name = hotels?.hits?.[0]?.en_name;
+				hotel.metaData.zone = hotels?.hits?.[0]?.Zone;
+				hotel.metaData.images = getHotelContent.data.data.HotelContent.Images;
+			}
+		});
+
+		setValue('hotelCode', _popularHotelsData);
+
+		setJPCode(null);
+	};
+
+	useEffect(() => {
+		function getHContent() {
+			getHotelContent.mutate({
+				language: 'kr',
+				JPCode: [JPCode],
+			});
+		}
+
+		if (JPCode) getHContent();
+	}, [JPCode]);
+
+	const { data: hotels, isLoading: isLoadingHotel } = useGetHotelPortfolios({
+		params: {
+			page: 1,
+			page_size: 10,
+			jp_code: JPCode,
+		},
+		queryParams: {
+			enabled: !!JPCode,
+		},
+	});
+
+	const { isLoading: isLoadingReview } = useReviews({
+		hotelName: hotels && hotels?.hits[0]?.en_name,
+		hotelLat: hotels && hotels?.hits[0]?.Latitude,
+		hotelLng: hotels && hotels?.hits[0]?.Longitude,
+		language: 'ko',
+		postalCode: getHotelContent?.data?.data?.HotelContent?.Address.PostalCode,
+		onChange: onChangeHotels,
+		JPCode,
+	});
+
+	// console.log('hotels', getHotelContent.data, hotels)
+
 	const { mutateAsync: create, isLoading: createLoading } =
-    useGroupDestinationsCreate({
+    useHotelPreviewCreate({
     	onSuccess: () => {
     		successToast();
     		navigate(-1);
     	},
     });
-
 	const { mutateAsync: update, isLoading: updateLoading } =
-    useGroupDestinationsUpdate({
+    useHotelPreviewUpdate({
     	onSuccess: () => {
     		successToast();
     		navigate(-1);
@@ -187,11 +299,14 @@ const GroupCardDestinationsDetailPage = () => {
 					});
 					markUpPoolId = markupPool.id;
 				}
-				await create({
+				create({
 					...values,
-					markUpId: values.markUpId || undefined,
-					hotelCode: values.hotelCode.map((item) => item.JPCode),
 					markUpPoolId,
+					markUpId: values.markUpId || undefined,
+					hotel: values.hotelCode.map((item) => ({
+						hotelCode: item.JPCode,
+						metaData: item.metaData,
+					})),
 				});
 			} else {
 				let markUpPoolId = '';
@@ -200,7 +315,9 @@ const GroupCardDestinationsDetailPage = () => {
 						groupDest.data.markUpId &&
             groupDest.data.markUpId !== values.markUpId
 					) {
-						const deletedHotels = groupDest.data.hotelCode;
+						const deletedHotels = groupDest.data.hotel.map(
+							(item) => item.hotelCode,
+						);
 						const res = await markupPoolService.getList({
 							page: 1,
 							page_size: 100,
@@ -234,7 +351,9 @@ const GroupCardDestinationsDetailPage = () => {
 				}
 
 				if (!values.markUpId && groupDest.data.markUpPoolId) {
-					const deletedHotels = groupDest.data.hotelCode;
+					const deletedHotels = groupDest.data.hotel.map(
+						(item) => item.hotelCode,
+					);
 					const res = await markupPoolService.getList({
 						page: 1,
 						page_size: 100,
@@ -252,22 +371,29 @@ const GroupCardDestinationsDetailPage = () => {
 					});
 					markUpPoolId = '';
 				}
-
-				await update({
+				update({
 					id,
 					data: {
 						...values,
-						hotelCode: values.hotelCode.map((item) => item.JPCode),
 						markUpPoolId,
+						hotel: values.hotelCode.map((item) => ({
+							hotelCode: item.JPCode,
+							metaData: item.metaData,
+						})),
 					},
 				});
 			}
 		} catch (e) {
-			console.log('e', e);
+			console.log('e===>', e);
 		} finally {
 			setIsLoadingMarkup(false);
 		}
 	};
+
+	const hotelCodes = useWatch({
+		control,
+		name: 'hotelCode',
+	});
 
 	const { onDelete, onSelectAll, selectedHotels, uploadFile, fileRef } =
     useHotelAction({
@@ -282,7 +408,7 @@ const GroupCardDestinationsDetailPage = () => {
 			<Header>
 				<HeaderLeftSide>
 					<BackButton />
-					<HeaderTitle>Group Cards</HeaderTitle>
+					<HeaderTitle>Hotel preview</HeaderTitle>
 				</HeaderLeftSide>
 				<HeaderExtraSide>
 					<Button
@@ -299,44 +425,19 @@ const GroupCardDestinationsDetailPage = () => {
 
 			<Page p={4} h="calc(100vh - 64px)">
 				<Flex gap={4}>
-					<PageCard w="50%">
+					<PageCard w="30%">
 						<PageCardHeader>
 							<HeaderLeftSide>
-								<Heading fontSize="xl">Destination Data</Heading>
+								<Heading fontSize="xl">Hotel preview Data</Heading>
 							</HeaderLeftSide>
 						</PageCardHeader>
 
 						<PageCardForm p={6} spacing={8}>
-							<FormRow label="Location (EN):" required>
-								<FormInput
+							<FormRow label="Order:" required>
+								<FormNumberInput
 									control={control}
-									name="en_location"
-									placeholder="Enter location"
-									autoFocus
-									required
-								/>
-							</FormRow>
-							<FormRow label="Location (KR):" required>
-								<FormInput
-									control={control}
-									name="kr_location"
-									placeholder="Enter location"
-									required
-								/>
-							</FormRow>
-							<FormRow label="Content (EN):" required>
-								<FormInput
-									control={control}
-									name="en_content"
-									placeholder="Enter content"
-									required
-								/>
-							</FormRow>
-							<FormRow label="Content (KR):" required>
-								<FormInput
-									control={control}
-									name="kr_content"
-									placeholder="Enter content"
+									name="order"
+									placeholder="Enter order"
 									required
 								/>
 							</FormRow>
@@ -353,6 +454,7 @@ const GroupCardDestinationsDetailPage = () => {
 									}}
 								/>
 							</FormRow>
+
 							<FormRow label="Select markup:">
 								<FormSelect
 									control={control}
@@ -361,23 +463,28 @@ const GroupCardDestinationsDetailPage = () => {
 									options={markups || []}
 								/>
 							</FormRow>
-							<FormRow label="Order:" required>
-								<FormNumberInput
-									control={control}
-									name="order"
-									placeholder="Enter order"
-									required
-								/>
-							</FormRow>
+							{/* <FormRow label='Tripadvisor Review Rating:' required>
+                <FormNumberInput
+                  control={control}
+                  name='tripadvisorReview.rayting'
+                  placeholder='Enter rayting'
+                  required
+                />
+              </FormRow>
+              <FormRow label='Tripadvisor Review Count:' required>
+                <FormNumberInput
+                  control={control}
+                  name='tripadvisorReview.reviews'
+                  placeholder='Enter reviews count'
+                  required
+                />
+              </FormRow> */}
 							<FormRow label="Active:">
 								<FormSwitch control={control} name="is_active" />
 							</FormRow>
-							<FormRow label="Image:" required>
-								<FormImageUpload control={control} name="imageURL" required />
-							</FormRow>
 						</PageCardForm>
 					</PageCard>
-					<PageCard w="50%">
+					<PageCard w="70%">
 						<PageCardHeader>
 							<HeaderLeftSide>
 								{hotelCodes.length > 0 ? (
@@ -396,13 +503,6 @@ const GroupCardDestinationsDetailPage = () => {
 								)}
 							</HeaderLeftSide>
 							<HeaderExtraSide>
-								<Button
-									onClick={downloadTemplate}
-									bgColor="primary.main"
-									position="relative"
-								>
-                  Download template
-								</Button>
 								{selectedHotels.length > 0 && (
 									<Button
 										leftIcon={<DeleteIcon />}
@@ -413,6 +513,15 @@ const GroupCardDestinationsDetailPage = () => {
                     Delete
 									</Button>
 								)}
+
+								<Button
+									onClick={downloadTemplate}
+									bgColor="primary.main"
+									position="relative"
+								>
+                  Download template
+								</Button>
+
 								<Button
 									bgColor="primary.main"
 									onClick={() => fileRef.current.click()}
@@ -434,6 +543,7 @@ const GroupCardDestinationsDetailPage = () => {
 									onClick={() =>
 										append({
 											JPCode: '',
+											metaData: {},
 										})
 									}
 									bgColor="primary.main"
@@ -445,16 +555,16 @@ const GroupCardDestinationsDetailPage = () => {
 						</PageCardHeader>
 
 						<PageCardForm p={6} spacing={8}>
-							<Grid templateColumns="repeat(2, 1fr)" gap={6}>
-								{fields.map((item, index) => (
-									<Flex alignItems="center" key={item.id} gap={3}>
-										<FormCheckbox
-											control={control}
-											name={`hotelCode[${index}].checked`}
-											size="lg"
-											mt="25px"
-										/>
+							{fields.map((item, index) => (
+								<Flex alignItems="flex-start" key={item.id} gap={3}>
+									<FormCheckbox
+										control={control}
+										name={`hotelCode[${index}].checked`}
+										size="lg"
+										mt="25px"
+									/>
 
+									<Grid templateColumns="repeat(3, 1fr)" gap={6} flex="1">
 										<FormRow label="JP Code:" required>
 											<FormInput
 												control={control}
@@ -463,19 +573,79 @@ const GroupCardDestinationsDetailPage = () => {
 												required
 											/>
 										</FormRow>
-										{/* {fields.length > 1 && (
-                      <IconButton
-                        onClick={() => remove(index)}
-                        mt={8}
-                        colorScheme='red'
-                        variant='outline'
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    )} */}
-									</Flex>
-								))}
-							</Grid>
+										<FormRow label="Tripadvisor Review Rating:" required>
+											<FormNumberInput
+												control={control}
+												name={`hotelCode[${index}].metaData.tripadvisorReview.rayting`}
+												placeholder="Enter rayting"
+												required
+											/>
+										</FormRow>
+										<Button
+											onClick={() => {
+												setJPCode(hotelCode[index].JPCode);
+											}}
+											mt="25px"
+											variant="outline"
+											isDisabled={
+												getHotelContent.isLoading ||
+                        isLoadingHotel ||
+                        isLoadingReview
+											}
+											isLoading={
+												(getHotelContent.isLoading ||
+                          isLoadingHotel ||
+                          isLoadingReview) &&
+                        JPCode === hotelCode[index].JPCode
+											}
+										>
+                      Get Tripadvisor Review
+										</Button>
+										<FormRow label="Tripadvisor Review Count:" required>
+											<FormNumberInput
+												control={control}
+												name={`hotelCode[${index}].metaData.tripadvisorReview.reviews`}
+												placeholder="Enter reviews count"
+												required
+											/>
+										</FormRow>
+										<FormRow label="Description:" required>
+											<FormInput
+												control={control}
+												name={`hotelCode[${index}].metaData.description`}
+												placeholder="Enter description"
+												required
+											/>
+										</FormRow>
+										<FormRow label="KR name:" required>
+											<FormInput
+												control={control}
+												name={`hotelCode[${index}].metaData.kr_name`}
+												placeholder="Enter kr name"
+												required
+											/>
+										</FormRow>
+
+										<FormRow label="EN name:" required>
+											<FormInput
+												control={control}
+												name={`hotelCode[${index}].metaData.en_name`}
+												placeholder="Enter en name"
+												required
+											/>
+										</FormRow>
+
+										<FormRow label="Location:" required>
+											<FormInput
+												control={control}
+												name={`hotelCode[${index}].metaData.location`}
+												placeholder="Enter location"
+												required
+											/>
+										</FormRow>
+									</Grid>
+								</Flex>
+							))}
 						</PageCardForm>
 					</PageCard>
 				</Flex>
@@ -483,4 +653,4 @@ const GroupCardDestinationsDetailPage = () => {
 		</form>
 	);
 };
-export default GroupCardDestinationsDetailPage;
+export default HotelPreviewDetailPage;

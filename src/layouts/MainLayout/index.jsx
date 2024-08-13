@@ -11,6 +11,11 @@ import { MdDataArray } from 'react-icons/md';
 import { AiFillDatabase } from 'react-icons/ai';
 import { HiTemplate } from 'react-icons/hi';
 import { RiMarkupLine } from 'react-icons/ri';
+import { RiCoupon3Fill } from 'react-icons/ri';
+import { FaBarcode } from 'react-icons/fa';
+import { FaCode } from 'react-icons/fa6';
+
+import { FaQrcode } from 'react-icons/fa';
 
 const elements = [
 	// {
@@ -56,6 +61,23 @@ const elements = [
 		link: '/banner',
 	},
 	{
+		label: 'Promocode',
+		icon: RiCoupon3Fill,
+		link: '/promocode',
+		children: [
+			{
+				label: 'Types',
+				icon: FaQrcode,
+				link: '/promocode/types',
+			},
+			{
+				label: 'Codes',
+				icon: FaCode,
+				link: '/promocode/codes',
+			},
+		],
+	},
+	{
 		label: 'Locations',
 		icon: MdOutlineDataExploration,
 		link: '/promotions',
@@ -96,6 +118,11 @@ const elements = [
 				label: 'Group Hotels',
 				icon: IoLocationOutline,
 				link: '/target/up-target-destinations',
+			},
+			{
+				label: 'Preview Hotels',
+				icon: IoLocationOutline,
+				link: '/target/hotel-previews',
 			},
 			// {
 			//   label: 'Get closer to the Europe you want to visit',

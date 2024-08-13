@@ -34,7 +34,7 @@ const useReviews = ({
 		);
 	}, [nearestPlaces, postalCode]);
 
-	const { data: details, isLoading2 } = useGetLocationDetails({
+	const { data: details, isLoading: isLoading2 } = useGetLocationDetails({
 		locationId: currentHotelTripadvisorPlace?.location_id,
 		queryParams: {
 			enabled: !!currentHotelTripadvisorPlace?.location_id,
