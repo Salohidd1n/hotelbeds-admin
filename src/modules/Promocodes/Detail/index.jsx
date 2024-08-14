@@ -76,6 +76,8 @@ const PromocodesDetailPage = () => {
 		queryParams: {
 			select: (res) => {
 				return res.data.results.map((value) => ({
+					...value,
+					maxValue: value?.value,
 					label: value.type,
 					value: value.id,
 				}));
@@ -193,6 +195,9 @@ const PromocodesDetailPage = () => {
 										placeholder="Select promocode type"
 										required
 										options={promocodeTypes || []}
+										customOnChange={(val) => {
+											setValue('value', val.maxValue);
+										}}
 									/>
 								</FormRow>
 							)}
@@ -208,6 +213,11 @@ const PromocodesDetailPage = () => {
 								<FormNumberInput
 									control={control}
 									name="value"
+									disabled={
+										promocodeTypes?.find(
+											(item) => item.value === promocodeTypeId,
+										)?.maxValue
+									}
 									placeholder="Enter value"
 									required
 								/>

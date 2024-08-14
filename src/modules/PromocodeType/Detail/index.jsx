@@ -35,6 +35,7 @@ import {
 	usePromocodeTypeCreate,
 	usePromocodeTypeUpdate,
 } from 'services/promocodeType.service';
+import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
 
 const PromocodeTypeDetailPage = () => {
 	const navigate = useNavigate();
@@ -119,6 +120,21 @@ const PromocodeTypeDetailPage = () => {
 									placeholder="Enter type"
 									autoFocus
 									required
+								/>
+							</FormRow>
+							<FormRow label="Value:" required>
+								<FormNumberInput
+									control={control}
+									name="value"
+									placeholder="Enter value"
+									required
+								/>
+							</FormRow>
+							<FormRow label="Max usage allowed:">
+								<FormNumberInput
+									control={control}
+									name="maxUsageAllowed"
+									placeholder="Enter max usage"
 								/>
 							</FormRow>
 							<FormRow label="Description:" required>
