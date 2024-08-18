@@ -186,7 +186,7 @@ const PromocodeListPage = () => {
 				Type: item.promocodeTypeId.type,
 				DateFrom: item.dateFrom.split('T')[0],
 				DateTo: item.dateTo.split('T')[0],
-				Valid: item.valid,
+				Valid: item.valid ? 'true' : 'false',
 			}));
 
 			const worksheet = XLSX.utils.json_to_sheet(jsons);
@@ -202,7 +202,7 @@ const PromocodeListPage = () => {
 			const blob = new Blob([excelBuffer], {
 				type: 'application/octet-stream',
 			});
-			saveAs(blob, 'data.xlsx');
+			saveAs(blob, `${list.data?.results[0].promocodeTypeId.type}.xlsx`);
 		} catch (e) {
 			console.log(e);
 		} finally {
