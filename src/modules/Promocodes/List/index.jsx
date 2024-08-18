@@ -1,4 +1,4 @@
-import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Box, Button, IconButton, Image } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -16,23 +16,27 @@ import styles from './index.module.scss';
 import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
-import {
+import promocodesService, {
 	useGetPromocodes,
 	usePromocodesDelete,
 } from 'services/promocodes.service';
 import { useGetPromocodeTypes } from 'services/promocodeType.service';
-import FormSelect from 'components/FormElements/Select/FormSelect';
 import { Select } from 'chakra-react-select';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import useCustomToast from 'hooks/useCustomToast';
 
 const PromocodeListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
+	const { errorToast } = useCustomToast();
+	const [isLoadingDownload, setIsLoadingDownload] = useState(false);
 	const [pageSize, setPageSize] = useState(30);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
 	const [term, setTerm] = useState();
 	const [deletableCountry, setDeletableCountry] = useState(null);
-	const [promocodeType, setPromocodeType] = useState(null);
+	const [promocodeType, setPromocodeType] = useState('');
 	const { data, isLoading, refetch } = useGetPromocodes({
 		params: {
 			page,
@@ -62,10 +66,13 @@ const PromocodeListPage = () => {
 		},
 		queryParams: {
 			select: (res) => {
-				return res.data.results.map((value) => ({
-					label: value.type,
-					value: value.id,
-				}));
+				return [
+					{ value: '', label: 'All' },
+					...res.data.results.map((value) => ({
+						label: value.type,
+						value: value.id,
+					})),
+				];
 			},
 		},
 	});
@@ -163,6 +170,46 @@ const PromocodeListPage = () => {
 		// }
 	];
 
+	const generateExcel = async () => {
+		if (!promocodeType) return errorToast('Select promocode type!');
+		try {
+			setIsLoadingDownload(true);
+			const list = await promocodesService.getList({
+				page: 1,
+				limit: 10000000,
+				populate: 'promocodeTypeId',
+				promocodeTypeId: promocodeType,
+			});
+
+			const jsons = list.data?.results?.map((item) => ({
+				Code: item.code,
+				Type: item.promocodeTypeId.type,
+				DateFrom: item.dateFrom.split('T')[0],
+				DateTo: item.dateTo.split('T')[0],
+				Valid: item.valid,
+			}));
+
+			const worksheet = XLSX.utils.json_to_sheet(jsons);
+
+			const workbook = XLSX.utils.book_new();
+			XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+			const excelBuffer = XLSX.write(workbook, {
+				bookType: 'xlsx',
+				type: 'array',
+			});
+
+			const blob = new Blob([excelBuffer], {
+				type: 'application/octet-stream',
+			});
+			saveAs(blob, 'data.xlsx');
+		} catch (e) {
+			console.log(e);
+		} finally {
+			setIsLoadingDownload(false);
+		}
+	};
+
 	return (
 		<>
 			<Box>
@@ -180,22 +227,33 @@ const PromocodeListPage = () => {
 					<PageCard h="calc(100vh - 90px)">
 						<PageCardHeader>
 							<HeaderLeftSide>
-								<Select
-									options={promocodeTypes}
-									value={promocodeTypes?.find(
-										(option) => option.value === promocodeType,
-									)}
-									onChange={(val) => {
-										setPromocodeType(val.value);
-									}}
-									placeholder="Select promocode type"
-									menuPortalTarget={document.body}
-								/>
+								<Box w="250px">
+									<Select
+										options={promocodeTypes}
+										value={promocodeTypes?.find(
+											(option) => option.value === promocodeType,
+										)}
+										onChange={(val) => {
+											setPromocodeType(val.value);
+										}}
+										placeholder="Select promocode type"
+										menuPortalTarget={document.body}
+									/>
+								</Box>
 							</HeaderLeftSide>
 							<HeaderExtraSide>
 								<Box w="250px">
 									<SearchInput onChange={onChangeTerm} />
 								</Box>
+
+								<Button
+									onClick={generateExcel}
+									bgColor="primary.main"
+									leftIcon={<DownloadIcon />}
+									isLoading={isLoadingDownload}
+								>
+                  Download Excel
+								</Button>
 								<Button
 									onClick={() => navigateToCreatePage(true)}
 									bgColor="primary.main"
