@@ -10,10 +10,18 @@ const promocodesService = {
 		httpRequestV2.get(`v1/promotions/promocodes/${id}`, {
 			params,
 		}),
+	downloadExcel: (id, params) =>
+		httpRequestV2.get(`v1/promotions/promocodes/download/${id}`, {
+			params,
+		}),
 	update: (data) =>
 		httpRequestV2.put(`v1/promotions/promocodes/${data.id}`, data.data),
 	delete: (id, params) =>
 		httpRequestV2.delete(`v1/promotions/promocodes/${id}`, {
+			params,
+		}),
+	deleteByType: (id, params) =>
+		httpRequestV2.delete(`v1/promotions/promocodes/promocode-type/${id}`, {
 			params,
 		}),
 	create: (data) => httpRequestV2.post('v1/promotions/promocodes', data),
@@ -36,6 +44,16 @@ export const useGetPromocodesById = ({ id, params = {}, queryParams }) => {
 		['useGetPromocodesById', { id, ...params }],
 		() => {
 			return promocodesService.getById(id, params);
+		},
+		queryParams,
+	);
+};
+
+export const useDownloadExcel = ({ id, params = {}, queryParams }) => {
+	return useQuery(
+		['useDownloadExcel', { id, ...params }],
+		() => {
+			return promocodesService.downloadExcel(id, params);
 		},
 		queryParams,
 	);
@@ -65,6 +83,13 @@ export const usePromocodesUpdate = (mutationSettings) => {
 export const usePromocodesDelete = (mutationSettings, params) => {
 	return useMutation(
 		(id) => promocodesService.delete(id, params),
+		mutationSettings,
+	);
+};
+
+export const usePromocodesDeleteByType = (mutationSettings, params) => {
+	return useMutation(
+		(id) => promocodesService.deleteByType(id, params),
 		mutationSettings,
 	);
 };

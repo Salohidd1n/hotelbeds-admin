@@ -5,7 +5,7 @@ import generateSignature from 'utils/generateSignature';
 
 const httpRequestV2 = axios.create({
 	baseURL: import.meta.env.VITE_BASE_URL_V2,
-	timeout: 100000,
+	timeout: 100000000,
 });
 
 const errorHandler = (error, hooks) => {

@@ -1,5 +1,5 @@
 import { AddIcon, DeleteIcon, DownloadIcon } from '@chakra-ui/icons';
-import { Box, Button, IconButton, Image } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Image } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import DataTable from '../../../components/DataTable';
@@ -17,19 +17,24 @@ import SearchInput from 'components/FormElements/Input/SearchInput';
 import useDebounce from 'hooks/useDebounce';
 import CustomPopup from 'components/CustomPopup';
 import promocodesService, {
+	useDownloadExcel,
 	useGetPromocodes,
 	usePromocodesDelete,
+	usePromocodesDeleteByType,
 } from 'services/promocodes.service';
 import { useGetPromocodeTypes } from 'services/promocodeType.service';
 import { Select } from 'chakra-react-select';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import useCustomToast from 'hooks/useCustomToast';
+import authStore from 'store/auth.store';
+import generateSignature from 'utils/generateSignature';
+import moment from 'moment';
 
 const PromocodeListPage = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const { errorToast } = useCustomToast();
+	const { errorToast, successToast } = useCustomToast();
 	const [isLoadingDownload, setIsLoadingDownload] = useState(false);
 	const [pageSize, setPageSize] = useState(30);
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -170,45 +175,113 @@ const PromocodeListPage = () => {
 		// }
 	];
 
+	const downloadExcel = useDownloadExcel({
+		id: promocodeType,
+		queryParams: {
+			enabled: false,
+		},
+	});
+
+	console.log('downloadExcel====>', downloadExcel.data);
+
+	//   console.log('authStore===>', authStore.token)
+
 	const generateExcel = async () => {
 		if (!promocodeType) return errorToast('Select promocode type!');
 		try {
 			setIsLoadingDownload(true);
-			const list = await promocodesService.getList({
-				page: 1,
-				limit: 10000000,
-				populate: 'promocodeTypeId',
-				promocodeTypeId: promocodeType,
-			});
+			const signature = generateSignature();
+			const response = await fetch(
+				`${
+					import.meta.env.VITE_BASE_URL_V2
+				}v1/promotions/promocodes/download/${promocodeType}`,
+				{
+					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${authStore.token.access_token}`,
+						'x-api-key': import.meta.env.VITE_API_KEY,
+						'x-api-secret': signature.key,
+						'x-timestamp': signature.timestamp,
+					},
+				},
+			);
 
-			const jsons = list.data?.results?.map((item) => ({
-				Code: item.code,
-				Type: item.promocodeTypeId.type,
-				DateFrom: item.dateFrom.split('T')[0],
-				DateTo: item.dateTo.split('T')[0],
-				Valid: item.valid ? 'true' : 'false',
-			}));
+			const promoType = promocodeTypes.find(
+				(item) => item.value === promocodeType,
+			);
 
-			const worksheet = XLSX.utils.json_to_sheet(jsons);
+			const contentDisposition = response.headers.get('Content-Disposition');
+			let filename = `${promoType?.label}_${moment().format('YYYY.MM.DD')}.xlsx`;
+			if (contentDisposition) {
+				const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+				if (filenameMatch.length === 2) {
+					filename = filenameMatch[1];
+				}
+			}
 
-			const workbook = XLSX.utils.book_new();
-			XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+			const blob = await response.blob();
 
-			const excelBuffer = XLSX.write(workbook, {
-				bookType: 'xlsx',
-				type: 'array',
-			});
+			// Create a link element, use it to download the blob, and then remove it
+			const downloadLink = document.createElement('a');
+			const urlBlob = window.URL.createObjectURL(blob);
+			downloadLink.href = urlBlob;
+			downloadLink.download = filename;
+			document.body.appendChild(downloadLink);
+			downloadLink.click();
+			document.body.removeChild(downloadLink);
 
-			const blob = new Blob([excelBuffer], {
-				type: 'application/octet-stream',
-			});
-			saveAs(blob, `${list.data?.results[0].promocodeTypeId.type}.xlsx`);
+			// Revoke the object URL after the download
+			window.URL.revokeObjectURL(urlBlob);
+
+			//   downloadExcel.refetch()
+			//   const list = await promocodesService.getList({
+			//     page: 2,
+			//     limit: 200000,
+			//     populate: 'promocodeTypeId',
+			//     promocodeTypeId: promocodeType
+			//   })
+
+			//   const jsons = list.data?.results?.map((item) => ({
+			//     Code: item.code,
+			//     Type: item.promocodeTypeId.type,
+			//     DateFrom: item.dateFrom.split('T')[0],
+			//     DateTo: item.dateTo.split('T')[0],
+			//     Valid: item.valid ? 'true' : 'false'
+			//   }))
+
+			//   const worksheet = XLSX.utils.json_to_sheet(jsons)
+
+			//   const workbook = XLSX.utils.book_new()
+			//   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+
+			//   const excelBuffer = XLSX.write(workbook, {
+			//     bookType: 'xlsx',
+			//     type: 'array'
+			//   })
+
+			//   const blob = new Blob([excelBuffer], {
+			//     type: 'application/octet-stream'
+			//   })
+			//saveAs(blob, `${list.data?.results[0].promocodeTypeId.type}.xlsx`)
 		} catch (e) {
 			console.log(e);
 		} finally {
 			setIsLoadingDownload(false);
 		}
 	};
+
+	const promocodeDeleteByType = usePromocodesDeleteByType();
+
+	const onDeletePromocodeByType = () => {
+		promocodeDeleteByType.mutate(promocodeType, {
+			onSuccess: (res) => {
+				successToast('Promocodes deleted!');
+				refetch();
+			},
+		});
+	};
+
+	console.log('promocodeType', promocodeType);
 
 	return (
 		<>
@@ -227,19 +300,31 @@ const PromocodeListPage = () => {
 					<PageCard h="calc(100vh - 90px)">
 						<PageCardHeader>
 							<HeaderLeftSide>
-								<Box w="250px">
-									<Select
-										options={promocodeTypes}
-										value={promocodeTypes?.find(
-											(option) => option.value === promocodeType,
-										)}
-										onChange={(val) => {
-											setPromocodeType(val.value);
-										}}
-										placeholder="Select promocode type"
-										menuPortalTarget={document.body}
-									/>
-								</Box>
+								<Flex alignItems="center" gap="16px">
+									<Box w="250px">
+										<Select
+											options={promocodeTypes}
+											value={promocodeTypes?.find(
+												(option) => option.value === promocodeType,
+											)}
+											onChange={(val) => {
+												setPromocodeType(val.value);
+											}}
+											placeholder="Select promocode type"
+											menuPortalTarget={document.body}
+										/>
+									</Box>
+									{/* {promocodeType && (
+                    <IconButton
+                      onClick={onDeletePromocodeByType}
+                      colorScheme='red'
+                      isLoading={promocodeDeleteByType.isLoading}
+                      variant='outline'
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )} */}
+								</Flex>
 							</HeaderLeftSide>
 							<HeaderExtraSide>
 								<Box w="250px">

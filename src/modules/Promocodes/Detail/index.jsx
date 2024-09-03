@@ -224,12 +224,13 @@ const PromocodesDetailPage = () => {
 							</FormRow>
 
 							{searchParams.get('type') === 'multiple' && (
-								<FormRow label="Quantity:" required>
+								<FormRow label="Quantity: (Max quantity 200 000)" required>
 									<FormNumberInput
 										control={control}
 										name="quantity"
 										placeholder="Enter quantity"
 										required
+										max="200000"
 									/>
 								</FormRow>
 							)}
