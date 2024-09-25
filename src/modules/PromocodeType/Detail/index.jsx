@@ -96,7 +96,12 @@ const PromocodeTypeDetailPage = () => {
 		queryParams: {
 			cacheTime: false,
 			enabled: Boolean(id),
-			onSuccess: (res) => reset({ ...res.data }),
+			onSuccess: (res) =>
+				reset({
+					...res.data,
+					dateFrom: res.data.dateFrom.split('T')[0],
+					dateTo: res.data.dateTo.split('T')[0],
+				}),
 		},
 	});
 
@@ -268,6 +273,7 @@ const PromocodeTypeDetailPage = () => {
 								isLoading={createLoading || updateLoading}
 								type="submit"
 								ml="auto"
+								isDisabled={!!id}
 							>
                 Save
 							</Button>
