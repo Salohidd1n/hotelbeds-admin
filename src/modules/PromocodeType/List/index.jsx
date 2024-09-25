@@ -51,7 +51,7 @@ const PromocodeTypeListPage = () => {
     });
 
 	const navigateToCreatePage = () => {
-		navigate(`${pathname}/create`);
+		navigate('/promocode/types/create');
 	};
 
 	const onChangePage = (current) => {
