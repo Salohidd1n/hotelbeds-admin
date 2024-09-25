@@ -86,13 +86,26 @@ const PromocodesDetailPage = () => {
 	});
 
 	useEffect(() => {
-		if (promocodeTypeId) {
+		if (promocodeTypeId && !id) {
 			const type = promocodeTypes.find(
 				(item) => item.value === promocodeTypeId,
 			);
-			if (type) setValue('code', type.label);
+			if (type) {
+				setValue('code', type.label);
+
+				setValue('dateTo', type.dateTo ? type.dateTo.split('T')[0] : undefined);
+
+				setValue(
+					'dateFrom',
+					type.dateFrom ? type.dateFrom.split('T')[0] : undefined,
+				);
+			}
 		}
-	}, [promocodeTypeId]);
+	}, [promocodeTypeId, id]);
+
+	const promocodeType = promocodeTypes?.find(
+		(item) => item.value === promocodeTypeId,
+	);
 
 	const { isLoading } = useGetPromocodesById({
 		id,
@@ -235,31 +248,34 @@ const PromocodesDetailPage = () => {
 								</FormRow>
 							)}
 
-							<FormRow label="Date from:" required>
-								<FormInput
-									control={control}
-									name="dateFrom"
-									inputProps={{
-										type: 'date',
-										max: dateTo,
-									}}
-									placeholder="Enter date from"
-									required
-								/>
-							</FormRow>
+							{promocodeType && !promocodeType?.dateFrom && (
+								<FormRow label="Date from:" required>
+									<FormInput
+										control={control}
+										name="dateFrom"
+										inputProps={{
+											type: 'date',
+											max: dateTo,
+										}}
+										placeholder="Enter date from"
+										required
+									/>
+								</FormRow>
+							)}
 
-							<FormRow label="Date to:" required>
-								<FormInput
-									control={control}
-									name="dateTo"
-									inputProps={{
-										type: 'date',
-										min: dateFrom,
-									}}
-									placeholder="Enter date to"
-									required
-								/>
-							</FormRow>
+							{promocodeType && !promocodeType?.dateTo && (
+								<FormRow label="Date to:" required>
+									<FormInput
+										control={control}
+										name="dateTo"
+										inputProps={{
+											type: 'date',
+										}}
+										placeholder="Enter date to"
+										required
+									/>
+								</FormRow>
+							)}
 
 							{/* <FormRow label='Valid:'>
                 <FormSwitch control={control} name='valid' />

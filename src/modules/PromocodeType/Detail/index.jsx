@@ -1,4 +1,5 @@
 import {
+	Box,
 	Button,
 	Checkbox,
 	Flex,
@@ -36,13 +37,59 @@ import {
 	usePromocodeTypeUpdate,
 } from 'services/promocodeType.service';
 import FormNumberInput from 'components/FormElements/Input/FormNumberInput';
+import FormSelect from 'components/FormElements/Select/FormSelect';
+import FormRadioGroup from 'components/FormElements/RadioGroup/FormRadioGroup';
+
+const options = [
+	{
+		value: 'CL',
+		label: 'CL',
+	},
+	{
+		value: 'WS',
+		label: 'WS',
+	},
+	{
+		value: 'GLN',
+		label: 'GLN',
+	},
+];
+
+const options2 = [
+	{
+		value: 'GIFT',
+		label: 'GIFT',
+	},
+	{
+		value: 'COUPON',
+		label: 'COUPON',
+	},
+	{
+		value: 'DISCOUNT',
+		label: 'DISCOUNT',
+	},
+];
 
 const PromocodeTypeDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
 
-	const { control, reset, handleSubmit, setValue } = useForm();
+	const { control, reset, handleSubmit, setValue } = useForm({
+		defaultValues: {
+			eventType: 'GIFT',
+		},
+	});
+
+	const dateFrom = useWatch({
+		control,
+		name: 'dateFrom',
+	});
+
+	const dateTo = useWatch({
+		control,
+		name: 'dateTo',
+	});
 
 	const { isLoading } = useGetPromocodeTypesById({
 		id,
@@ -106,6 +153,23 @@ const PromocodeTypeDetailPage = () => {
 						</PageCardHeader>
 
 						<PageCardForm p={6} spacing={8}>
+							<FormRow label="Issuer" required>
+								<FormSelect
+									control={control}
+									name="issuer"
+									placeholder="Select issuer"
+									required
+									options={options}
+								/>
+							</FormRow>
+							<FormRow label="Event type" required>
+								<FormRadioGroup
+									name="eventType"
+									control={control}
+									options={options2}
+									required
+								/>
+							</FormRow>
 							<FormRow label="Type:" required>
 								<FormInput
 									control={control}
@@ -118,7 +182,6 @@ const PromocodeTypeDetailPage = () => {
 										},
 									}}
 									placeholder="Enter type"
-									autoFocus
 									required
 								/>
 							</FormRow>
@@ -130,11 +193,12 @@ const PromocodeTypeDetailPage = () => {
 									required
 								/>
 							</FormRow>
-							<FormRow label="Max usage allowed:">
+							<FormRow label="Max usage allowed:" required>
 								<FormNumberInput
 									control={control}
 									name="maxUsageAllowed"
 									placeholder="Enter max usage"
+									required
 								/>
 							</FormRow>
 							<FormRow label="Description:" required>
@@ -146,9 +210,57 @@ const PromocodeTypeDetailPage = () => {
 								/>
 							</FormRow>
 
+							<FormRow label="Date from:" required>
+								<FormInput
+									control={control}
+									name="dateFrom"
+									inputProps={{
+										type: 'date',
+										max: dateTo,
+									}}
+									placeholder="Enter date from"
+									required
+								/>
+							</FormRow>
+
+							<FormRow label="Date to:" required>
+								<FormInput
+									control={control}
+									name="dateTo"
+									inputProps={{
+										type: 'date',
+										// min: dateFrom
+									}}
+									placeholder="Enter date to"
+									required
+								/>
+							</FormRow>
+
 							<FormRow label="Active:">
 								<FormSwitch control={control} name="is_active" />
 							</FormRow>
+
+							<Box>
+								<Text fontSize="16px" fontWeight={500}>
+                  Apply discount sharing ratio
+								</Text>
+
+								<Flex mt={3} flexDirection="column" gap={5}>
+									{options.map((item) => (
+										<FormRow key={item.value} label={item.label}>
+											<Box display="flex" gap={6}>
+												<FormNumberInput
+													name={`eventPriceDistribution.${item.value.toLowerCase()}.value`}
+													control={control}
+													placeholder="0"
+													min="0"
+													inputRightElement="KRW"
+												/>
+											</Box>
+										</FormRow>
+									))}
+								</Flex>
+							</Box>
 						</PageCardForm>
 
 						<PageCardFooter mt={6}>

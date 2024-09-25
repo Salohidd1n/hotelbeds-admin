@@ -49,10 +49,10 @@ const FormNumberInput = ({
 								placeholder={placeholder}
 								required={false}
 							/>
-							<NumberInputStepper>
+							{/* <NumberInputStepper>
 								<NumberIncrementStepper />
 								<NumberDecrementStepper />
-							</NumberInputStepper>
+							</NumberInputStepper> */}
 						</NumberInput>
 
 						<InputRightElement width="2.5rem">
