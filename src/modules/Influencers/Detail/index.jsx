@@ -249,7 +249,7 @@ const InfulancersDetailPage = () => {
 
 							{promocodeType && (
 								<Flex alignItems="center" gap="6px">
-									<FormRow label="Promocode Type" required>
+									<FormRow label="Email" required>
 										<FormInput
 											control={control}
 											name="email"
