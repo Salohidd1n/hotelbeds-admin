@@ -23,6 +23,7 @@ const FormSwitch = ({
 					isInvalid={error}
 					onChange={onChange}
 					isChecked={value}
+					isDisabled={disabled}
 					{...props}
 				>
 					{children}

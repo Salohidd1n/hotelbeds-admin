@@ -38,6 +38,8 @@ import PromocodeListPage from 'modules/Promocodes/List';
 import PromocodesDetailPage from 'modules/Promocodes/Detail';
 import HotelPreviewListPage from 'modules/HotelPreview/List';
 import HotelPreviewDetailPage from 'modules/HotelPreview/Detail';
+import InfluencersListPage from 'modules/Influencers/List';
+import InfulancersDetailPage from 'modules/Influencers/Detail';
 
 const Router = () => {
 	const { isAuth } = authStore;
@@ -82,6 +84,15 @@ const Router = () => {
 				<Route path="target/markup/:id" element={<MarkupDetailPage />} />
 
 				<Route path="promocode/types" element={<PromocodeTypeListPage />} />
+				<Route path="promocode/infulancers" element={<InfluencersListPage />} />
+				<Route
+					path="promocode/infulancers/create"
+					element={<InfulancersDetailPage />}
+				/>
+				<Route
+					path="promocode/infulancers/:id"
+					element={<InfulancersDetailPage />}
+				/>
 				<Route path="promocode" element={<PromocodeTypeListPage />} />
 				<Route
 					path="promocode/types/create"

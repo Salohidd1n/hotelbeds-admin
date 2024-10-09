@@ -186,7 +186,7 @@ const PromocodeTypeDetailPage = () => {
 											}
 										},
 									}}
-									placeholder="Enter type"
+									placeholder="Enter type (ex. CL900)"
 									required
 								/>
 							</FormRow>

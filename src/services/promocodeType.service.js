@@ -6,6 +6,10 @@ const promocodeTypeService = {
 		httpRequestV2.get('v1/promotions/promocode-types', {
 			params,
 		}),
+	getInfulancers: (params) =>
+		httpRequestV2.get('v1/promotions/promocodes/promocode-type', {
+			params,
+		}),
 	getById: (id, params) =>
 		httpRequestV2.get(`v1/promotions/promocode-types/${id}`, {
 			params,
@@ -17,6 +21,18 @@ const promocodeTypeService = {
 			params,
 		}),
 	create: (data) => httpRequestV2.post('v1/promotions/promocode-types', data),
+	sendToEmail: (data) =>
+		httpRequestV2.post('v1/promotions/promocodes/infulancer', data),
+};
+
+export const useGetInfulancers = ({ params = {}, queryParams } = {}) => {
+	return useQuery(
+		['useGetInfulancers', params],
+		() => {
+			return promocodeTypeService.getInfulancers(params);
+		},
+		queryParams,
+	);
 };
 
 export const useGetPromocodeTypes = ({ params = {}, queryParams } = {}) => {
@@ -42,6 +58,13 @@ export const useGetPromocodeTypesById = ({ id, params = {}, queryParams }) => {
 export const usePromocodeTypeCreate = (mutationSettings) => {
 	return useMutation(
 		(data) => promocodeTypeService.create(data),
+		mutationSettings,
+	);
+};
+
+export const useSendPromocodeToEmail = (mutationSettings) => {
+	return useMutation(
+		(data) => promocodeTypeService.sendToEmail(data),
 		mutationSettings,
 	);
 };

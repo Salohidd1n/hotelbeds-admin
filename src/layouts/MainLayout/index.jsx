@@ -75,6 +75,11 @@ const elements = [
 				icon: FaCode,
 				link: '/promocode/codes',
 			},
+			{
+				label: 'Infulancers',
+				icon: FaCode,
+				link: '/promocode/infulancers',
+			},
 		],
 	},
 	{

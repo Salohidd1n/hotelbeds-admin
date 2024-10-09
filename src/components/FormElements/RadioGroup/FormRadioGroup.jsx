@@ -1,7 +1,12 @@
 import { Radio, RadioGroup, Stack } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 
-export default function FormRadioGroup({ name, control, options = [] }) {
+export default function FormRadioGroup({
+	name,
+	control,
+	isDisabled = false,
+	options = [],
+}) {
 	return (
 		<Controller
 			name={name}
@@ -11,7 +16,12 @@ export default function FormRadioGroup({ name, control, options = [] }) {
 					<RadioGroup onChange={onChange} width="100%" value={value}>
 						<Stack direction="row" gap="20px">
 							{options?.map((item) => (
-								<Radio size="lg" key={item.value} value={item.value}>
+								<Radio
+									isDisabled={isDisabled}
+									size="lg"
+									key={item.value}
+									value={item.value}
+								>
 									{item.label}
 								</Radio>
 							))}
