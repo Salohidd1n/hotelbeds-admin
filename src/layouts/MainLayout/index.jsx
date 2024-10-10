@@ -14,6 +14,7 @@ import { RiMarkupLine } from 'react-icons/ri';
 import { RiCoupon3Fill } from 'react-icons/ri';
 import { FaBarcode } from 'react-icons/fa';
 import { FaCode } from 'react-icons/fa6';
+import { BiMailSend } from 'react-icons/bi';
 
 import { FaQrcode } from 'react-icons/fa';
 
@@ -77,7 +78,7 @@ const elements = [
 			},
 			{
 				label: 'Infulancers',
-				icon: FaCode,
+				icon: BiMailSend,
 				link: '/promocode/infulancers',
 			},
 		],
