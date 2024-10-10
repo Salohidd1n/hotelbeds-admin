@@ -33,6 +33,7 @@ import FormSwitch from 'components/FormElements/Switch/FormSwitch';
 import FormTextarea from 'components/FormElements/Input/FormTextarea';
 
 import {
+	useGetInfulancers,
 	useGetPromocodeTypes,
 	useGetPromocodeTypesById,
 	usePromocodeTypeCreate,
@@ -49,6 +50,8 @@ import {
 	usePromocodesUpdate,
 } from 'services/promocodes.service';
 import { useState } from 'react';
+import styles from '../List/index.module.scss';
+import DataTable from 'components/DataTable';
 
 const options = [
 	{
@@ -82,6 +85,8 @@ const options2 = [
 
 const InfulancersDetailPage = () => {
 	const navigate = useNavigate();
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(30);
 	const { id } = useParams();
 	const { successToast } = useCustomToast();
 	const [promocode, setPromocode] = useState();
@@ -99,6 +104,21 @@ const InfulancersDetailPage = () => {
 	const promocodeType = useWatch({
 		control,
 		name: 'promocodeType',
+	});
+
+	const {
+		data,
+		isLoading: isLoadingTable,
+		refetch,
+	} = useGetInfulancers({
+		params: {
+			page,
+			limit: pageSize,
+			promocodeTypeId: promocodeType,
+		},
+		queryParams: {
+			enabled: !!promocodeType,
+		},
 	});
 
 	const email = useWatch({
@@ -210,6 +230,43 @@ const InfulancersDetailPage = () => {
 				},
 			);
 		}
+	};
+
+	const columns = [
+		{
+			title: 'No',
+			width: 40,
+			textAlign: 'center',
+			align: 'center',
+			// render: (_, __, index) => (page - 1) * pageSize + index + 1,
+			render: (_, row, index) => (
+				<Box bg={row.valid ? 'transparent' : '#fef2f2'} p="12px 8px">
+					{(page - 1) * pageSize + index + 1}
+				</Box>
+			),
+		},
+		{
+			title: 'Code',
+			dataIndex: 'code',
+			render: (_, row) => (
+				<Box bg={row.valid ? 'transparent' : '#fef2f2'} p="12px 8px">
+					{row.code}
+				</Box>
+			),
+		},
+		{
+			title: 'Email',
+			dataIndex: 'email',
+			render: (_, row) => (
+				<Box bg={row.valid ? 'transparent' : '#fef2f2'} p="12px 8px">
+					{row.email}
+				</Box>
+			),
+		},
+	];
+
+	const onChangePage = (current) => {
+		setPage(current);
 	};
 
 	if (isLoading) return <SimpleLoader h="100vh" />;
@@ -440,6 +497,34 @@ const InfulancersDetailPage = () => {
 							)}
 						</PageCardFooter>
 					</PageCard>
+					{promocodeType && (
+						<PageCard w="50%" p={4} height="fit-content">
+							<DataTable
+								columns={columns}
+								data={data?.data?.results}
+								scroll={{ y: 'calc(100vh - 260px)' }}
+								isLoading={isLoadingTable}
+								pagination={{
+									total: Number(data?.data?.totalResults || 0),
+									pageSize,
+									onPageSizeChange: setPageSize,
+									onChange: onChangePage,
+									current: page,
+								}}
+								onRow={(row, index) => ({
+									onClick: (e) => {
+										// const selection = window.getSelection().toString();
+										// if (selection.length > 0) {
+										// 	e.preventDefault();
+										// 	return;
+										// }
+										// navigateToEditPage(row.id);
+									},
+								})}
+								className={styles.table}
+							/>
+						</PageCard>
+					)}
 				</Flex>
 			</Page>
 		</form>
